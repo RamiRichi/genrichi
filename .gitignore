@@ -1,0 +1,16 @@
+# Raw data
+data/raw/*
+data/processed/*
+
+# Large files
+*.fastq
+*.fastq.gz
+*.bam
+*.sam
+
+# Conda
+.conda/
+__pycache__/
+
+# Logs
+*.log

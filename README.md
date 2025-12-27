@@ -21,3 +21,4 @@ alignment, quantification, and differential expression analysis.
 
 ## Author
 Rami Richi
+Bioinformatics & Medical Data Analysis
