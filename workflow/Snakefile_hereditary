@@ -1,0 +1,30 @@
+configfile: "config/hereditary_config.yaml"
+
+import pandas as pd
+from pathlib import Path
+
+samples_df = (
+    pd.read_csv(config["samples"], sep="\t", dtype=str)
+    .set_index("sample_id")
+)
+SAMPLES = samples_df.index.tolist()
+
+wildcard_constraints:
+    sample = "|".join(SAMPLES)
+
+
+rule all:
+    input:
+        expand("results/{sample}/report/{sample}_hereditary_report.html", sample=SAMPLES),
+        "results/multiqc/multiqc_report.html",
+
+
+# Shared rules — config keys are compatible with hereditary_config.yaml
+include: "rules/qc.smk"
+include: "rules/align.smk"
+
+# Hereditary-specific rules
+include: "rules/germline_calling.smk"
+include: "rules/annotation_germline.smk"
+include: "rules/acmg_classify.smk"
+include: "rules/report_hereditary.smk"

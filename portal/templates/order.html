@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}{{ order.order_id }} — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h1>
+      <i class="bi bi-clipboard2-pulse me-2 text-primary"></i>
+      <code>{{ order.order_id }}</code>
+    </h1>
+    <p>{{ pipeline.get('label', order.panel_type) }}</p>
+  </div>
+  <div class="d-flex gap-2">
+    {% if order.status == 'Running' %}
+    <form method="POST" action="{{ url_for('cancel_order', order_id=order.order_id) }}"
+          onsubmit="return confirm('Cancel this analysis?')">
+      <button class="btn btn-danger"><i class="bi bi-stop-fill me-1"></i>Cancel</button>
+    </form>
+    {% endif %}
+    {% if order.status == 'Failed' %}
+    <form method="POST" action="{{ url_for('retry_order', order_id=order.order_id) }}">
+      <button class="btn btn-warning"><i class="bi bi-arrow-clockwise me-1"></i>Retry</button>
+    </form>
+    {% endif %}
+    {% if order.log_path %}
+    <a href="{{ url_for('download_log', order_id=order.order_id) }}"
+       class="btn btn-outline-secondary">
+      <i class="bi bi-download me-1"></i>Log
+    </a>
+    {% endif %}
+    {% if order.report_path %}
+    <a href="{{ url_for('report_embed', order_id=order.order_id) }}"
+       class="btn btn-success">
+      <i class="bi bi-file-earmark-medical me-1"></i>View Report
+    </a>
+    <a href="{{ url_for('download_report', order_id=order.order_id) }}"
+       class="btn btn-outline-success">
+      <i class="bi bi-download me-1"></i>Download
+    </a>
+    {% endif %}
+    {% if order.status == 'Done' %}
+    <a href="{{ url_for('invoice', order_id=order.order_id) }}"
+       class="btn btn-outline-warning" target="_blank">
+      <i class="bi bi-receipt me-1"></i>Rechnung
+    </a>
+    {% endif %}
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Left column: info + status -->
+  <div class="col-lg-5">
+
+    <!-- Status card -->
+    <div class="card detail-card mb-4">
+      <div class="card-header">
+        <i class="bi bi-activity me-2"></i> Status
+      </div>
+      <div class="card-body text-center py-4">
+        {% if order.status == 'Queued' %}
+          <i class="bi bi-hourglass-split text-warning" style="font-size:48px"></i>
+          <h4 class="mt-3 text-warning">Queued</h4>
+          <p class="text-muted small">Waiting for a free compute slot…</p>
+        {% elif order.status == 'Running' %}
+          <i class="bi bi-gear-fill text-primary pulse" style="font-size:48px"></i>
+          <h4 class="mt-3 text-primary">Running</h4>
+          <p class="text-muted small">Pipeline is executing — check log below</p>
+        {% elif order.status == 'Done' %}
+          <i class="bi bi-check-circle-fill text-success" style="font-size:48px"></i>
+          <h4 class="mt-3 text-success">Complete</h4>
+          <p class="text-muted small">Report is ready</p>
+        {% elif order.status == 'Failed' %}
+          <i class="bi bi-x-circle-fill text-danger" style="font-size:48px"></i>
+          <h4 class="mt-3 text-danger">Failed</h4>
+          {% if order.error_msg %}
+          <p class="text-muted small">{{ order.error_msg }}</p>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Patient card -->
+    <div class="card detail-card mb-4">
+      <div class="card-header">
+        <i class="bi bi-person-badge me-2"></i> Patient
+      </div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><th class="text-muted small w-40">Patient ID</th>   <td><strong>{{ order.patient_id }}</strong></td></tr>
+          <tr><th class="text-muted small">Name</th>              <td>{{ order.patient_name or '—' }}</td></tr>
+          <tr><th class="text-muted small">Sex</th>               <td>{{ order.sex or '—' }}</td></tr>
+          <tr><th class="text-muted small">Date of Birth</th>     <td>{{ order.dob or '—' }}</td></tr>
+          <tr><th class="text-muted small">Tumor Type</th>        <td>{{ order.tumor_type or '—' }}</td></tr>
+          <tr><th class="text-muted small">Panel</th>
+              <td><span class="panel-pill panel-{{ order.panel_type }}">{{ pipeline.get('label', order.panel_type) }}</span></td></tr>
+          {% if order.notes %}
+          <tr><th class="text-muted small">Notes</th>             <td>{{ order.notes }}</td></tr>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+
+    <!-- Timeline card -->
+    <div class="card detail-card">
+      <div class="card-header">
+        <i class="bi bi-clock-history me-2"></i> Timeline
+      </div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><th class="text-muted small">Created</th>  <td>{{ order.created_at[:16].replace('T',' ') }}</td></tr>
+          <tr><th class="text-muted small">Started</th>  <td>{{ order.started_at[:16].replace('T',' ') if order.started_at else '—' }}</td></tr>
+          <tr><th class="text-muted small">Finished</th> <td>{{ order.finished_at[:16].replace('T',' ') if order.finished_at else '—' }}</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right column: FASTQ paths + log -->
+  <div class="col-lg-7">
+
+    <!-- FASTQ files -->
+    <div class="card detail-card mb-4">
+      <div class="card-header">
+        <i class="bi bi-file-zip me-2"></i> Input Files
+      </div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr>
+            <th class="text-muted small">Tumor R1</th>
+            <td class="font-monospace small text-break">{{ order.fastq_r1 or '—' }}</td>
+          </tr>
+          <tr>
+            <th class="text-muted small">Tumor R2</th>
+            <td class="font-monospace small text-break">{{ order.fastq_r2 or '—' }}</td>
+          </tr>
+          {% if order.fastq_normal_r1 %}
+          <tr>
+            <th class="text-muted small">Normal R1</th>
+            <td class="font-monospace small text-break">{{ order.fastq_normal_r1 }}</td>
+          </tr>
+          <tr>
+            <th class="text-muted small">Normal R2</th>
+            <td class="font-monospace small text-break">{{ order.fastq_normal_r2 }}</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+
+    <!-- Pipeline log -->
+    <div class="card detail-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-terminal me-2"></i> Pipeline Log (last 60 lines)</span>
+        {% if order.status in ('Running', 'Queued') %}
+        <small class="text-light pulse">⬤ live</small>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        {% if log_tail %}
+        <div class="log-box" id="logBox">{{ log_tail }}</div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-terminal" style="font-size:32px;opacity:.3"></i>
+          <p class="mt-2 small">Log will appear when the pipeline starts</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const orderId = {{ order.order_id | tojson }};
+const status  = {{ order.status  | tojson }};
+
+// Auto-refresh page while running or queued
+if (status === 'Running' || status === 'Queued') {
+  setInterval(() => {
+    fetch(`/api/order/${orderId}/status`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status !== status) {
+          location.reload();
+        }
+      });
+  }, 8000);
+  setTimeout(() => location.reload(), 30000);
+}
+
+// Scroll log to bottom
+const logBox = document.getElementById('logBox');
+if (logBox) logBox.scrollTop = logBox.scrollHeight;
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Report {{ order.order_id }} — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h1><i class="bi bi-file-earmark-medical me-2 text-success"></i>Analysis Report</h1>
+    <p>{{ order.order_id }} &nbsp;·&nbsp; {{ order.patient_name or order.patient_id }}</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('download_report', order_id=order.order_id) }}"
+       class="btn btn-success">
+      <i class="bi bi-download me-1"></i>Download PDF-ready
+    </a>
+    <a href="{{ url_for('view_report', order_id=order.order_id) }}"
+       class="btn btn-outline-secondary" target="_blank">
+      <i class="bi bi-box-arrow-up-right me-1"></i>Open in new tab
+    </a>
+    <a href="{{ url_for('order_detail', order_id=order.order_id) }}"
+       class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius:10px;overflow:hidden;">
+  <iframe src="{{ url_for('view_report', order_id=order.order_id) }}"
+          style="width:100%;height:calc(100vh - 160px);border:none;"
+          title="Analysis Report {{ order.order_id }}">
+  </iframe>
+</div>
+{% endblock %}

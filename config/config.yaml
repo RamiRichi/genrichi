@@ -1,0 +1,48 @@
+# GenRichi Somatic Hotspot Panel Pipeline - Configuration
+# Edit all paths below before running
+
+samples: config/samples.tsv
+
+ref:
+  genome: resources/reference/hg38.fa           # BWA-indexed + GATK dict required
+  dbsnp: resources/reference/dbsnp_146.hg38.vcf.gz
+  gnomad: resources/reference/af-only-gnomad.hg38.vcf.gz
+  pon: null                                      # optional Panel-of-Normals VCF
+
+panel:
+  bed: resources/panel/hotspots.bed
+  name: "GenRichi Cancer Hotspot Panel v1"
+
+trimming:
+  fastp:
+    min_length: 50
+    quality_threshold: 20
+
+alignment:
+  platform: ILLUMINA
+  bwa_mem2:
+    extra: "-M"
+
+calling:
+  mutect2:
+    extra: "--min-base-quality-score 20"
+  filter:
+    min_af: 0.02           # minimum allele frequency after filtering
+    min_depth: 30          # minimum total read depth
+    min_alt_reads: 5       # minimum reads supporting alt allele
+
+annotation:
+  vep:
+    cache_dir: resources/vep_cache
+    genome_build: GRCh38
+    extra: "--everything --canonical --check_existing"
+  cosmic:
+    vcf: resources/annotation/CosmicCodingMuts_v99_GRCh38.vcf.gz
+  clinvar:
+    vcf: resources/annotation/clinvar_20240101.vcf.gz
+
+report:
+  company: "GenRichi"
+  logo: null                 # optional path to logo PNG
+  min_vaf_report: 0.02
+  output_format: html        # html or pdf

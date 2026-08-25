@@ -1,0 +1,75 @@
+# GenRichi Hereditary Cancer Panel Pipeline - Configuration
+# Run with: snakemake --snakefile workflow/Snakefile_hereditary --configfile config/hereditary_config.yaml
+
+samples: config/hereditary_samples.tsv
+
+ref:
+  genome: /home/rami/genrichi/reference_db/ref/hg38.fa
+  dbsnp: /home/rami/genrichi/reference_db/dbsnp/dbsnp_146.hg38.vcf.gz
+  gnomad: null                                    # not required for germline calling
+
+panel:
+  bed: resources/panel/hereditary_genes.bed
+  name: "GenRichi Hereditary Cancer Panel v1"
+
+trimming:
+  fastp:
+    min_length: 50
+    quality_threshold: 20
+
+alignment:
+  platform: ILLUMINA
+  bwa_mem2:
+    extra: "-M"
+
+calling:
+  haplotypecaller:
+    extra: "--pcr-indel-model NONE"
+  filter:
+    min_depth: 20          # minimum read depth to report variant
+    min_gq: 20             # minimum genotype quality score
+
+annotation:
+  vep:
+    cache_dir: /home/rami/genrichi/reference_db/vep_cache
+    genome_build: GRCh38
+    # --sift b / --polyphen b → include scores in output; --hgvs for HGVS notation
+    extra: "--everything --canonical --check_existing --hgvs --hgvsg --sift b --polyphen b"
+  clinvar:
+    vcf: /home/rami/genrichi/reference_db/clinvar/clinvar.vcf.gz
+
+acmg:
+  ba1_af: 0.05            # gnomAD AF > 5%  → Benign Stand-Alone (BA1)
+  bs1_af: 0.01            # gnomAD AF > 1%  → Benign Strong (BS1)
+  pm2_af: 0.001           # gnomAD AF < 0.1% or absent → Moderate Pathogenic (PM2)
+  lof_intolerant_genes:   # LOF variants in these genes trigger PVS1
+    - BRCA1
+    - BRCA2
+    - MLH1
+    - MSH2
+    - MSH6
+    - PMS2
+    - APC
+    - TP53
+    - PTEN
+    - RB1
+    - VHL
+    - MEN1
+    - RET
+    - PALB2
+    - ATM
+    - CHEK2
+    - CDH1
+    - STK11
+    - SMAD4
+    - BMPR1A
+    - NBN
+    - MUTYH
+    - EPCAM
+    - BARD1
+    - MLH3
+
+report:
+  company: "GenRichi"
+  logo: /home/rami/genrichi/genrichi_logo_final.png
+  show_benign: false       # include Benign / Likely Benign variants in report table

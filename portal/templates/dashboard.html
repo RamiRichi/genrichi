@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h1><i class="bi bi-grid-1x2-fill me-2 text-primary"></i>Dashboard</h1>
+    <p>All genomic orders — live status</p>
+  </div>
+  <a href="{{ url_for('new_order') }}" class="btn btn-primary">
+    <i class="bi bi-plus-lg me-1"></i> New Order
+  </a>
+</div>
+
+<!-- Stats row -->
+<div class="row g-3 mb-4">
+  {% set stat_items = [
+    ('Total Orders',  stats.total,   'bi-clipboard2-pulse-fill', '#3498db'),
+    ('Queued',        stats.queued,  'bi-hourglass-split',       '#f39c12'),
+    ('Running',       stats.running, 'bi-activity',              '#3498db'),
+    ('Completed',     stats.done,    'bi-check-circle-fill',     '#27ae60'),
+    ('Failed',        stats.failed,  'bi-x-circle-fill',         '#e74c3c'),
+  ] %}
+  {% for label, count, icon, color in stat_items %}
+  <div class="col">
+    <div class="card stat-card">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div style="width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+                    background:linear-gradient(135deg,{{ color }}33,{{ color }}11);
+                    border:1px solid {{ color }}44;box-shadow:0 0 16px {{ color }}33;">
+          <i class="bi {{ icon }}" style="font-size:20px;color:{{ color }}"></i>
+        </div>
+        <div>
+          <div class="stat-number" style="color:{{ color }}">{{ count }}</div>
+          <div class="stat-label">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Orders table -->
+<div class="card border-0 rounded-3 shadow-sm">
+  <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+    <strong>Recent Orders</strong>
+    <small class="text-muted">Auto-refreshes every 30s</small>
+  </div>
+  <div class="card-body p-0">
+    {% if orders %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Patient</th>
+            <th>Panel</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Duration</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr>
+            <td><code class="text-primary">{{ o.order_id }}</code></td>
+            <td>
+              <strong>{{ o.patient_name or o.patient_id }}</strong><br>
+              <small class="text-muted">{{ o.patient_id }}</small>
+            </td>
+            <td>
+              <span class="panel-pill panel-{{ o.panel_type }}">
+                {{ pipelines[o.panel_type]['label'] if o.panel_type in pipelines else o.panel_type }}
+              </span>
+            </td>
+            <td>
+              <span class="badge badge-{{ o.status }} text-white px-2 py-1">
+                {% if o.status == 'Running' %}<i class="bi bi-arrow-repeat pulse me-1"></i>{% endif %}
+                {{ o.status }}
+              </span>
+            </td>
+            <td><small>{{ o.created_at[:16].replace('T',' ') }}</small></td>
+            <td>
+              <small class="text-muted">
+              {% if o.started_at and o.finished_at %}
+                {{ ((o.finished_at[:19] | replace('T',' ')) | string) }}
+              {% elif o.started_at %}
+                Running…
+              {% else %}
+                —
+              {% endif %}
+              </small>
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('order_detail', order_id=o.order_id) }}"
+                 class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye"></i> View
+              </a>
+              {% if o.report_path %}
+              <a href="{{ url_for('view_report', order_id=o.order_id) }}"
+                 class="btn btn-sm btn-success ms-1" target="_blank">
+                <i class="bi bi-file-earmark-text"></i> Report
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox" style="font-size:48px;opacity:.3"></i>
+      <p class="mt-3">No orders yet. <a href="{{ url_for('new_order') }}">Create the first one →</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Auto-refresh dashboard every 30 seconds if any order is running/queued
+  const hasActive = {{ (stats.running + stats.queued) | tojson }};
+  if (hasActive > 0) {
+    setTimeout(() => location.reload(), 30000);
+  }
+</script>
+{% endblock %}

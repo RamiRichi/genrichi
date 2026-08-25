@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<title>Rechnung {{ invoice_no }} — {{ cfg.COMPANY_NAME }}</title>
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body { margin: 0; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px;
+         color: #2c3e50; background: #f0f2f5; }
+
+  .no-print {
+    background: #2c3e50; padding: 12px 32px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .no-print button {
+    background: #3498db; color: #fff; border: none; padding: 8px 20px;
+    border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;
+  }
+  .no-print button:hover { background: #2980b9; }
+  .no-print a {
+    color: #bdc3c7; text-decoration: none; font-size: 13px; margin-left: 10px;
+  }
+
+  .page {
+    max-width: 800px; margin: 24px auto; background: #fff;
+    padding: 48px 56px; box-shadow: 0 2px 12px rgba(0,0,0,.1);
+  }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start;
+            border-bottom: 3px solid #1a3a5c; padding-bottom: 24px; margin-bottom: 32px; }
+  .logo-block h1 { font-size: 28px; font-weight: 800; color: #1a3a5c; }
+  .logo-block h1 span { color: #2980b9; }
+  .logo-block p { font-size: 11px; color: #7f8c8d; margin-top: 2px; }
+  .invoice-meta { text-align: right; }
+  .invoice-meta h2 { font-size: 22px; color: #1a3a5c; text-transform: uppercase;
+                     letter-spacing: 2px; }
+  .invoice-meta table td { padding: 2px 6px; font-size: 12px; }
+  .invoice-meta table td:first-child { color: #7f8c8d; }
+  .invoice-meta table td:last-child { font-weight: 600; }
+
+  /* Addresses */
+  .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+  .addr-block h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+                   color: #7f8c8d; margin-bottom: 8px; border-bottom: 1px solid #ecf0f1;
+                   padding-bottom: 4px; }
+  .addr-block p { line-height: 1.7; font-size: 13px; }
+  .addr-block strong { font-size: 14px; color: #1a3a5c; }
+
+  /* Items table */
+  .items-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .items-table thead th {
+    background: #1a3a5c; color: #fff; padding: 10px 12px;
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .items-table thead th:last-child { text-align: right; }
+  .items-table tbody td { padding: 12px; border-bottom: 1px solid #ecf0f1; font-size: 13px; }
+  .items-table tbody td:last-child { text-align: right; font-weight: 600; }
+  .items-table tbody tr:last-child td { border-bottom: none; }
+
+  /* Totals */
+  .totals { display: flex; justify-content: flex-end; margin-bottom: 32px; }
+  .totals table { width: 280px; }
+  .totals table td { padding: 5px 12px; font-size: 13px; }
+  .totals table td:first-child { color: #7f8c8d; }
+  .totals table td:last-child { text-align: right; font-weight: 600; }
+  .totals table tr.total-row td {
+    border-top: 2px solid #1a3a5c; padding-top: 10px; font-size: 16px;
+    font-weight: 800; color: #1a3a5c;
+  }
+
+  /* Payment */
+  .payment-box {
+    background: #f8f9fa; border-left: 4px solid #2980b9;
+    padding: 16px 20px; border-radius: 4px; margin-bottom: 32px;
+  }
+  .payment-box h4 { color: #1a3a5c; margin-bottom: 8px; font-size: 13px; }
+  .payment-box table td { padding: 2px 12px 2px 0; font-size: 12px; color: #555; }
+  .payment-box table td:first-child { color: #7f8c8d; width: 100px; }
+
+  /* Footer */
+  .footer { border-top: 1px solid #ecf0f1; padding-top: 16px;
+            font-size: 11px; color: #aaa; text-align: center; line-height: 1.8; }
+
+  .badge-done { background: #d4edda; color: #155724; padding: 2px 8px;
+                border-radius: 4px; font-size: 11px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- Print bar -->
+<div class="no-print">
+  <button onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>
+  <a href="{{ url_for('order_detail', order_id=order.order_id) }}">← Zurück zum Auftrag</a>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-block">
+      <h1>🧬 Gen<span>Richi</span></h1>
+      <p>Bioinformatics Partner for Accredited Labs</p>
+      <p style="margin-top:8px;font-size:12px;color:#555">
+        {{ cfg.COMPANY_NAME }}<br>
+        {{ cfg.COMPANY_ADDRESS }}<br>
+        {{ cfg.COMPANY_EMAIL }} · {{ cfg.COMPANY_WEB }}
+      </p>
+    </div>
+    <div class="invoice-meta">
+      <h2>Rechnung</h2>
+      <table>
+        <tr><td>Rechnungsnr.:</td><td>{{ invoice_no }}</td></tr>
+        <tr><td>Datum:</td>       <td>{{ invoice_date }}</td></tr>
+        <tr><td>Auftragsnr.:</td> <td>{{ order.order_id }}</td></tr>
+        <tr><td>Fällig am:</td>   <td>{{ due_date }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Addresses -->
+  <div class="addresses">
+    <div class="addr-block">
+      <h4>Rechnungssteller</h4>
+      <p>
+        <strong>{{ cfg.COMPANY_NAME }}</strong><br>
+        {{ cfg.COMPANY_ADDRESS }}<br>
+        USt-IdNr.: {{ cfg.COMPANY_TAX_ID }}
+      </p>
+    </div>
+    <div class="addr-block">
+      <h4>Rechnungsempfänger</h4>
+      <p>
+        <strong>{{ order.patient_name or order.patient_id }}</strong><br>
+        {% if order.created_by and order.created_by != 'admin' %}
+        Arzt/Ärztin: {{ order.created_by }}<br>
+        {% endif %}
+        Patienten-ID: {{ order.patient_id }}<br>
+        {% if order.dob %}Geb.: {{ order.dob }}{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <!-- Items -->
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th>Pos.</th>
+        <th>Beschreibung</th>
+        <th>Menge</th>
+        <th>Einzelpreis</th>
+        <th>Betrag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>
+          <strong>{{ pipeline_label }}</strong><br>
+          <span style="color:#7f8c8d;font-size:12px">
+            Molekulargenetische Analyse · Auftrag {{ order.order_id }}<br>
+            Patient: {{ order.patient_id }}
+            {% if order.tumor_type %} · Indikation: {{ order.tumor_type }}{% endif %}
+          </span>
+        </td>
+        <td>1</td>
+        <td>{{ "%.2f"|format(net_price) }} €</td>
+        <td>{{ "%.2f"|format(net_price) }} €</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Totals -->
+  <div class="totals">
+    <table>
+      <tr><td>Nettobetrag:</td>    <td>{{ "%.2f"|format(net_price) }} €</td></tr>
+      <tr><td>MwSt. 19%:</td>      <td>{{ "%.2f"|format(vat) }} €</td></tr>
+      <tr class="total-row">
+        <td>Gesamtbetrag:</td>
+        <td>{{ "%.2f"|format(gross_price) }} €</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Payment -->
+  <div class="payment-box">
+    <h4>Zahlungsinformationen</h4>
+    <table>
+      <tr><td>IBAN:</td>   <td><strong>{{ cfg.BANK_IBAN }}</strong></td></tr>
+      <tr><td>BIC:</td>    <td>{{ cfg.BANK_BIC }}</td></tr>
+      <tr><td>Bank:</td>   <td>{{ cfg.COMPANY_NAME }}</td></tr>
+      <tr><td>Verwendung:</td><td>{{ invoice_no }} / {{ order.order_id }}</td></tr>
+      <tr><td>Zahlungsziel:</td><td>{{ cfg.PAYMENT_DAYS }} Tage netto</td></tr>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    {{ cfg.COMPANY_NAME }} · {{ cfg.COMPANY_ADDRESS }}<br>
+    E-Mail: {{ cfg.COMPANY_EMAIL }} · Web: {{ cfg.COMPANY_WEB }} · USt-IdNr.: {{ cfg.COMPANY_TAX_ID }}
+  </div>
+
+</div>
+</body>
+</html>

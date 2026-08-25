@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}New Order — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-plus-circle-fill me-2 text-primary"></i>New Analysis Order</h1>
+  <p>Fill in patient details, select the panel, and provide FASTQ file paths on the server</p>
+</div>
+
+<form method="POST" id="orderForm">
+
+  <!-- ── Step 1: Patient Info ────────────────────────────────────── -->
+  <div class="card detail-card mb-4">
+    <div class="card-header">
+      <i class="bi bi-person-badge me-2"></i> Step 1 — Patient Information
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Patient ID <span class="text-danger">*</span></label>
+          <input type="text" name="patient_id" class="form-control"
+                 placeholder="e.g. PT-2026-001" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Patient Name</label>
+          <input type="text" name="patient_name" class="form-control"
+                 placeholder="Full name (optional)">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label fw-semibold">Sex</label>
+          <select name="sex" class="form-select">
+            <option value="">— select —</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Unknown</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label fw-semibold">Date of Birth</label>
+          <input type="date" name="dob" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Tumor Type / Indication</label>
+          <input type="text" name="tumor_type" class="form-control"
+                 placeholder="e.g. Breast Cancer, Validation">
+        </div>
+        <div class="col-md-5">
+          <label class="form-label fw-semibold">Notes</label>
+          <input type="text" name="notes" class="form-control"
+                 placeholder="Clinical context, referral source, etc.">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Notify Email <span class="text-muted small">(optional)</span></label>
+          <input type="email" name="notify_email" class="form-control"
+                 placeholder="labstaff@yourlab.de">
+          <div class="form-text">Email when analysis completes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 2: Panel Selection ────────────────────────────────── -->
+  <div class="card detail-card mb-4">
+    <div class="card-header">
+      <i class="bi bi-ui-checks me-2"></i> Step 2 — Select Analysis Panel
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        {% for key, p in pipelines.items() %}
+        <div class="col-md-4">
+          <label class="panel-option-card h-100">
+            <input type="radio" name="panel_type" value="{{ key }}"
+                   class="d-none panel-radio"
+                   {{ 'checked' if loop.first }}
+                   onchange="updatePanelUI()">
+            <div class="card h-100 border-2 rounded-3 p-3 panel-card" id="pcard-{{ key }}">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                {% if key == 'hotspot' %}
+                  <i class="bi bi-bullseye text-primary fs-4"></i>
+                {% elif key == 'hereditary' %}
+                  <i class="bi bi-heart-pulse-fill text-success fs-4"></i>
+                {% else %}
+                  <i class="bi bi-diagram-3-fill fs-4" style="color:#8e44ad"></i>
+                {% endif %}
+                <strong>{{ p.label }}</strong>
+              </div>
+              <p class="text-muted small mb-0">{{ p.description }}</p>
+            </div>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 3: FASTQ Paths ─────────────────────────────────────── -->
+  <div class="card detail-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-file-zip me-2"></i> Step 3 — FASTQ Files</span>
+      <button type="button" class="btn btn-sm btn-outline-light"
+              onclick="openFileBrowser(null)">
+        <i class="bi bi-folder2-open me-1"></i>Browse SFTP Uploads
+      </button>
+    </div>
+    <div class="card-body">
+
+      <!-- Tumor / single sample -->
+      <h6 class="fw-semibold mb-3 mt-1" id="tumorLabel">Sample</h6>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">R1</label>
+          <div class="input-group">
+            <input type="text" name="fastq_r1" id="fastq_r1" class="form-control font-monospace"
+                   placeholder="select from browser or type path">
+            <button type="button" class="btn btn-outline-secondary"
+                    onclick="openFileBrowser('fastq_r1')">
+              <i class="bi bi-folder2-open"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-semibold">R2</label>
+          <div class="input-group">
+            <input type="text" name="fastq_r2" id="fastq_r2" class="form-control font-monospace"
+                   placeholder="select from browser or type path">
+            <button type="button" class="btn btn-outline-secondary"
+                    onclick="openFileBrowser('fastq_r2')">
+              <i class="bi bi-folder2-open"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Normal sample (comprehensive only) -->
+      <div id="normalSection" style="display:none">
+        <hr>
+        <h6 class="fw-semibold mb-3">Matched Normal Sample</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Normal R1</label>
+            <div class="input-group">
+              <input type="text" name="fastq_normal_r1" id="fastq_normal_r1"
+                     class="form-control font-monospace" placeholder="normal R1 path">
+              <button type="button" class="btn btn-outline-secondary"
+                      onclick="openFileBrowser('fastq_normal_r1')">
+                <i class="bi bi-folder2-open"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Normal R2</label>
+            <div class="input-group">
+              <input type="text" name="fastq_normal_r2" id="fastq_normal_r2"
+                     class="form-control font-monospace" placeholder="normal R2 path">
+              <button type="button" class="btn btn-outline-secondary"
+                      onclick="openFileBrowser('fastq_normal_r2')">
+                <i class="bi bi-folder2-open"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- ── SFTP File Browser Modal ─────────────────────────────────────────── -->
+<div class="modal fade" id="fileBrowserModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background:#2c3e50;color:#fff">
+        <h5 class="modal-title"><i class="bi bi-folder2-open me-2"></i>SFTP Uploaded Files</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="sftp-loading" class="text-center py-5 text-muted">
+          <div class="spinner-border spinner-border-sm me-2"></div> Loading files…
+        </div>
+        <div id="sftp-empty" class="text-center py-5 text-muted" style="display:none">
+          <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+          No FASTQ files found in SFTP uploads.
+        </div>
+        <table class="table table-hover mb-0" id="sftp-table" style="display:none">
+          <thead class="table-light">
+            <tr>
+              <th>Client</th><th>Filename</th><th>Size</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="sftp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Submit -->
+  <div class="d-flex gap-3">
+    <button type="submit" class="btn btn-primary btn-lg px-5">
+      <i class="bi bi-play-fill me-1"></i> Submit Order
+    </button>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">
+      Cancel
+    </a>
+  </div>
+
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PAIRED = {{ paired_panels | tojson }};
+let _targetField = null;
+let _sftpFiles   = null;
+
+function updatePanelUI() {
+  const selected = document.querySelector('input[name="panel_type"]:checked')?.value;
+  document.querySelectorAll('.panel-card').forEach(c => {
+    c.classList.remove('border-primary','border-success','bg-light');
+  });
+  if (selected) {
+    const card = document.getElementById('pcard-' + selected);
+    if (card) card.classList.add('border-primary', 'bg-light');
+  }
+  const showNormal = PAIRED.includes(selected);
+  document.getElementById('normalSection').style.display = showNormal ? '' : 'none';
+  document.getElementById('tumorLabel').textContent = showNormal ? 'Tumor Sample' : 'Sample';
+}
+
+function openFileBrowser(fieldId) {
+  _targetField = fieldId;
+  const modal = new bootstrap.Modal(document.getElementById('fileBrowserModal'));
+  modal.show();
+
+  if (_sftpFiles !== null) { renderFiles(_sftpFiles); return; }
+
+  document.getElementById('sftp-loading').style.display = '';
+  document.getElementById('sftp-table').style.display   = 'none';
+  document.getElementById('sftp-empty').style.display   = 'none';
+
+  fetch('/api/sftp-files')
+    .then(r => r.json())
+    .then(files => { _sftpFiles = files; renderFiles(files); })
+    .catch(() => { document.getElementById('sftp-loading').textContent = 'Error loading files.'; });
+}
+
+function renderFiles(files) {
+  document.getElementById('sftp-loading').style.display = 'none';
+  if (!files.length) {
+    document.getElementById('sftp-empty').style.display = '';
+    return;
+  }
+  const tbody = document.getElementById('sftp-tbody');
+  tbody.innerHTML = '';
+  files.forEach(f => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="badge bg-secondary">${f.client}</span></td>
+      <td class="font-monospace small">${f.name}</td>
+      <td class="text-muted small">${f.size_mb} MB</td>
+      <td><button type="button" class="btn btn-sm btn-primary"
+                  onclick="selectFile('${f.path}')">Select</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('sftp-table').style.display = '';
+}
+
+function selectFile(path) {
+  if (_targetField) {
+    document.getElementById(_targetField).value = path;
+  }
+  bootstrap.Modal.getInstance(document.getElementById('fileBrowserModal')).hide();
+}
+
+document.addEventListener('DOMContentLoaded', updatePanelUI);
+</script>
+{% endblock %}

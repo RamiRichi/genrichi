@@ -1,0 +1,2 @@
+patient_id	sex	tumor_type	hotspot_sample	germline_sample	somatic_sample
+NA12878	Female	Validation		NA12878	NA12878_somatic

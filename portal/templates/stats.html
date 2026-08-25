@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Statistics — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h1><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Analytics & Statistics</h1>
+    <p>Overview of all genomic analyses on this portal</p>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card text-center p-3 h-100">
+      <div class="fs-1 fw-bold text-primary">{{ stats.total }}</div>
+      <div class="text-muted small">Total Orders</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3 h-100">
+      <div class="fs-1 fw-bold text-success">{{ stats.done }}</div>
+      <div class="text-muted small">Completed</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3 h-100">
+      <div class="fs-1 fw-bold text-danger">{{ stats.failed }}</div>
+      <div class="text-muted small">Failed</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3 h-100">
+      <div class="fs-1 fw-bold text-info">
+        {% if stats.total > 0 %}
+          {{ "%.0f"|format(stats.done / stats.total * 100) }}%
+        {% else %}
+          —
+        {% endif %}
+      </div>
+      <div class="text-muted small">Success Rate</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Status Chart -->
+  <div class="col-md-6">
+    <div class="card detail-card h-100">
+      <div class="card-header"><i class="bi bi-pie-chart me-2"></i>Orders by Status</div>
+      <div class="card-body d-flex align-items-center justify-content-center">
+        <canvas id="statusChart" style="max-height:260px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Chart -->
+  <div class="col-md-6">
+    <div class="card detail-card h-100">
+      <div class="card-header"><i class="bi bi-bar-chart me-2"></i>Orders by Panel</div>
+      <div class="card-body d-flex align-items-center justify-content-center">
+        <canvas id="panelChart" style="max-height:260px"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Orders over time -->
+<div class="card detail-card mb-4">
+  <div class="card-header"><i class="bi bi-graph-up me-2"></i>Orders Over Time (last 30 days)</div>
+  <div class="card-body">
+    <canvas id="timelineChart" style="max-height:200px"></canvas>
+  </div>
+</div>
+
+<!-- Recent orders table -->
+<div class="card detail-card">
+  <div class="card-header"><i class="bi bi-clock-history me-2"></i>Recent Orders</div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>Order ID</th><th>Patient</th><th>Panel</th>
+          <th>Status</th><th>Created</th><th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders[:20] %}
+        <tr>
+          <td><a href="{{ url_for('order_detail', order_id=o.order_id) }}" class="text-decoration-none">
+            <code>{{ o.order_id }}</code></a></td>
+          <td>{{ o.patient_id }}</td>
+          <td><span class="panel-pill panel-{{ o.panel_type }}">{{ pipelines.get(o.panel_type,{}).get('label', o.panel_type) }}</span></td>
+          <td>
+            {% if o.status == 'Done' %}<span class="badge bg-success">Done</span>
+            {% elif o.status == 'Running' %}<span class="badge bg-primary">Running</span>
+            {% elif o.status == 'Failed' %}<span class="badge bg-danger">Failed</span>
+            {% else %}<span class="badge bg-warning text-dark">Queued</span>{% endif %}
+          </td>
+          <td class="small text-muted">{{ o.created_at[:16].replace('T',' ') }}</td>
+          <td class="small text-muted">
+            {% if o.finished_at and o.started_at %}
+              {{ ((o.finished_at[:19] | string) ) }}
+            {% elif o.status == 'Running' %}Running…
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No orders yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ── Data from Flask ────────────────────────────────────────────────────────
+const statusData  = {{ status_data  | tojson }};
+const panelData   = {{ panel_data   | tojson }};
+const timelineData = {{ timeline_data | tojson }};
+
+const COLORS = {
+  Done:    '#28a745',
+  Running: '#007bff',
+  Failed:  '#dc3545',
+  Queued:  '#ffc107',
+};
+
+const PANEL_COLORS = ['#007bff','#28a745','#8e44ad'];
+
+// ── Status Pie ─────────────────────────────────────────────────────────────
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: Object.keys(statusData),
+    datasets: [{
+      data: Object.values(statusData),
+      backgroundColor: Object.keys(statusData).map(k => COLORS[k] || '#aaa'),
+      borderWidth: 2,
+    }]
+  },
+  options: { plugins: { legend: { position: 'bottom' } }, cutout: '60%' }
+});
+
+// ── Panel Bar ──────────────────────────────────────────────────────────────
+new Chart(document.getElementById('panelChart'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(panelData),
+    datasets: [{
+      label: 'Orders',
+      data: Object.values(panelData),
+      backgroundColor: PANEL_COLORS,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+  }
+});
+
+// ── Timeline Line ──────────────────────────────────────────────────────────
+new Chart(document.getElementById('timelineChart'), {
+  type: 'line',
+  data: {
+    labels: timelineData.labels,
+    datasets: [{
+      label: 'Orders per day',
+      data: timelineData.values,
+      borderColor: '#007bff',
+      backgroundColor: 'rgba(0,123,255,.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 3,
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+  }
+});
+</script>
+{% endblock %}

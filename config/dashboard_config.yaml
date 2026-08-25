@@ -1,0 +1,20 @@
+# GenRichi Multi-Panel Dashboard — Configuration
+# Run with: snakemake --snakefile workflow/Snakefile_dashboard --configfile config/dashboard_config.yaml
+
+patients: config/dashboard_patients.tsv
+
+# Where pipeline results live (relative to genrichi project root)
+results_dir: results
+
+report:
+  company: "GenRichi"
+  logo: /home/rami/genrichi/genrichi_logo_final.png
+
+# Thresholds (must match the individual pipeline configs)
+thresholds:
+  tmb_high: 10.0          # mut/Mb
+  tmb_coding_mb: 1.5      # panel coding size in Mb
+  msi_high: 10.0          # indels/Mb
+  cnv_amp: 0.58           # log2 ratio
+  cnv_del: -1.0           # log2 ratio
+  min_probes: 5           # min probes per CNV segment

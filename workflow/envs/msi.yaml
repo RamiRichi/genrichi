@@ -1,0 +1,8 @@
+name: genrichi_msi
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - msisensor-pro=1.3.0
+  - libdeflate=1.22

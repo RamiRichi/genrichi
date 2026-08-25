@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Settings — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-gear-fill me-2 text-primary"></i>Settings</h1>
+  <p>Account and portal configuration</p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Left column -->
+  <div class="col-lg-6">
+
+    <!-- Change Password -->
+    <div class="card detail-card mb-4">
+      <div class="card-header"><i class="bi bi-lock-fill me-2"></i>Change My Password</div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('settings_save') }}">
+          <input type="hidden" name="action" value="change_password">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Current Password</label>
+            <input type="password" name="current_pass" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">New Password</label>
+            <input type="password" name="new_pass" class="form-control" required minlength="8">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Confirm New Password</label>
+            <input type="password" name="confirm_pass" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Email Settings (admin only) -->
+    {% if session.get('role') == 'admin' %}
+    <div class="card detail-card">
+      <div class="card-header"><i class="bi bi-envelope-fill me-2"></i>Email Notifications</div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('settings_save') }}">
+          <input type="hidden" name="action" value="email_settings">
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="smtp_enabled"
+                   id="smtpSwitch" {{ 'checked' if smtp_enabled }}>
+            <label class="form-check-label fw-semibold" for="smtpSwitch">Enable Email Notifications</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">SMTP Email Address</label>
+            <input type="email" name="smtp_user" class="form-control"
+                   value="{{ smtp_user }}" placeholder="info@genrichi.de">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">SMTP Password</label>
+            <input type="password" name="smtp_pass" class="form-control"
+                   value="{{ smtp_pass }}" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Save Email Settings
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Right column: System Info (admin only) -->
+  {% if session.get('role') == 'admin' %}
+  <div class="col-lg-6">
+    <div class="card detail-card mb-4">
+      <div class="card-header"><i class="bi bi-info-circle me-2"></i>System Information</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><th class="text-muted small w-50">Portal URL</th>
+              <td><a href="{{ portal_url }}" target="_blank">{{ portal_url }}</a></td></tr>
+          <tr><th class="text-muted small">Admin User</th>
+              <td><code>{{ admin_user }}</code></td></tr>
+          <tr><th class="text-muted small">Database</th>
+              <td class="small font-monospace text-break">{{ db_path }}</td></tr>
+          <tr><th class="text-muted small">Workflow Dir</th>
+              <td class="small font-monospace text-break">{{ workflow_dir }}</td></tr>
+          <tr><th class="text-muted small">Total Orders</th>
+              <td>{{ total_orders }}</td></tr>
+          <tr><th class="text-muted small">Disk (results)</th>
+              <td>{{ disk_usage }}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card detail-card">
+      <div class="card-header"><i class="bi bi-hdd-fill me-2"></i>Pipeline Status</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          {% for key, p in pipelines.items() %}
+          <tr>
+            <td><span class="panel-pill panel-{{ key }}">{{ p.label }}</span></td>
+            <td class="small font-monospace text-muted">{{ p.snakefile }}</td>
+            <td><span class="badge bg-success">Ready</span></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- Non-admin: show simple account info -->
+  <div class="col-lg-6">
+    <div class="card detail-card">
+      <div class="card-header"><i class="bi bi-person-circle me-2"></i>My Account</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tr><th class="text-muted small w-40">Username</th>
+              <td><code>{{ session.get('username') }}</code></td></tr>
+          <tr><th class="text-muted small">Full Name</th>
+              <td>{{ session.get('full_name', '—') }}</td></tr>
+          <tr><th class="text-muted small">Role</th>
+              <td><span class="role-{{ session.get('role', 'lab_staff') }}">{{ session.get('role', 'lab_staff') | replace('_', ' ') | capitalize }}</span></td></tr>
+          <tr><th class="text-muted small">Portal</th>
+              <td><a href="{{ portal_url }}" target="_blank">{{ portal_url }}</a></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

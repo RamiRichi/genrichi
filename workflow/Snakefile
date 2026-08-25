@@ -1,0 +1,26 @@
+configfile: "config/config.yaml"
+
+import pandas as pd
+from pathlib import Path
+
+samples_df = (
+    pd.read_csv(config["samples"], sep="\t", dtype=str)
+    .set_index("sample_id")
+)
+SAMPLES = samples_df.index.tolist()
+
+wildcard_constraints:
+    sample = "|".join(SAMPLES)
+
+
+rule all:
+    input:
+        expand("results/{sample}/report/{sample}_report.html", sample=SAMPLES),
+        "results/multiqc/multiqc_report.html",
+
+
+include: "rules/qc.smk"
+include: "rules/align.smk"
+include: "rules/calling.smk"
+include: "rules/annotation.smk"
+include: "rules/report.smk"

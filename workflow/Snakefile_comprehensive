@@ -1,0 +1,35 @@
+configfile: "config/comprehensive_config.yaml"
+
+import pandas as pd
+from pathlib import Path
+
+samples_df = (
+    pd.read_csv(config["samples"], sep="\t", dtype=str)
+    .set_index("sample_id")
+)
+SAMPLES = samples_df.index.tolist()
+
+wildcard_constraints:
+    sample    = "|".join(SAMPLES),
+    read_type = "tumor|normal",
+
+
+rule all:
+    input:
+        expand(
+            "results/{sample}/report/{sample}_comprehensive_report.html",
+            sample=SAMPLES,
+        ),
+        "results/multiqc/multiqc_report.html",
+
+
+# ── Shared (tumor + normal both run through these) ─────────────────────────
+include: "rules/qc_paired.smk"
+include: "rules/align_paired.smk"
+
+# ── Somatic-specific ────────────────────────────────────────────────────────
+include: "rules/somatic_calling_paired.smk"
+include: "rules/cnv_calling.smk"
+include: "rules/msi_scoring.smk"
+include: "rules/annotation_comprehensive.smk"
+include: "rules/report_comprehensive.smk"

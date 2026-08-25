@@ -1,0 +1,49 @@
+configfile: "config/dashboard_config.yaml"
+
+import pandas as pd
+from pathlib import Path
+
+patients_df = (
+    pd.read_csv(config["patients"], sep="\t", dtype=str)
+    .fillna("")
+    .set_index("patient_id")
+)
+PATIENTS = patients_df.index.tolist()
+
+wildcard_constraints:
+    patient_id = "|".join(PATIENTS),
+
+
+rule all:
+    input:
+        expand("results/dashboard/{patient_id}_dashboard.html", patient_id=PATIENTS),
+
+
+rule generate_dashboard:
+    """
+    Unified multi-panel patient dashboard.
+    All input paths are passed as params so Snakemake does not require every
+    pipeline to have run — missing files are handled gracefully in the script.
+    """
+    output:
+        html="results/dashboard/{patient_id}_dashboard.html",
+    conda: "../envs/report.yaml"
+    log: "logs/{patient_id}/dashboard.log"
+    params:
+        patient_id      = lambda wc: wc.patient_id,
+        sex             = lambda wc: patients_df.loc[wc.patient_id, "sex"],
+        tumor_type      = lambda wc: patients_df.loc[wc.patient_id, "tumor_type"],
+        hotspot_sample  = lambda wc: patients_df.loc[wc.patient_id, "hotspot_sample"],
+        germline_sample = lambda wc: patients_df.loc[wc.patient_id, "germline_sample"],
+        somatic_sample  = lambda wc: patients_df.loc[wc.patient_id, "somatic_sample"],
+        results_dir     = config["results_dir"],
+        company         = config["report"]["company"],
+        logo            = config["report"]["logo"],
+        tmb_high        = config["thresholds"]["tmb_high"],
+        tmb_coding_mb   = config["thresholds"]["tmb_coding_mb"],
+        msi_high        = config["thresholds"]["msi_high"],
+        cnv_amp         = config["thresholds"]["cnv_amp"],
+        cnv_del         = config["thresholds"]["cnv_del"],
+        min_probes      = config["thresholds"]["min_probes"],
+    script:
+        "scripts/generate_dashboard.py"

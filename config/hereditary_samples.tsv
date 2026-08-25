@@ -1,0 +1,2 @@
+sample_id	fastq_r1	fastq_r2	patient_id	sex	indication
+NA12878	/home/rami/genrichi/outputs/NA12878_R1.fastq.gz	/home/rami/genrichi/outputs/NA12878_R2.fastq.gz	PT_NA12878	Female	Hereditary Cancer Panel

@@ -1,0 +1,37 @@
+# Personal / CV files - never push these
+build_anschreiben_*.py
+build_cv_*.py
+build_cover_letter_*.py
+build_motivation_*.py
+build_note_*.py
+merge_*.py
+*.pdf
+Rami_Richi_*
+
+# Large reference data
+resources/reference/
+resources/vep_cache/
+resources/annotation/
+
+# Snakemake internals
+.snakemake/
+__pycache__/
+*.pyc
+
+# Job application files
+دراسة_جدوى_مختبر_حلب.docx
+docs/legal/
+
+# Logs and temp
+wget-log
+*.log
+*.bat
+*.exe
+
+# Portal secrets (add real secrets here)
+portal/.env
+portal/instance/
+
+# OS
+.DS_Store
+Thumbs.db

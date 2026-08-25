@@ -1,0 +1,2 @@
+sample_id	tumor_r1	tumor_r2	normal_r1	normal_r2	patient_id	sex	tumor_type
+NA12878_somatic	/home/rami/genrichi/outputs/NA12878_R1.fastq.gz	/home/rami/genrichi/outputs/NA12878_R2.fastq.gz	/home/rami/genrichi/outputs/NA12878_R1.fastq.gz	/home/rami/genrichi/outputs/NA12878_R2.fastq.gz	NA12878	Female	Validation
