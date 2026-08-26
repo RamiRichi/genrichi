@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenRichi — NGS Bioinformatics Partner for Accredited Laboratories</title>
+<meta name="description" content="GenRichi provides NGS bioinformatics analysis — somatic and hereditary cancer pipelines — as a technology partner to accredited medical laboratories. Research Use Only. Germany-based.">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root {
+    --gr-navy-deep:#060b14; --gr-navy:#0a1322; --gr-navy-light:#101e33;
+    --gr-blue:#2e8de0; --gr-blue-soft:#5aa8ec;
+    --gr-green:#6fce4a; --gr-green-soft:#8fe06b;
+    --gr-text:#e7eef6; --gr-muted:#84a0bf; --gr-border:rgba(255,255,255,.08);
+    --gr-glass:rgba(255,255,255,.045);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:radial-gradient(circle at 15% 0%,#102742 0%,var(--gr-navy) 45%,var(--gr-navy-deep) 100%);
+    color:var(--gr-text);line-height:1.6;overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 15% 0%,rgba(46,141,224,.16) 0%,transparent 40%),
+      radial-gradient(circle at 100% 30%,rgba(111,206,74,.10) 0%,transparent 45%),
+      linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+    background-size:auto,auto,34px 34px,34px 34px;
+    background-attachment:fixed;
+  }
+  a{text-decoration:none;}
+  .container{max-width:1140px;margin:0 auto;padding:0 24px;}
+
+  /* ── Header ── */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(7,14,24,.8);backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--gr-border);
+  }
+  header .inner{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand img{width:36px;height:36px;object-fit:contain;
+    filter:drop-shadow(0 0 12px rgba(111,206,74,.5));
+    animation:logoPulse 3s ease-in-out infinite;}
+  @keyframes logoPulse{
+    0%,100%{filter:drop-shadow(0 0 10px rgba(111,206,74,.4));}
+    50%{filter:drop-shadow(0 0 22px rgba(111,206,74,.8)) drop-shadow(0 0 8px rgba(46,141,224,.4));}
+  }
+  .brand span{font-size:19px;font-weight:800;color:#fff;letter-spacing:.3px;}
+  .brand span em{color:var(--gr-green-soft);font-style:normal;}
+  nav.main-nav{display:flex;align-items:center;gap:28px;}
+  nav.main-nav a{color:var(--gr-muted);font-size:14px;font-weight:500;transition:color .15s;position:relative;}
+  nav.main-nav a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,var(--gr-blue),var(--gr-green));
+    transform:scaleX(0);transition:transform .25s;}
+  nav.main-nav a:hover{color:#fff;}
+  nav.main-nav a:hover::after{transform:scaleX(1);}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;padding:10px 22px;
+    border-radius:9px;font-weight:600;font-size:14px;transition:all .2s;border:1px solid transparent;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--gr-blue),#1c6fc2);color:#fff;
+    box-shadow:0 2px 14px rgba(46,141,224,.4);
+  }
+  .btn-primary:hover{box-shadow:0 6px 24px rgba(46,141,224,.6);transform:translateY(-2px);color:#fff;}
+  .btn-outline{border-color:var(--gr-border);color:var(--gr-text);}
+  .btn-outline:hover{background:var(--gr-glass);border-color:rgba(111,206,74,.4);color:#fff;}
+
+  /* ── Hero ── */
+  .hero{
+    min-height:88vh;display:flex;align-items:center;
+    padding:60px 32px;position:relative;overflow:hidden;
+  }
+  .hero-inner{
+    max-width:1140px;margin:0 auto;width:100%;
+    display:grid;grid-template-columns:1fr 480px;gap:60px;align-items:center;
+  }
+  .hero .eyebrow{
+    display:inline-block;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;
+    letter-spacing:.5px;color:var(--gr-green-soft);background:rgba(111,206,74,.12);
+    border:1px solid rgba(111,206,74,.3);margin-bottom:22px;
+    animation:fadeDown .7s ease both;
+  }
+  .hero h1{
+    font-size:48px;font-weight:800;color:#fff;line-height:1.12;margin-bottom:18px;
+    animation:fadeDown .8s ease .1s both;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(90deg,var(--gr-blue-soft),var(--gr-green-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{font-size:16px;color:#ccdff0;margin-bottom:32px;line-height:1.7;
+    animation:fadeDown .8s ease .2s both;}
+  .hero .cta-row{display:flex;gap:12px;flex-wrap:wrap;animation:fadeDown .8s ease .3s both;}
+  .hero .tagline{margin-top:22px;font-size:12px;color:#7a99ba;font-style:italic;
+    animation:fadeDown .8s ease .4s both;}
+
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:none;}}
+
+  /* DNA canvas */
+  .dna-wrap{
+    display:flex;align-items:center;justify-content:center;
+    position:relative;animation:fadeIn 1.2s ease .2s both;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  #dnaCanvas{border-radius:50%;position:relative;z-index:1;}
+  .dna-wrap::before{
+    content:'';position:absolute;inset:-20px;border-radius:50%;
+    background:radial-gradient(circle,rgba(46,141,224,.12) 0%,transparent 70%);
+    animation:glowPulse 4s ease-in-out infinite;
+  }
+  @keyframes glowPulse{
+    0%,100%{transform:scale(1);opacity:.7;}
+    50%{transform:scale(1.08);opacity:1;}
+  }
+
+  /* ── Stats strip ── */
+  .stats-strip{
+    border-top:1px solid var(--gr-border);border-bottom:1px solid var(--gr-border);
+    background:rgba(255,255,255,.02);
+  }
+  .stats-strip .container{display:flex;justify-content:space-between;padding:28px 24px;flex-wrap:wrap;gap:20px;}
+  .stat-item{text-align:center;flex:1;min-width:140px;}
+  .stat-num{font-size:30px;font-weight:800;color:var(--gr-blue-soft);
+    text-shadow:0 0 18px rgba(46,141,224,.5);}
+  .stat-lbl{font-size:12px;color:var(--gr-muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+
+  /* ── Section headings ── */
+  .section{padding:80px 0;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 50px;}
+  .section-head .eyebrow{color:var(--gr-blue-soft);font-size:12px;font-weight:700;
+    text-transform:uppercase;letter-spacing:1px;}
+  .section-head h2{font-size:32px;font-weight:800;color:#fff;margin:10px 0 12px;}
+  .section-head p{color:var(--gr-muted);font-size:15px;}
+
+  /* ── Panels ── */
+  .panels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .panel-card{
+    background:var(--gr-glass);backdrop-filter:blur(10px);
+    border:1px solid var(--gr-border);border-radius:16px;padding:30px 26px;
+    transition:all .3s;position:relative;overflow:hidden;
+  }
+  .panel-card::before{
+    content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .3s;
+    background:linear-gradient(135deg,rgba(46,141,224,.06),rgba(111,206,74,.04));
+  }
+  .panel-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.35);}
+  .panel-card:hover::before{opacity:1;}
+  .panel-card.c-blue:hover{border-color:rgba(46,141,224,.4);}
+  .panel-card.c-green:hover{border-color:rgba(111,206,74,.4);}
+  .panel-card.c-purple:hover{border-color:rgba(155,89,182,.4);}
+  .icon-badge{
+    width:52px;height:52px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:22px;margin-bottom:18px;
+  }
+  .c-blue .icon-badge{background:linear-gradient(135deg,rgba(46,141,224,.25),rgba(46,141,224,.08));
+    color:var(--gr-blue-soft);box-shadow:0 0 18px rgba(46,141,224,.25);}
+  .c-green .icon-badge{background:linear-gradient(135deg,rgba(111,206,74,.25),rgba(111,206,74,.08));
+    color:var(--gr-green-soft);box-shadow:0 0 18px rgba(111,206,74,.25);}
+  .c-purple .icon-badge{background:linear-gradient(135deg,rgba(155,89,182,.25),rgba(155,89,182,.08));
+    color:#d4a8e8;box-shadow:0 0 18px rgba(155,89,182,.25);}
+  .panel-card h3{font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;}
+  .panel-card p{font-size:13.5px;color:var(--gr-muted);margin-bottom:16px;}
+  .panel-card ul{list-style:none;font-size:12.5px;color:#b8cbe0;}
+  .panel-card ul li{padding:4px 0;display:flex;gap:8px;align-items:flex-start;}
+  .panel-card ul li i{color:var(--gr-green-soft);margin-top:2px;}
+
+  /* ── How it works ── */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative;}
+  .steps::before{
+    content:'';position:absolute;top:23px;left:10%;right:10%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gr-blue),var(--gr-green),transparent);
+    opacity:.4;
+  }
+  .step{text-align:center;padding:10px;}
+  .step-num{
+    width:46px;height:46px;border-radius:50%;margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#fff;
+    background:linear-gradient(135deg,var(--gr-blue),var(--gr-green));
+    box-shadow:0 0 20px rgba(46,141,224,.45);position:relative;z-index:1;
+    transition:transform .3s,box-shadow .3s;
+  }
+  .step:hover .step-num{transform:scale(1.15);box-shadow:0 0 30px rgba(46,141,224,.65);}
+  .step h4{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+  .step p{font-size:12.5px;color:var(--gr-muted);}
+
+  /* ── Why us ── */
+  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .why-item{
+    display:flex;gap:14px;align-items:flex-start;background:var(--gr-glass);
+    border:1px solid var(--gr-border);border-radius:12px;padding:20px 22px;
+    transition:all .25s;
+  }
+  .why-item:hover{border-color:rgba(111,206,74,.3);transform:translateX(4px);}
+  .why-item i{font-size:22px;color:var(--gr-green-soft);margin-top:2px;flex-shrink:0;}
+  .why-item h5{font-size:14px;font-weight:700;color:#fff;margin-bottom:5px;}
+  .why-item p{font-size:12.5px;color:var(--gr-muted);margin:0;}
+
+  /* ── CTA section ── */
+  .cta-section{
+    background:linear-gradient(135deg,rgba(46,141,224,.1),rgba(111,206,74,.07));
+    border:1px solid var(--gr-border);border-radius:20px;padding:60px 40px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .cta-section::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 50%,rgba(46,141,224,.08),transparent 60%);
+  }
+  .cta-section h2{font-size:30px;font-weight:800;color:#fff;margin-bottom:12px;position:relative;}
+  .cta-section p{color:var(--gr-muted);margin-bottom:28px;position:relative;}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
+  .contact-info{display:flex;justify-content:center;gap:40px;margin-top:32px;flex-wrap:wrap;position:relative;}
+  .contact-info div{font-size:13px;color:var(--gr-muted);}
+  .contact-info i{color:var(--gr-blue-soft);margin-right:6px;}
+  .contact-info strong{color:#fff;display:block;font-size:14px;margin-bottom:3px;}
+
+  /* ── Footer ── */
+  footer{border-top:1px solid var(--gr-border);padding:40px 24px;text-align:center;margin-top:60px;}
+  footer p{font-size:12px;color:#5d7a99;}
+  footer .f-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;flex-wrap:wrap;}
+  footer .f-links a{color:var(--gr-muted);font-size:13px;transition:color .15s;}
+  footer .f-links a:hover{color:var(--gr-green-soft);}
+
+  /* ── Scroll reveal ── */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.visible{opacity:1;transform:none;}
+
+  /* ── Responsive ── */
+  @media(max-width:900px){
+    .hero-inner{grid-template-columns:1fr;gap:40px;}
+    #dnaCanvas{width:260px !important;height:260px !important;}
+    .dna-wrap{order:-1;}
+    nav.main-nav{display:none;}
+    .panels-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr 1fr;}
+    .why-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:32px;}
+    .steps::before{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="brand">
+      <img src="img/logo.png" alt="GenRichi">
+      <span>Gen<em>Richi</em></span>
+    </div>
+    <nav class="main-nav">
+      <a href="#panels">Panels</a>
+      <a href="#how">How it works</a>
+      <a href="#why">Why GenRichi</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="https://portal.genrichi.de" class="btn btn-primary">
+      <i class="bi bi-box-arrow-in-right"></i> Partner Login
+    </a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow"><i class="bi bi-geo-alt-fill me-1"></i>NGS bioinformatics partner · Germany</span>
+      <h1>Your lab's <span class="grad">bioinformatics backend</span>, without building it yourself</h1>
+      <p class="lead">
+        GenRichi runs the NGS bioinformatics — somatic and hereditary cancer analysis pipelines —
+        as a technology partner behind your accredited laboratory.
+        Hosted in Germany, GDPR-compliant. Research Use Only.
+      </p>
+      <div class="cta-row">
+        <a href="#contact" class="btn btn-primary"><i class="bi bi-chat-dots-fill"></i> Talk to Us</a>
+        <a href="https://portal.genrichi.de" class="btn btn-outline"><i class="bi bi-box-arrow-in-right"></i> Partner Login</a>
+      </div>
+      <p class="tagline">Trusted by accredited laboratories · Secure · Automated</p>
+    </div>
+    <div class="dna-wrap">
+      <canvas id="dnaCanvas" width="420" height="420"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="stat-item">
+      <div class="stat-num" data-target="3">3</div>
+      <div class="stat-lbl">Analysis Pipelines</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;48h</div>
+      <div class="stat-lbl">Turnaround Time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Germany-hosted</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-lbl">Secure SFTP Upload</div>
+    </div>
+  </div>
+</div>
+
+<!-- Panels -->
+<section class="section" id="panels">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Our Services</div>
+      <h2>NGS Bioinformatics Pipelines</h2>
+      <p>Analysis pipelines covering the most common oncology testing needs, run under contract for your lab.</p>
+    </div>
+    <div class="panels-grid reveal">
+      <div class="panel-card c-blue">
+        <div class="icon-badge"><i class="bi bi-bullseye"></i></div>
+        <h3>Somatic Hotspot Panel</h3>
+        <p>Quick driver-mutation screen for the most actionable cancer genes.</p>
+        <ul>
+          <li><i class="bi bi-check-circle-fill"></i> KRAS, BRAF, TP53, PIK3CA, EGFR…</li>
+          <li><i class="bi bi-check-circle-fill"></i> Fast turnaround for urgent cases</li>
+          <li><i class="bi bi-check-circle-fill"></i> VAF, COSMIC &amp; ClinVar annotation</li>
+        </ul>
+      </div>
+      <div class="panel-card c-green">
+        <div class="icon-badge"><i class="bi bi-heart-pulse-fill"></i></div>
+        <h3>Hereditary Germline Panel</h3>
+        <p>ACMG-classified germline variant analysis across 25 cancer-predisposition genes.</p>
+        <ul>
+          <li><i class="bi bi-check-circle-fill"></i> BRCA1/2, ATM, PALB2, MLH1…</li>
+          <li><i class="bi bi-check-circle-fill"></i> ACMG variant classification</li>
+          <li><i class="bi bi-check-circle-fill"></i> Family risk &amp; counselling support</li>
+        </ul>
+      </div>
+      <div class="panel-card c-purple">
+        <div class="icon-badge"><i class="bi bi-diagram-3-fill"></i></div>
+        <h3>Somatic Comprehensive Panel</h3>
+        <p>Full somatic workup for complex tumor profiling and therapy selection.</p>
+        <ul>
+          <li><i class="bi bi-check-circle-fill"></i> SNV / indel + CNV + MSI + TMB</li>
+          <li><i class="bi bi-check-circle-fill"></i> 65 cancer-relevant genes</li>
+          <li><i class="bi bi-check-circle-fill"></i> Matched tumor–normal analysis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section" id="how" style="background:rgba(255,255,255,.015);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Workflow</div>
+      <h2>How It Works</h2>
+      <p>From file upload to analysis report — fully tracked, fully secure.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Secure Upload</h4>
+        <p>Your lab uploads FASTQ files via an isolated SFTP account.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Automated Pipeline</h4>
+        <p>GATK-based variant calling, QC and VEP annotation run automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Analysis Report</h4>
+        <p>An annotated, interactive report is generated for each case.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Results Delivered</h4>
+        <p>Your lab team is notified by email and can view/download in the portal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why us -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Why GenRichi</div>
+      <h2>Built for Lab Partners</h2>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-item">
+        <i class="bi bi-shield-lock-fill"></i>
+        <div><h5>GDPR &amp; Data Sovereignty</h5><p>All data processed and stored on servers in Germany.</p></div>
+      </div>
+      <div class="why-item">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <div><h5>Fast Turnaround</h5><p>Automated pipelines minimize manual steps and delays.</p></div>
+      </div>
+      <div class="why-item">
+        <i class="bi bi-person-badge-fill"></i>
+        <div><h5>Multi-User Portal</h5><p>Role-based access for your lab's technicians and administrators.</p></div>
+      </div>
+      <div class="why-item">
+        <i class="bi bi-file-earmark-medical-fill"></i>
+        <div><h5>Clear Analysis Reports</h5><p>Annotated variants with COSMIC, ClinVar and gnomAD context.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="cta-section reveal">
+      <h2>Ready to work with GenRichi?</h2>
+      <p>Reach out to set up a laboratory partner account, request a technical walkthrough, or ask about terms.</p>
+      <div class="cta-row">
+        <a href="mailto:info@genrichi.de" class="btn btn-primary"><i class="bi bi-envelope-fill"></i> info@genrichi.de</a>
+        <a href="https://portal.genrichi.de" class="btn btn-outline"><i class="bi bi-box-arrow-in-right"></i> Portal Login</a>
+      </div>
+      <div class="contact-info">
+        <div><strong>Email</strong><i class="bi bi-envelope"></i>info@genrichi.de</div>
+        <div><strong>Location</strong><i class="bi bi-geo-alt"></i>Germany</div>
+        <div><strong>Portal</strong><i class="bi bi-globe"></i>portal.genrichi.de</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-links">
+    <a href="#panels">Panels</a>
+    <a href="#how">How it works</a>
+    <a href="#why">Why GenRichi</a>
+    <a href="mailto:info@genrichi.de">Contact</a>
+    <a href="https://portal.genrichi.de">Portal</a>
+  </div>
+  <p>© 2026 GenRichi · NGS bioinformatics partner for accredited laboratories</p>
+  <p style="margin-top:5px;">For Research Use Only (RUO). Not a certified in-vitro diagnostic (IVD) product. Provided as a technology service to accredited laboratory partners, who retain full clinical and legal responsibility for any resulting report.</p>
+</footer>
+
+<script>
+/* ── DNA Double Helix Animation ── */
+(function(){
+  const canvas = document.getElementById('dnaCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  let t = 0;
+
+  const BLUE  = [46, 141, 224];
+  const GREEN = [111, 206, 74];
+  const PAIRS = 14;       // number of base pairs
+  const AMP   = W * 0.28; // horizontal amplitude
+  const SPEED = 0.018;
+
+  function rgba(c, a){ return `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(2)})`; }
+
+  // Generate all 3D points for both strands
+  function getPoints(){
+    const s1 = [], s2 = [];
+    for(let i = 0; i <= PAIRS * 2; i++){
+      const progress = i / (PAIRS * 2);
+      const y = progress * H;
+      const angle = progress * Math.PI * 4 + t; // 2 full rotations
+      s1.push({ x: cx + Math.sin(angle) * AMP, y, z: Math.cos(angle) });
+      s2.push({ x: cx + Math.sin(angle + Math.PI) * AMP, y, z: Math.cos(angle + Math.PI) });
+    }
+    return [s1, s2];
+  }
+
+  function drawSmooth(pts, color){
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for(let i = 1; i < pts.length - 1; i++){
+      const mx = (pts[i].x + pts[i+1].x) / 2;
+      const my = (pts[i].y + pts[i+1].y) / 2;
+      ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+    }
+    ctx.strokeStyle = rgba(color, 0.7);
+    ctx.lineWidth = 3;
+    ctx.shadowColor = rgba(color, 0.4);
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  function frame(){
+    ctx.clearRect(0, 0, W, H);
+    const [s1, s2] = getPoints();
+
+    // Collect base pairs at every 2 points
+    const rungs = [];
+    for(let i = 0; i <= PAIRS * 2; i += 2){
+      rungs.push({ p1: s1[i], p2: s2[i], z: (s1[i].z + s2[i].z) / 2 });
+    }
+
+    // Sort rungs by depth (draw back ones first)
+    rungs.sort((a, b) => a.z - b.z);
+
+    // Draw back rungs
+    rungs.filter(r => r.z < 0).forEach(r => {
+      ctx.beginPath();
+      ctx.moveTo(r.p1.x, r.p1.y);
+      ctx.lineTo(r.p2.x, r.p2.y);
+      ctx.strokeStyle = rgba(GREEN, 0.18);
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    // Draw strands
+    drawSmooth(s1, BLUE);
+    drawSmooth(s2, GREEN);
+
+    // Draw front rungs
+    rungs.filter(r => r.z >= 0).forEach(r => {
+      ctx.beginPath();
+      ctx.moveTo(r.p1.x, r.p1.y);
+      ctx.lineTo(r.p2.x, r.p2.y);
+      ctx.strokeStyle = rgba(GREEN, 0.35);
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    // Draw nodes
+    for(let i = 0; i <= PAIRS * 2; i += 2){
+      [[s1[i], BLUE], [s2[i], GREEN]].forEach(([p, color]) => {
+        const depth = (p.z + 1) / 2;           // 0..1
+        const r = 3 + depth * 5;
+        const alpha = 0.3 + depth * 0.7;
+
+        // Outer glow
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3.5);
+        g.addColorStop(0, rgba(color, alpha * 0.6));
+        g.addColorStop(1, rgba(color, 0));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+
+        // Core dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(color, alpha);
+        ctx.fill();
+      });
+    }
+
+    t += SPEED;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
