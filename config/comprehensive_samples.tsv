@@ -1,2 +1,3 @@
 sample_id	tumor_r1	tumor_r2	normal_r1	normal_r2	patient_id	sex	tumor_type
 NA12878_somatic	/home/rami/genrichi/outputs/NA12878_R1.fastq.gz	/home/rami/genrichi/outputs/NA12878_R2.fastq.gz	/home/rami/genrichi/outputs/NA12878_R1.fastq.gz	/home/rami/genrichi/outputs/NA12878_R2.fastq.gz	NA12878	Female	Validation
+HCC1395_demo	/home/rami/genrichi/hcc1395_demo/Exome_Tumor/2891351066_1.fastq	/home/rami/genrichi/hcc1395_demo/Exome_Tumor/2891351066_2.fastq	/home/rami/genrichi/hcc1395_demo/Exome_Norm/2891351068_1.fastq	/home/rami/genrichi/hcc1395_demo/Exome_Norm/2891351068_2.fastq	HCC1395	Female	Breast_Cancer
