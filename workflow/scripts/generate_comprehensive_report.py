@@ -29,10 +29,12 @@ TUMOR_TYPE     = sm.params.tumor_type
 PANEL_NAME     = sm.params.panel_name
 COMPANY        = sm.params.company
 LOGO_PATH      = sm.params.logo
-SHOW_SYN       = sm.params.show_synonymous
-MSI_THRESHOLD  = float(sm.params.msi_threshold)
-TMB_MB         = float(sm.params.tmb_coding_mb)
-TMB_HIGH       = float(sm.params.tmb_high_threshold)
+SHOW_SYN              = sm.params.show_synonymous
+MSI_THRESHOLD         = float(sm.params.msi_threshold)
+TMB_CODING_BED        = sm.params.tmb_coding_bed
+TMB_PARTIAL_THRESHOLD = float(sm.params.tmb_partial_threshold)
+TMB_HIGH              = float(sm.params.tmb_high_threshold)
+PANEL_BED             = sm.params.panel_bed
 AMP_THR        = float(sm.params.cnv_amp_threshold)
 DEL_THR        = float(sm.params.cnv_del_threshold)
 
@@ -60,6 +62,73 @@ def _fig_to_b64(fig) -> str:
     return base64.b64encode(buf.getvalue()).decode()
 
 
+def _read_cds_bed(path: str):
+    """
+    Return (total_bp, n_intervals, n_genes) from a BED4 file.
+    Used to compute the exact MANE CDS ∩ panel territory as TMB denominator.
+    """
+    total_bp = 0
+    n_intervals = 0
+    genes: set = set()
+    try:
+        with open(path) as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                parts = line.split("\t")
+                if len(parts) < 3:
+                    continue
+                total_bp += int(parts[2]) - int(parts[1])
+                n_intervals += 1
+                if len(parts) > 3:
+                    genes.add(parts[3])
+    except Exception:
+        pass
+    return total_bp, n_intervals, genes
+
+
+def _is_partial_run(tumor_mosdepth: str, panel_bed: str, threshold: float) -> bool:
+    """
+    True if fewer than `threshold` fraction of panel chromosomes have ≥1× mean depth
+    in the tumor mosdepth BED summary.  Used only for partial-run detection — NOT
+    for the TMB denominator.
+    """
+    panel_chroms: set = set()
+    try:
+        with open(panel_bed) as fh:
+            for line in fh:
+                parts = line.strip().split("\t")
+                if parts and parts[0] and not parts[0].startswith("#"):
+                    panel_chroms.add(parts[0])
+    except Exception:
+        return False
+    if not panel_chroms:
+        return False
+
+    covered_chroms: set = set()
+    try:
+        df = pd.read_csv(tumor_mosdepth, sep="\t")
+        region_rows = df[
+            df["chrom"].str.endswith("_region", na=False) &
+            (df["chrom"] != "total_region")
+        ].copy()
+        for col in ("length", "bases"):
+            region_rows[col] = pd.to_numeric(region_rows[col], errors="coerce").fillna(0)
+        covered = region_rows[
+            (region_rows["length"] > 0) &
+            (region_rows["bases"] / region_rows["length"] >= 1.0)
+        ]
+        for chrom_region in covered["chrom"]:
+            covered_chroms.add(chrom_region.replace("_region", ""))
+    except Exception:
+        return False
+
+    covered_in_panel = panel_chroms & covered_chroms
+    fraction = len(covered_in_panel) / len(panel_chroms)
+    return fraction < threshold
+
+
 # ── Load variants ─────────────────────────────────────────────────────────────
 variants_df = pd.read_csv(sm.input.variants, sep="\t", dtype=str).fillna("")
 if not SHOW_SYN:
@@ -68,18 +137,36 @@ if not SHOW_SYN:
     ]
 
 # ── TMB calculation ───────────────────────────────────────────────────────────
+# Denominator: exact MANE Select v1.4 CDS ∩ panel BED (static, pre-computed).
+# mosdepth is used ONLY for partial-run detection — not as denominator.
+tmb_coding_bp, tmb_n_intervals, tmb_genes = _read_cds_bed(TMB_CODING_BED)
+tmb_coding_mb_actual = tmb_coding_bp / 1_000_000
+
+tmb_partial = _is_partial_run(sm.input.tumor_mosdepth, PANEL_BED, TMB_PARTIAL_THRESHOLD)
+
 coding_consequences = {
     "missense_variant", "stop_gained", "frameshift_variant",
     "splice_donor_variant", "splice_acceptor_variant",
     "start_lost", "stop_lost", "inframe_insertion", "inframe_deletion",
 }
-tmb_variants = variants_df[
-    variants_df["consequence"].apply(
-        lambda c: any(x in c.lower() for x in coding_consequences)
+
+if tmb_partial or tmb_coding_mb_actual == 0:
+    tmb_value = None
+    tmb_status = "N/A"
+    tmb_note = (
+        "Partial-region run — full 62-gene panel required for TMB."
+        " Chr17 only covers 6% of assay coding target."
     )
-]
-tmb_value = round(len(tmb_variants) / TMB_MB, 2)
-tmb_status = "TMB-High" if tmb_value >= TMB_HIGH else "TMB-Low"
+    tmb_variants = pd.DataFrame()
+else:
+    tmb_variants = variants_df[
+        variants_df["consequence"].apply(
+            lambda c: any(x in c.lower() for x in coding_consequences)
+        )
+    ]
+    tmb_value = round(len(tmb_variants) / tmb_coding_mb_actual, 2)
+    tmb_status = "TMB-High" if tmb_value >= TMB_HIGH else "TMB-Low"
+    tmb_note = ""
 
 # ── MSI score ─────────────────────────────────────────────────────────────────
 msi_score = None
@@ -158,6 +245,22 @@ def _parse_flagstat(path):
 def _parse_mosdepth(path):
     try:
         df = pd.read_csv(path, sep="\t")
+        region_rows = df[
+            df["chrom"].str.endswith("_region", na=False) &
+            (df["chrom"] != "total_region")
+        ].copy()
+        region_rows["length"] = pd.to_numeric(region_rows["length"], errors="coerce").fillna(0)
+        region_rows["bases"] = pd.to_numeric(region_rows["bases"], errors="coerce").fillna(0)
+        # Only include BED regions with >= 1× mean depth.  This excludes
+        # unsequenced chromosomes (e.g. a chr17-only run against a whole-panel BED)
+        # while giving the same result as total_region for full-panel runs.
+        covered = region_rows[
+            (region_rows["length"] > 0) &
+            (region_rows["bases"] / region_rows["length"] >= 1.0)
+        ]
+        if not covered.empty:
+            return round(covered["bases"].sum() / covered["length"].sum(), 1)
+        # Fallback for very low-coverage samples
         row = df[df["chrom"] == "total_region"]
         if not row.empty:
             return round(float(row["mean"].values[0]), 1)
@@ -220,6 +323,19 @@ def _make_tmb_gauge(tmb_val, tmb_high):
     return fig
 
 
+def _make_tmb_partial_chart(note: str):
+    fig, ax = plt.subplots(figsize=(4, 2.5))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    ax.text(0.5, 0.65, "TMB: N/A", ha="center", va="center",
+            fontsize=14, fontweight="bold", color="#aaa")
+    ax.text(0.5, 0.35, "Partial-region run\nFull panel required", ha="center", va="center",
+            fontsize=9, color="#e67e22", linespacing=1.5)
+    fig.tight_layout()
+    return fig
+
+
 def _make_msi_bar(score, threshold):
     fig, ax = plt.subplots(figsize=(4, 2))
     color = "#e74c3c" if (score or 0) >= threshold else "#2ecc71"
@@ -251,7 +367,11 @@ def _make_qc_chart(t_depth, n_depth):
     return fig
 
 
-tmb_gauge_b64  = _fig_to_b64(_make_tmb_gauge(tmb_value, TMB_HIGH))
+tmb_gauge_b64  = (
+    _fig_to_b64(_make_tmb_gauge(tmb_value, TMB_HIGH))
+    if not tmb_partial and tmb_value is not None
+    else _fig_to_b64(_make_tmb_partial_chart(tmb_note))
+)
 msi_bar_b64    = _fig_to_b64(_make_msi_bar(msi_score, MSI_THRESHOLD))
 qc_chart_b64   = _fig_to_b64(_make_qc_chart(t_depth, n_depth))
 cnv_scatter_b64 = _img_to_b64(sm.input.cnv_scatter)
@@ -327,6 +447,34 @@ cnv_scatter_html = (
     if cnv_scatter_b64 else "<p style='color:#999'>CNV scatter plot not available</p>"
 )
 
+# ── Pre-render TMB strings for use in HTML template ──────────────────────────
+if tmb_partial or tmb_value is None:
+    tmb_banner_str = "TMB: N/A (partial-region run — chr17 only)"
+    tmb_card_html = f"""
+    <div class="bm-value" style="color:#aaa;font-size:1.3em">N/A</div>
+    <div style="font-size:0.82em;margin-top:6px;color:#e67e22;font-weight:bold">Partial-Region Run</div>
+    <div style="font-size:0.72em;color:#999;margin-top:4px;line-height:1.5">
+      Chr17 only &mdash; 6% of assay coding target.<br>Full 62-gene panel required for TMB.
+    </div>
+    """
+    tmb_footer_str = (
+        f"TMB: N/A (partial-region run) &nbsp;|&nbsp; "
+        f"Denominator would be: {tmb_coding_mb_actual:.4f}&nbsp;Mb "
+        f"({tmb_coding_bp:,}&nbsp;bp, {tmb_n_intervals}&nbsp;intervals, {len(tmb_genes)}&nbsp;genes)"
+    )
+else:
+    tmb_color = "#e74c3c" if tmb_value >= TMB_HIGH else "#27ae60"
+    tmb_banner_str = f"TMB: {tmb_value} mut/Mb [{tmb_status}]"
+    tmb_card_html = f"""
+    <div class="bm-value {'tmb-high' if tmb_value >= TMB_HIGH else 'tmb-low'}">{tmb_value} <span style="font-size:0.5em">mut/Mb</span></div>
+    <div style="font-size:0.85em;margin-top:4px;color:{tmb_color};font-weight:bold">{tmb_status}</div>
+    <div style="font-size:0.75em;color:#999;margin-top:2px">Threshold: &ge;{TMB_HIGH} mut/Mb</div>
+    """
+    tmb_footer_str = (
+        f"TMB denominator: {tmb_coding_mb_actual:.4f}&nbsp;Mb "
+        f"({tmb_coding_bp:,}&nbsp;bp, {tmb_n_intervals}&nbsp;intervals, {len(tmb_genes)}&nbsp;genes)"
+    )
+
 # Clinical summary banner
 n_high = len(high_vars)
 n_mod  = len(mod_vars)
@@ -399,15 +547,13 @@ HTML = f"""<!DOCTYPE html>
   <div class="meta-item"><div class="label">Report Date</div><div class="value">{date.today().isoformat()}</div></div>
 </div>
 
-<div class="banner">&#128203; {summary_text} &nbsp;|&nbsp; TMB: {tmb_value} mut/Mb [{tmb_status}] &nbsp;|&nbsp; MSI: {f"{msi_score:.1f}%" if msi_score is not None else "N/A"} [{msi_status}]</div>
+<div class="banner">&#128203; {summary_text} &nbsp;|&nbsp; {tmb_banner_str} &nbsp;|&nbsp; MSI: {f"{msi_score:.1f}%" if msi_score is not None else "N/A"} [{msi_status}]</div>
 
 <!-- Biomarker summary cards -->
 <div class="biomarker-row">
   <div class="biomarker-card">
     <div class="bm-label">Tumor Mutational Burden</div>
-    <div class="bm-value {'tmb-high' if tmb_value >= TMB_HIGH else 'tmb-low'}">{tmb_value} <span style="font-size:0.5em">mut/Mb</span></div>
-    <div style="font-size:0.85em;margin-top:4px;color:{'#e74c3c' if tmb_value >= TMB_HIGH else '#27ae60'};font-weight:bold">{tmb_status}</div>
-    <div style="font-size:0.75em;color:#999;margin-top:2px">Threshold: &ge;{TMB_HIGH} mut/Mb</div>
+    {tmb_card_html}
   </div>
   <div class="biomarker-card">
     <div class="bm-label">Microsatellite Instability</div>
@@ -510,6 +656,9 @@ HTML = f"""<!DOCTYPE html>
 
 <div class="footer">
   <b>{COMPANY}</b> &bull; {PANEL_NAME} &bull; Report generated {date.today().isoformat()}<br>
+  {tmb_footer_str} &nbsp;&bull;&nbsp;
+  Annotation: MANE Select v1.4 (GRCh38) &nbsp;&bull;&nbsp;
+  Threshold: &ge;{TMB_HIGH} mut/Mb (requires assay-specific clinical validation)<br>
   <span style="color:#c0392b">FOR RESEARCH USE ONLY. Not validated for clinical diagnostic use. Requires expert review before clinical reporting.</span>
 </div>
 

@@ -41,7 +41,7 @@ def _in_homopolymer(ref: str, alt: str, context: str = "") -> bool:
     for i in range(len(seq) - 2):
         if seq[i] == seq[i + 1] == seq[i + 2]:
             return True
-    return True   # count all indels — conservative but transparent
+    return False
 
 
 total_variants = 0

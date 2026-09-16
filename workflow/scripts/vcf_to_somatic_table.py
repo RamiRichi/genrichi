@@ -60,10 +60,10 @@ def _parse_vcf(path: str) -> list[dict]:
             alt   = record["ALT"]
             filt  = record["FILTER"]
 
-            # FORMAT / tumor sample (first sample column after NORMAL in Mutect2 output)
+            # FORMAT / tumor sample; Mutect2 paired VCF writes normal first, tumor second
             fmt_keys    = record["FORMAT"].split(":")
             sample_cols = col_names[9:]                 # all sample columns
-            tumor_col   = sample_cols[0]                # tumor is first in Mutect2 paired output
+            tumor_col   = sample_cols[-1]               # tumor is last (normal first in Mutect2 paired)
             fmt_vals    = record[tumor_col].split(":")
             fmt         = dict(zip(fmt_keys, fmt_vals))
 

@@ -33,8 +33,10 @@ rule comprehensive_report:
         logo=config["report"]["logo"],
         show_synonymous=config["report"]["show_synonymous"],
         msi_threshold=config["msi"]["threshold"],
-        tmb_coding_mb=config["tmb"]["coding_mb"],
+        tmb_coding_bed=config["tmb"]["coding_bed"],
+        tmb_partial_threshold=config["tmb"]["partial_threshold"],
         tmb_high_threshold=config["tmb"]["high_threshold"],
+        panel_bed=config["panel"]["bed"],
         cnv_amp_threshold=config["cnv"]["amp_threshold"],
         cnv_del_threshold=config["cnv"]["del_threshold"],
     script:

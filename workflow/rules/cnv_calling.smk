@@ -41,7 +41,6 @@ rule cnv_export_bed:
         call_cns="results/{sample}/cnv/{sample}.call.cns",
     output:
         bed="results/{sample}/cnv/{sample}.cnv_calls.bed",
-    conda: "../envs/report.yaml"
     log: "logs/{sample}/cnv_export.log"
     params:
         amp_thr=config["cnv"]["amp_threshold"],

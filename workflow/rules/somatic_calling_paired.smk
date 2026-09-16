@@ -167,7 +167,7 @@ rule pass_variants_paired:
         """
         bcftools view \
             -f PASS \
-            -e 'FORMAT/DP[0] < {params.min_depth} || FORMAT/AD[0:1] < {params.min_alt}' \
+            -e 'FORMAT/DP[1] < {params.min_depth} || FORMAT/AD[1:1] < {params.min_alt}' \
             {input.vcf} \
         | bcftools sort \
         | bgzip -c > {output.vcf} \

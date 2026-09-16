@@ -30,7 +30,7 @@ rule vep_annotate_comprehensive:
             )
             if config["annotation"]["cosmic"]["vcf"]
             and _os.path.isfile(config["annotation"]["cosmic"]["vcf"])
-            else "# COSMIC VCF not found — skipping"
+            else ""
         ),
     shell:
         """

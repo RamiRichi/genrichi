@@ -10,7 +10,7 @@ ref:
   pon: null
 
 panel:
-  bed: resources/panel/comprehensive_genes.bed
+  bed: resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1.bed  # Phase-1: MANE Select v1.4 CDS ±20bp, 55-gene solid tumor panel (see resources/panel/phase1_solid_tumor/README.md). Was: resources/panel/comprehensive_genes.bed
   name: "GenRichi Comprehensive Cancer Panel v1"
 
 trimming:
@@ -35,7 +35,7 @@ annotation:
   vep:
     cache_dir: /home/rami/genrichi/reference_db/vep_cache
     genome_build: GRCh38
-    extra: "--everything --canonical --check_existing --hgvs --sift b --polyphen b"
+    extra: "--everything --canonical --check_existing --hgvs --sift b --polyphen b --cache_version 113"
   cosmic:
     vcf: /home/rami/genrichi/reference_db/cosmic/CosmicCodingMuts.vcf.gz
   clinvar:
@@ -50,8 +50,10 @@ msi:
   threshold: 10.0          # MS-context indels/Mb → MSI-High (panel-based estimate)
 
 tmb:
-  coding_mb: 1.5           # sequenced coding panel size in Mb (update per panel)
-  high_threshold: 10.0     # TMB-High cutoff (mutations/Mb, FDA pembrolizumab approval)
+  coding_mb: 1.5           # MSI denominator only — do not change (panel-based indel scoring)
+  coding_bed: resources/panel/comprehensive_genes_cds.bed   # TMB denominator: MANE Select v1.4 CDS ∩ panel BED
+  partial_threshold: 0.80  # fraction of panel chromosomes needing coverage for full TMB; below → partial run
+  high_threshold: 10.0     # TMB-High threshold (mut/Mb); requires assay-specific clinical validation
 
 report:
   company: "GenRichi"
