@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GenRichi — Somatic Panel Pipeline</title>
+<style>
+  :root{--blue:#2563eb;--dark:#0f172a;--mid:#1e293b;--light:#f8fafc;--border:#e2e8f0;--green:#16a34a;--red:#dc2626;--amber:#d97706}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+
+  /* Sidebar */
+  .sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--dark);display:flex;flex-direction:column;padding:0}
+  .logo{padding:22px 20px;border-bottom:1px solid #1e3a5f}
+  .logo h2{color:#fff;font-size:18px;letter-spacing:.5px}
+  .logo p{color:#64748b;font-size:11px;margin-top:3px}
+  .nav{padding:20px 0;flex:1}
+  .nav a{display:flex;align-items:center;gap:10px;padding:11px 20px;color:#94a3b8;text-decoration:none;font-size:13px;transition:all .15s}
+  .nav a:hover,.nav a.active{background:#1e293b;color:#fff}
+  .nav a .ico{font-size:16px;width:20px;text-align:center}
+  .sidebar-footer{padding:16px 20px;border-top:1px solid #1e293b;font-size:11px;color:#475569}
+
+  /* Main */
+  .main{margin-left:220px;padding:28px 32px;min-height:100vh}
+  .page-title{font-size:22px;font-weight:700;margin-bottom:6px}
+  .page-sub{color:#64748b;font-size:13px;margin-bottom:28px}
+
+  /* Cards */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+  .stat-card{background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .stat-card .val{font-size:28px;font-weight:700;color:var(--blue)}
+  .stat-card .lbl{font-size:12px;color:#64748b;margin-top:4px}
+
+  /* Submit form */
+  .card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:24px}
+  .card-header{padding:16px 24px;border-bottom:1px solid var(--border);font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
+  .card-body{padding:24px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .form-group{display:flex;flex-direction:column;gap:6px}
+  .form-group label{font-size:12px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.5px}
+  .form-group input{padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .15s}
+  .form-group input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-group .hint{font-size:11px;color:#94a3b8}
+  .btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:#1d4ed8}
+  .btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+  .btn-sm{padding:5px 12px;font-size:12px}
+  .btn-outline{background:#fff;border:1px solid var(--border);color:#374151}
+  .btn-outline:hover{border-color:#94a3b8}
+
+  /* Progress panel */
+  #progress-panel{display:none}
+  .steps-list{display:flex;flex-direction:column;gap:6px;padding:0 24px 20px}
+  .step-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+  .step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .3s}
+  .step-dot.waiting{background:#f1f5f9;color:#94a3b8;border:2px solid #e2e8f0}
+  .step-dot.active{background:#dbeafe;color:var(--blue);border:2px solid var(--blue);animation:pulse 1.5s infinite}
+  .step-dot.done{background:#dcfce7;color:var(--green);border:2px solid var(--green)}
+  .step-dot.error{background:#fee2e2;color:var(--red);border:2px solid var(--red)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.3)}50%{box-shadow:0 0 0 6px rgba(37,99,235,0)}}
+  .step-label{font-size:13px;flex:1}
+  .step-label.active{font-weight:600;color:var(--blue)}
+  .step-label.done{color:#64748b}
+  .progress-bar-wrap{background:#e2e8f0;border-radius:99px;height:6px;margin:0 24px 20px;overflow:hidden}
+  .progress-bar{background:var(--blue);height:100%;border-radius:99px;transition:width .4s}
+
+  /* Log terminal */
+  .log-box{background:#0f172a;border-radius:8px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;padding:16px;height:260px;overflow-y:auto;color:#94a3b8}
+  .log-box .log-ts{color:#475569;user-select:none}
+  .log-box .log-ok{color:#4ade80}
+  .log-box .log-err{color:#f87171}
+  .log-box .log-cmd{color:#60a5fa}
+
+  /* Jobs table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f8fafc;padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+  td{padding:12px 16px;border-bottom:1px solid var(--border)}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f8fafc}
+  .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+  .badge-queued{background:#f1f5f9;color:#64748b}
+  .badge-running{background:#dbeafe;color:var(--blue)}
+  .badge-done{background:#dcfce7;color:var(--green)}
+  .badge-error{background:#fee2e2;color:var(--red)}
+
+  /* Tool status */
+  .tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:20px 24px}
+  .tool-chip{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);font-size:12px}
+  .tool-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dot-ok{background:var(--green)}
+  .dot-miss{background:var(--red)}
+  .dot-spin{background:#d1d5db;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Alerts */
+  .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px}
+  .alert-error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+  .alert-success{background:#dcfce7;color:#14532d;border:1px solid #bbf7d0}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <h2>GenRichi</h2>
+    <p>Somatic Panel Pipeline</p>
+  </div>
+  <nav class="nav">
+    <a href="#" class="active" onclick="showSection('submit')"><span class="ico">🧬</span>New Analysis</a>
+    <a href="#" onclick="showSection('history')"><span class="ico">📋</span>Job History</a>
+    <a href="#" onclick="showSection('tools')"><span class="ico">🔧</span>Tool Status</a>
+  </nav>
+  <div class="sidebar-footer">GenRichi Diagnostics v2.0<br>For research use only</div>
+</div>
+
+<div class="main">
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="val" id="stat-total">—</div><div class="lbl">Total Jobs</div></div>
+    <div class="stat-card"><div class="val" id="stat-done" style="color:#16a34a">—</div><div class="lbl">Completed</div></div>
+    <div class="stat-card"><div class="val" id="stat-running" style="color:#2563eb">—</div><div class="lbl">Running</div></div>
+    <div class="stat-card"><div class="val" id="stat-error" style="color:#dc2626">—</div><div class="lbl">Failed</div></div>
+  </div>
+
+  <!-- ── SUBMIT SECTION ── -->
+  <div id="section-submit">
+    <div class="page-title">New Sample Analysis</div>
+    <div class="page-sub">Submit paired-end FASTQ files for somatic variant detection</div>
+
+    <!-- Submit form -->
+    <div class="card">
+      <div class="card-header">🧬 Sample Information</div>
+      <div class="card-body">
+        <div id="submit-alert" style="display:none"></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Sample ID</label>
+            <input id="f-sample" type="text" placeholder="e.g. G8_S13">
+          </div>
+          <div class="form-group">
+            <label>Panel BED (optional)</label>
+            <input id="f-bed" type="text" placeholder="default: example_hotspots.bed">
+            <span class="hint">Leave blank to use default 20-gene panel</span>
+          </div>
+          <div class="form-group">
+            <label>FASTQ R1</label>
+            <input id="f-r1" type="text" placeholder="/home/rami/data/sample_R1.fastq.gz">
+          </div>
+          <div class="form-group">
+            <label>FASTQ R2</label>
+            <input id="f-r2" type="text" placeholder="/home/rami/data/sample_R2.fastq.gz">
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:10px;align-items:center">
+          <button class="btn btn-primary" id="btn-submit" onclick="submitJob()">▶ Run Pipeline</button>
+          <span id="submit-spinner" style="display:none;color:#64748b;font-size:13px">⏳ Submitting…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress panel -->
+    <div class="card" id="progress-panel">
+      <div class="card-header">
+        <span>⚡ Pipeline Progress</span>
+        <span id="progress-sample" style="margin-left:auto;font-weight:400;color:#64748b;font-size:13px"></span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div class="steps-list" id="steps-list">
+        {% for s in steps %}
+        <div class="step-item" id="step-{{ s.id }}">
+          <div class="step-dot waiting" id="dot-{{ s.id }}">○</div>
+          <span class="step-label" id="lbl-{{ s.id }}">{{ s.name }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div style="padding:0 24px 20px">
+        <div class="card-header" style="padding:0 0 10px;border:none;font-size:13px">📟 Live Log</div>
+        <div class="log-box" id="log-box"></div>
+      </div>
+      <div id="result-btns" style="display:none;padding:0 24px 24px;display:flex;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- ── HISTORY SECTION ── -->
+  <div id="section-history" style="display:none">
+    <div class="page-title">Job History</div>
+    <div class="page-sub">All submitted analyses</div>
+    <div class="card">
+      <div class="card-header">
+        📋 Recent Jobs
+        <button class="btn btn-outline btn-sm" style="margin-left:auto" onclick="loadHistory()">↻ Refresh</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>Sample</th><th>Status</th><th>Step</th>
+            <th>Started</th><th>Finished</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="history-tbody"><tr><td colspan="6" style="text-align:center;padding:24px;color:#94a3b8">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOOLS SECTION ── -->
+  <div id="section-tools" style="display:none">
+    <div class="page-title">Tool Status</div>
+    <div class="page-sub">Verify all pipeline tools are available</div>
+    <div class="card">
+      <div class="card-header">
+        🔧 Installed Tools
+        <button class="btn btn-outline btn-sm" style="margin-left:auto" onclick="loadTools()">↻ Check</button>
+      </div>
+      <div class="tools-grid" id="tools-grid">
+        <div style="grid-column:span 4;text-align:center;padding:20px;color:#94a3b8">Checking…</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .main -->
+
+<script>
+const STEPS = {{ steps | tojson }};
+let currentJobId = null;
+let pollTimer = null;
+let logOffset = 0;
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showSection(name) {
+  ['submit','history','tools'].forEach(s => {
+    document.getElementById('section-'+s).style.display = s===name ? '' : 'none';
+  });
+  document.querySelectorAll('.nav a').forEach((a,i) => {
+    const names = ['submit','history','tools'];
+    a.classList.toggle('active', names[i]===name);
+  });
+  if (name==='history') loadHistory();
+  if (name==='tools')   loadTools();
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+async function updateStats() {
+  try {
+    const jobs = await fetch('/api/jobs').then(r=>r.json());
+    document.getElementById('stat-total').textContent = jobs.length;
+    document.getElementById('stat-done').textContent  = jobs.filter(j=>j.status==='done').length;
+    document.getElementById('stat-running').textContent = jobs.filter(j=>j.status==='running').length;
+    document.getElementById('stat-error').textContent   = jobs.filter(j=>j.status==='error').length;
+  } catch(e) {}
+}
+updateStats();
+setInterval(updateStats, 5000);
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+async function submitJob() {
+  const sample = document.getElementById('f-sample').value.trim();
+  const r1     = document.getElementById('f-r1').value.trim();
+  const r2     = document.getElementById('f-r2').value.trim();
+  const bed    = document.getElementById('f-bed').value.trim();
+
+  const alertEl = document.getElementById('submit-alert');
+  alertEl.style.display = 'none';
+
+  if (!sample || !r1 || !r2) {
+    alertEl.className = 'alert alert-error';
+    alertEl.textContent = 'Please fill in Sample ID, R1, and R2 fields.';
+    alertEl.style.display = '';
+    return;
+  }
+
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('submit-spinner').style.display = '';
+
+  try {
+    const res = await fetch('/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({sample_id:sample, r1, r2, bed})
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      alertEl.className = 'alert alert-error';
+      alertEl.innerHTML = '<strong>Errors:</strong><br>' + data.errors.join('<br>');
+      alertEl.style.display = '';
+      document.getElementById('btn-submit').disabled = false;
+      document.getElementById('submit-spinner').style.display = 'none';
+      return;
+    }
+    currentJobId = data.job_id;
+    logOffset = 0;
+    startPolling(currentJobId, sample);
+  } catch(e) {
+    alertEl.className = 'alert alert-error';
+    alertEl.textContent = 'Server error: ' + e.message;
+    alertEl.style.display = '';
+    document.getElementById('btn-submit').disabled = false;
+    document.getElementById('submit-spinner').style.display = 'none';
+  }
+}
+
+// ── Progress polling ──────────────────────────────────────────────────────────
+function startPolling(jobId, sampleId) {
+  document.getElementById('progress-panel').style.display = '';
+  document.getElementById('progress-sample').textContent = sampleId;
+  document.getElementById('result-btns').style.display = 'none';
+  document.getElementById('result-btns').innerHTML = '';
+  document.getElementById('log-box').innerHTML = '';
+  document.getElementById('submit-spinner').style.display = 'none';
+  // reset steps
+  STEPS.forEach(s => setStepState(s.id, 'waiting'));
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(()=>pollJob(jobId), 2000);
+  pollJob(jobId);
+}
+
+async function pollJob(jobId) {
+  try {
+    const data = await fetch(`/api/job/${jobId}?log_offset=${logOffset}`).then(r=>r.json());
+    // progress bar
+    document.getElementById('progress-bar').style.width = data.progress + '%';
+    // steps
+    const activeStep = data.step;
+    let foundActive = false;
+    STEPS.forEach(s => {
+      if (data.status === 'error') {
+        if (s.id === activeStep) setStepState(s.id, 'error');
+        else if (!foundActive)   setStepState(s.id, 'done');
+      } else if (s.id === activeStep && data.status === 'running') {
+        setStepState(s.id, 'active'); foundActive = true;
+      } else if (!foundActive) {
+        setStepState(s.id, 'done');
+      } else {
+        setStepState(s.id, 'waiting');
+      }
+      if (s.id === activeStep) foundActive = true;
+    });
+    if (data.status === 'done') {
+      STEPS.forEach(s => setStepState(s.id, 'done'));
+      document.getElementById('progress-bar').style.width = '100%';
+    }
+    // logs
+    if (data.logs && data.logs.length) {
+      const box = document.getElementById('log-box');
+      data.logs.forEach(l => {
+        const div = document.createElement('div');
+        const ts  = document.createElement('span');
+        ts.className = 'log-ts';
+        ts.textContent = `[${l.ts}] `;
+        const txt = document.createElement('span');
+        const line = l.line || '';
+        if (line.startsWith('✓'))  txt.className = 'log-ok';
+        else if (line.startsWith('✗') || line.toLowerCase().includes('error') || line.toLowerCase().includes('failed'))
+                                    txt.className = 'log-err';
+        else if (line.startsWith('$')) txt.className = 'log-cmd';
+        txt.textContent = line;
+        div.appendChild(ts);
+        div.appendChild(txt);
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+      logOffset += data.logs.length;
+    }
+    // done / error
+    if (data.status === 'done' || data.status === 'error') {
+      clearInterval(pollTimer);
+      document.getElementById('btn-submit').disabled = false;
+      const btnDiv = document.getElementById('result-btns');
+      btnDiv.style.display = 'flex';
+      btnDiv.innerHTML = '';
+      if (data.has_report) {
+        const a1 = document.createElement('a');
+        a1.href = `/report/${jobId}`; a1.target = '_blank';
+        a1.className = 'btn btn-primary';
+        a1.textContent = '📄 View Report'; btnDiv.appendChild(a1);
+        const a2 = document.createElement('a');
+        a2.href = `/api/download/${jobId}/report`;
+        a2.className = 'btn btn-outline btn-sm';
+        a2.textContent = '⬇ Download HTML'; btnDiv.appendChild(a2);
+      }
+      if (data.has_vcf) {
+        const a3 = document.createElement('a');
+        a3.href = `/api/download/${jobId}/vcf`;
+        a3.className = 'btn btn-outline btn-sm';
+        a3.textContent = '⬇ Download VCF'; btnDiv.appendChild(a3);
+      }
+      if (data.status === 'error') {
+        const errDiv = document.createElement('div');
+        errDiv.className = 'alert alert-error';
+        errDiv.style.margin = '0 24px 16px';
+        errDiv.textContent = '✗ ' + (data.error_msg || 'Pipeline failed');
+        document.getElementById('progress-panel').insertBefore(errDiv, btnDiv);
+      }
+    }
+  } catch(e) { console.error(e); }
+}
+
+function setStepState(id, state) {
+  const dot = document.getElementById('dot-'+id);
+  const lbl = document.getElementById('lbl-'+id);
+  if (!dot) return;
+  dot.className = 'step-dot ' + state;
+  lbl.className = 'step-label ' + state;
+  dot.textContent = state==='done' ? '✓' : state==='error' ? '✗' : state==='active' ? '●' : '○';
+}
+
+// ── History ───────────────────────────────────────────────────────────────────
+async function loadHistory() {
+  const tbody = document.getElementById('history-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#94a3b8">Loading…</td></tr>';
+  try {
+    const jobs = await fetch('/api/jobs').then(r=>r.json());
+    if (!jobs.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#94a3b8">No jobs yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = jobs.map(j => {
+      const badge = `<span class="badge badge-${j.status}">${j.status}</span>`;
+      const created = j.created_at ? j.created_at.replace('T',' ').slice(0,16) : '—';
+      const finished = j.finished_at ? j.finished_at.replace('T',' ').slice(0,16) : '—';
+      const rpBtn  = j.report_path ? `<a href="/report/${j.id}" target="_blank" class="btn btn-primary btn-sm">Report</a>` : '';
+      const vcfBtn = j.vcf_path    ? `<a href="/api/download/${j.id}/vcf" class="btn btn-outline btn-sm">VCF</a>` : '';
+      return `<tr>
+        <td><strong>${j.sample_id}</strong><br><span style="font-size:11px;color:#94a3b8">${j.id.slice(0,8)}…</span></td>
+        <td>${badge}</td>
+        <td>${j.step || '—'}</td>
+        <td>${created}</td>
+        <td>${finished}</td>
+        <td style="display:flex;gap:6px">${rpBtn} ${vcfBtn}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:#dc2626;padding:16px">Error loading jobs</td></tr>';
+  }
+}
+
+// ── Tool check ────────────────────────────────────────────────────────────────
+async function loadTools() {
+  const grid = document.getElementById('tools-grid');
+  grid.innerHTML = '<div style="grid-column:span 4;text-align:center;padding:20px;color:#94a3b8">Checking tools…</div>';
+  try {
+    const tools = await fetch('/api/tools').then(r=>r.json());
+    grid.innerHTML = Object.entries(tools).map(([name, status]) =>
+      `<div class="tool-chip">
+        <div class="dot ${status==='ok'?'dot-ok':'dot-miss'}"></div>
+        <span><strong>${name}</strong></span>
+        <span style="margin-left:auto;font-size:11px;color:${status==='ok'?'#16a34a':'#dc2626'}">${status}</span>
+      </div>`
+    ).join('');
+  } catch(e) {
+    grid.innerHTML = '<div style="grid-column:span 4;color:#dc2626;padding:16px">Could not check tools</div>';
+  }
+}
+
+// ── Enter key ─────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && document.getElementById('section-submit').style.display!=='none')
+    submitJob();
+});
+</script>
+</body>
+</html>

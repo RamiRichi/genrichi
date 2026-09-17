@@ -1,5 +1,6 @@
 # Personal / CV files - never push these
 build_anschreiben_*.py
+build_cv.py
 build_cv_*.py
 build_cover_letter_*.py
 build_motivation_*.py
@@ -31,6 +32,14 @@ wget-log
 # Portal secrets (add real secrets here)
 portal/.env
 portal/instance/
+
+# Claude Code local settings (machine-specific permissions)
+.claude/
+
+# Generated pipeline outputs (regenerable via Snakemake)
+/results/
+NA12878_dashboard.html
+NA12878_somatic_comprehensive_report.html
 
 # OS
 .DS_Store

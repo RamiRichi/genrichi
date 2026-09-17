@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutzerklärung — GenRichi Diagnostics</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root {
+    --gr-navy-deep:#060b14; --gr-navy:#0a1322;
+    --gr-blue:#2e8de0; --gr-green:#6fce4a;
+    --gr-text:#e7eef6; --gr-muted:#84a0bf; --gr-border:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:var(--gr-navy-deep);color:var(--gr-text);line-height:1.8;
+    min-height:100vh;
+  }
+  header{
+    background:rgba(7,14,24,.9);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--gr-border);padding:14px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand img{width:32px;height:32px;object-fit:contain;}
+  .brand span{font-size:17px;font-weight:800;color:#fff;}
+  .brand span em{color:#8fe06b;font-style:normal;}
+  .back-link{color:var(--gr-muted);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;}
+  .back-link:hover{color:#fff;}
+
+  .container{max-width:760px;margin:0 auto;padding:48px 24px 80px;}
+  h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;}
+  .subtitle{color:var(--gr-muted);font-size:14px;margin-bottom:40px;
+    padding-bottom:20px;border-bottom:1px solid var(--gr-border);}
+
+  .section{margin-bottom:36px;}
+  .section h2{font-size:16px;font-weight:700;color:#8fe06b;
+    text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+  .section h3{font-size:14px;font-weight:600;color:#fff;margin:16px 0 8px;}
+  .section p{font-size:14px;color:var(--gr-text);margin-bottom:10px;}
+  .section ul{font-size:14px;color:var(--gr-text);padding-left:20px;margin-bottom:10px;}
+  .section ul li{margin-bottom:6px;}
+  .section a{color:var(--gr-blue);text-decoration:none;}
+  .section a:hover{text-decoration:underline;}
+
+  .highlight{
+    padding:16px 20px;border-radius:10px;margin-bottom:16px;
+    background:rgba(111,206,74,.06);border:1px solid rgba(111,206,74,.2);
+    font-size:13px;color:var(--gr-muted);
+  }
+
+  footer{
+    border-top:1px solid var(--gr-border);padding:24px;
+    text-align:center;font-size:12px;color:#5d7a99;
+  }
+  footer a{color:#5d7a99;}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="brand">
+    <img src="img/logo.png" alt="GenRichi">
+    <span>Gen<em>Richi</em></span>
+  </a>
+  <a href="/" class="back-link"><i class="bi bi-arrow-left"></i> Zurück zur Startseite</a>
+</header>
+
+<div class="container">
+  <h1>Datenschutzerklärung</h1>
+  <p class="subtitle">Gemäß DSGVO (EU) 2016/679 — Stand: September 2026</p>
+
+  <div class="section">
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      GenRichi Diagnostics<br>
+      Brandhorsterstr. 3, 06844 Dessau-Roßlau<br>
+      E-Mail: <a href="mailto:info@genrichi.de">info@genrichi.de</a><br>
+      Telefon: <a href="tel:+4917661855193">+49 176 61855193</a>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>2. Erhobene Daten und Zwecke</h2>
+
+    <h3>2.1 Besuch der Website (genrichi.de)</h3>
+    <p>Beim Aufruf unserer Website werden automatisch folgende Daten durch den Webserver erfasst:</p>
+    <ul>
+      <li>IP-Adresse (anonymisiert über Cloudflare)</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>Aufgerufene Seite / URL</li>
+      <li>Verwendeter Browser und Betriebssystem</li>
+    </ul>
+    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Betriebssicherheit).</p>
+
+    <h3>2.2 Partnerportal (portal.genrichi.de)</h3>
+    <p>Im Portal werden folgende Daten verarbeitet:</p>
+    <ul>
+      <li>Benutzername und verschlüsseltes Passwort (Login)</li>
+      <li>Auftragsdetails (Proben-ID, Analysetyp, Status)</li>
+      <li>E-Mail-Adresse für Benachrichtigungen</li>
+      <li>Sequenzierdaten (FASTQ-Dateien) — ausschließlich pseudonymisiert</li>
+    </ul>
+    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung mit dem beauftragenden Labor).</p>
+
+    <h3>2.3 Kontaktaufnahme per E-Mail</h3>
+    <p>Bei Kontaktaufnahme per E-Mail werden Name und E-Mail-Adresse zur Bearbeitung Ihrer Anfrage gespeichert.</p>
+    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. Datenspeicherung und -sicherheit</h2>
+    <div class="highlight">
+      <i class="bi bi-shield-lock-fill"></i> Alle Daten werden ausschließlich auf Servern in Deutschland verarbeitet und gespeichert (DSGVO-konform).
+    </div>
+    <ul>
+      <li>Sequenzierdaten werden pseudonymisiert übertragen und verarbeitet</li>
+      <li>Dateiübertragung erfolgt verschlüsselt über SFTP (SSH)</li>
+      <li>Zugang zum Portal ist passwortgeschützt mit rollenbasiertem Zugriff</li>
+      <li>Verbindungen sind TLS-verschlüsselt (HTTPS via Cloudflare)</li>
+      <li>Regelmäßige verschlüsselte Backups</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Weitergabe an Dritte</h2>
+    <p>Eine Weitergabe personenbezogener Daten an Dritte erfolgt nicht, außer:</p>
+    <ul>
+      <li><strong>Cloudflare Inc.</strong> — CDN und DDoS-Schutz (EU-Standardvertragsklauseln)</li>
+      <li><strong>Google LLC</strong> — Backup-Dienste (EU-Standardvertragsklauseln)</li>
+      <li>Gesetzliche Verpflichtung zur Weitergabe an Behörden</li>
+    </ul>
+    <p>Mit allen Dienstleistern bestehen Auftragsverarbeitungsverträge (AVV) gemäß Art. 28 DSGVO.</p>
+  </div>
+
+  <div class="section">
+    <h2>5. Speicherdauer</h2>
+    <ul>
+      <li>Portaldaten (Aufträge, Berichte): 10 Jahre (gesetzliche Aufbewahrungspflicht)</li>
+      <li>Sequenzierdaten (FASTQ): nach Abschluss der Analyse und Freigabe durch das Labor</li>
+      <li>Kontaktdaten: bis zur Erledigung der Anfrage, max. 3 Jahre</li>
+      <li>Server-Logs: 30 Tage</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>6. Ihre Rechte (Art. 15–21 DSGVO)</h2>
+    <p>Sie haben das Recht auf:</p>
+    <ul>
+      <li><strong>Auskunft</strong> über Ihre gespeicherten Daten (Art. 15)</li>
+      <li><strong>Berichtigung</strong> unrichtiger Daten (Art. 16)</li>
+      <li><strong>Löschung</strong> Ihrer Daten (Art. 17)</li>
+      <li><strong>Einschränkung</strong> der Verarbeitung (Art. 18)</li>
+      <li><strong>Datenübertragbarkeit</strong> (Art. 20)</li>
+      <li><strong>Widerspruch</strong> gegen die Verarbeitung (Art. 21)</li>
+    </ul>
+    <p>Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:info@genrichi.de">info@genrichi.de</a></p>
+  </div>
+
+  <div class="section">
+    <h2>7. Beschwerderecht</h2>
+    <p>Sie haben das Recht, sich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren:</p>
+    <p>
+      <strong>Landesbeauftragter für den Datenschutz Sachsen-Anhalt</strong><br>
+      Leiterstraße 9, 39104 Magdeburg<br>
+      <a href="https://datenschutz.sachsen-anhalt.de" target="_blank">datenschutz.sachsen-anhalt.de</a>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>8. Cookies</h2>
+    <p>Diese Website verwendet keine Tracking-Cookies. Das Partnerportal verwendet ausschließlich technisch notwendige Session-Cookies für die Anmeldung (kein Tracking, keine Analyse).</p>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 GenRichi Diagnostics ·
+  <a href="/impressum.html">Impressum</a> ·
+  <a href="/datenschutz.html">Datenschutz</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum — GenRichi Diagnostics</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root {
+    --gr-navy-deep:#060b14; --gr-navy:#0a1322;
+    --gr-blue:#2e8de0; --gr-green:#6fce4a;
+    --gr-text:#e7eef6; --gr-muted:#84a0bf; --gr-border:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:var(--gr-navy-deep);color:var(--gr-text);line-height:1.7;
+    min-height:100vh;
+  }
+  header{
+    background:rgba(7,14,24,.9);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--gr-border);padding:14px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand img{width:32px;height:32px;object-fit:contain;}
+  .brand span{font-size:17px;font-weight:800;color:#fff;}
+  .brand span em{color:#8fe06b;font-style:normal;}
+  .back-link{color:var(--gr-muted);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;}
+  .back-link:hover{color:#fff;}
+
+  .container{max-width:760px;margin:0 auto;padding:48px 24px 80px;}
+  h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;}
+  .subtitle{color:var(--gr-muted);font-size:14px;margin-bottom:40px;
+    padding-bottom:20px;border-bottom:1px solid var(--gr-border);}
+
+  .section{margin-bottom:32px;}
+  .section h2{font-size:15px;font-weight:700;color:#8fe06b;
+    text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+  .section p, .section address{
+    font-size:14px;color:var(--gr-text);font-style:normal;line-height:1.8;
+  }
+  .section a{color:var(--gr-blue);text-decoration:none;}
+  .section a:hover{text-decoration:underline;}
+  .note{
+    margin-top:32px;padding:16px 20px;border-radius:10px;
+    background:rgba(46,141,224,.08);border:1px solid rgba(46,141,224,.2);
+    font-size:12.5px;color:var(--gr-muted);line-height:1.7;
+  }
+
+  footer{
+    border-top:1px solid var(--gr-border);padding:24px;
+    text-align:center;font-size:12px;color:#5d7a99;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="brand">
+    <img src="img/logo.png" alt="GenRichi">
+    <span>Gen<em>Richi</em></span>
+  </a>
+  <a href="/" class="back-link"><i class="bi bi-arrow-left"></i> Zurück zur Startseite</a>
+</header>
+
+<div class="container">
+  <h1>Impressum</h1>
+  <p class="subtitle">Angaben gemäß § 5 TMG</p>
+
+  <div class="section">
+    <h2>Anbieter</h2>
+    <address>
+      GenRichi Diagnostics<br>
+      Brandhorsterstr. 3<br>
+      06844 Dessau-Roßlau<br>
+      Deutschland
+    </address>
+  </div>
+
+  <div class="section">
+    <h2>Kontakt</h2>
+    <p>
+      Telefon: <a href="tel:+4917661855193">+49 176 61855193</a><br>
+      E-Mail: <a href="mailto:info@genrichi.de">info@genrichi.de</a><br>
+      Website: <a href="https://genrichi.de">genrichi.de</a>
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Verantwortlicher</h2>
+    <p>Rami Richi (Inhaber)</p>
+  </div>
+
+  <div class="section">
+    <h2>Steuerliche Angaben</h2>
+    <p>
+      Steuernummer: 114/262/00939<br>
+      Zuständiges Finanzamt: Dessau-Roßlau
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Kleinunternehmerregelung</h2>
+    <p>
+      Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Inhaltlich Verantwortlicher</h2>
+    <p>Rami Richi (Anschrift wie oben)</p>
+  </div>
+
+  <div class="section">
+    <h2>Haftungsausschluss</h2>
+    <p>
+      Die Inhalte dieser Website dienen ausschließlich zur allgemeinen Information.
+      GenRichi Diagnostics übernimmt keine Gewähr für die Aktualität, Vollständigkeit
+      oder Richtigkeit der bereitgestellten Informationen. Die angebotenen
+      bioinformatischen Analysen sind ausschließlich für den Forschungseinsatz (RUO —
+      Research Use Only) bestimmt und stellen kein zertifiziertes In-vitro-Diagnostikum
+      (IVD) dar.
+    </p>
+  </div>
+
+  <div class="note">
+    <i class="bi bi-info-circle me-1"></i>
+    <strong>Research Use Only (RUO):</strong> Die von GenRichi Diagnostics bereitgestellten
+    bioinformatischen Auswertungen sind nicht für die direkte klinische Diagnostik
+    zugelassen. Die volle klinische und rechtliche Verantwortung für die Interpretation
+    und Verwendung der Ergebnisse liegt beim beauftragenden akkreditierten Labor.
+  </div>
+</div>
+
+<footer>
+  © 2026 GenRichi Diagnostics · <a href="/impressum.html" style="color:#5d7a99;">Impressum</a>
+</footer>
+
+</body>
+</html>
