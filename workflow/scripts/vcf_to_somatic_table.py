@@ -4,8 +4,13 @@ import csv
 import gzip
 import re
 
+from sample_columns import SampleColumnError, resolve_tumor_normal_columns
+
 vcf_path: str = snakemake.input.vcf   # type: ignore[name-defined]
 out_path: str = snakemake.output.tsv  # type: ignore[name-defined]
+# Phase 5.3: expected sample_id (e.g. "HCC1395_demo"), used to cross-check
+# resolved VCF sample-column names when the rule's wildcards are available.
+_expected_sample_id = getattr(getattr(snakemake, "wildcards", None), "sample", None)  # type: ignore[name-defined]
 
 FIELDNAMES = [
     "chrom", "pos", "ref", "alt",
@@ -49,6 +54,14 @@ def _parse_vcf(path: str) -> list[dict]:
                 continue
             if line.startswith("#CHROM"):
                 col_names = line.lstrip("#").split("\t")
+                # Phase 5.3: resolve tumor/normal columns once per file, by
+                # name (not position), and fail loudly if the expected
+                # relationship can't be established -- see sample_columns.py.
+                # This replaces a previously unvalidated assumption that the
+                # tumor sample is always the last VCF sample column.
+                tumor_col, normal_col = resolve_tumor_normal_columns(
+                    col_names, expected_sample_id=_expected_sample_id
+                )
                 continue
 
             cols = line.split("\t")
@@ -60,10 +73,8 @@ def _parse_vcf(path: str) -> list[dict]:
             alt   = record["ALT"]
             filt  = record["FILTER"]
 
-            # FORMAT / tumor sample; Mutect2 paired VCF writes normal first, tumor second
+            # FORMAT / tumor sample (tumor_col resolved above, by name)
             fmt_keys    = record["FORMAT"].split(":")
-            sample_cols = col_names[9:]                 # all sample columns
-            tumor_col   = sample_cols[-1]               # tumor is last (normal first in Mutect2 paired)
             fmt_vals    = record[tumor_col].split(":")
             fmt         = dict(zip(fmt_keys, fmt_vals))
 
