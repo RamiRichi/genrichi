@@ -24,6 +24,8 @@ import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 
+from qc_status import VALID, INSUFFICIENT_DATA, cnv_qc_status
+
 sm = snakemake  # type: ignore[name-defined]
 
 TUMOR_REGIONS  = sm.input.tumor_regions
@@ -68,6 +70,14 @@ merged = pd.merge(
     how="inner",
 ).rename(columns={"mean_depth": "tumor_depth"})
 
+# ── Phase 5.2: explicit VALID vs INSUFFICIENT_DATA status ─────────────────
+# Does not change the segmentation/calling logic for the case where tumor
+# and normal regions DO overlap -- only distinguishes that case from "zero
+# overlapping regions", which previously produced an empty-but-technically-
+# valid call.cns file that a report could not tell apart from a genuine
+# zero-CNV-calls result.
+CNV_QC_STATUS = cnv_qc_status(len(merged))
+
 # ── Log2 ratio ─────────────────────────────────────────────────────────────────
 merged["log2"] = np.log2(
     (merged["tumor_depth"] + PSEUDO) / (merged["normal_depth"] + PSEUDO)
@@ -104,10 +114,18 @@ cnr_df.to_csv(OUT_CNR, sep="\t", index=False)
 
 
 # ── Simple segmentation: group consecutive same-direction regions ──────────────
+_CNS_COLUMNS = ["chromosome", "start", "end", "gene", "log2", "probes", "weight"]
+
+
 def _segment(df: pd.DataFrame) -> pd.DataFrame:
     """
     Merge adjacent regions with log2_smooth in the same direction
     (both above amp_thr, both below del_thr, or both neutral).
+
+    Always returns a DataFrame with the full _CNS_COLUMNS schema, even when
+    `df` is empty (Phase 5.2 fix) -- a bare `pd.DataFrame([])` on an empty
+    segment list previously had zero columns, producing an unparseable
+    call.cns rather than a valid, empty one.
     """
     segments = []
     for chrom, grp in df.groupby("chrom", sort=False):
@@ -132,6 +150,8 @@ def _segment(df: pd.DataFrame) -> pd.DataFrame:
                 "weight":     1.0,
             })
             i = j
+    if not segments:
+        return pd.DataFrame(columns=_CNS_COLUMNS)
     return pd.DataFrame(segments)
 
 
@@ -152,7 +172,12 @@ call_df["type"] = np.where(
     call_df["log2"] >= AMP_THR, "Amplification",
     np.where(call_df["log2"] <= DEL_THR, "Deletion", "Neutral")
 )
-call_df.to_csv(OUT_CALL_CNS, sep="\t", index=False)
+# Phase 5.2: leading comment line records VALID/INSUFFICIENT_DATA status.
+# `pd.read_csv(..., comment="#")` (used by the report script) already skips
+# comment lines transparently, so this is backward compatible.
+with open(OUT_CALL_CNS, "w") as fh:
+    fh.write(f"#qc_status\t{CNV_QC_STATUS}\n")
+call_df.to_csv(OUT_CALL_CNS, sep="\t", index=False, mode="a")
 
 # ── Scatter plot ───────────────────────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(14, 4))

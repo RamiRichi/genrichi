@@ -172,8 +172,12 @@ else:
     tmb_note = ""
 
 # ── MSI score ─────────────────────────────────────────────────────────────────
+# Phase 5.2: a 4th "qc_status" column (VALID / INSUFFICIENT_DATA) may be
+# present (see calculate_msi.py). Absent (legacy 3-column format) is treated
+# as VALID, preserving prior behavior exactly.
 msi_score = None
 msi_status = "Unknown"
+msi_qc_status_value = "VALID"
 try:
     with open(sm.input.msi_score) as f:
         lines = f.readlines()
@@ -184,13 +188,38 @@ try:
             if len(parts) >= 3:
                 try:
                     msi_score = float(parts[2])
-                    msi_status = "MSI-High" if msi_score >= MSI_THRESHOLD else "MSS"
                 except ValueError:
-                    pass
+                    continue
+                if len(parts) >= 4 and parts[3].strip():
+                    msi_qc_status_value = parts[3].strip()
+                if msi_qc_status_value == "INSUFFICIENT_DATA":
+                    msi_status = "INSUFFICIENT_DATA"
+                else:
+                    msi_status = "MSI-High" if msi_score >= MSI_THRESHOLD else "MSS"
 except Exception:
     pass
 
+# Human-facing display value only -- never show a numeric MSI% next to an
+# "insufficient data" determination (the underlying file keeps the real
+# number for machine-readability/debugging).
+msi_score_display = None if msi_status == "INSUFFICIENT_DATA" else msi_score
+
 # ── CNV calls ─────────────────────────────────────────────────────────────────
+# Phase 5.2: a leading "#qc_status" comment line may be present in call.cns
+# (see calculate_cnv.py). Absent (legacy format) is treated as VALID,
+# preserving prior behavior exactly. `comment="#"` in the pd.read_csv call
+# below already skips this line transparently.
+cnv_qc_status_value = "VALID"
+try:
+    with open(sm.input.call_cns) as f:
+        _first_line = f.readline()
+    if _first_line.startswith("#qc_status"):
+        _parts = _first_line.strip().split("\t", 1)
+        if len(_parts) == 2 and _parts[1].strip():
+            cnv_qc_status_value = _parts[1].strip()
+except Exception:
+    pass
+
 cnv_calls = []
 try:
     cnv_df = pd.read_csv(sm.input.call_cns, sep="\t", comment="#")
@@ -490,6 +519,21 @@ summary_text  = (
     "No HIGH or MODERATE impact somatic variants detected"
 )
 
+# ── Pre-render MSI/CNV display strings (Phase 5.2 insufficient-data aware) ──
+if msi_status == "INSUFFICIENT_DATA":
+    msi_value_class = ""
+    msi_value_color = "#aaa"
+    msi_status_color = "#e67e22"
+else:
+    msi_value_class = "msi-high" if msi_status == "MSI-High" else "mss"
+    msi_value_color = "inherit"
+    msi_status_color = "#e74c3c" if msi_status == "MSI-High" else "#27ae60"
+msi_display_str = f"{msi_score_display:.1f}%" if msi_score_display is not None else "N/A"
+
+cnv_insufficient = cnv_qc_status_value == "INSUFFICIENT_DATA"
+cnv_count_display = "N/A" if cnv_insufficient else str(len(cnv_calls))
+cnv_count_color = "#aaa" if cnv_insufficient else "#8e44ad"
+
 # ── Provenance (Phase 5.1) ────────────────────────────────────────────────────
 PROVENANCE = build_provenance(
     sample_id=SAMPLE_ID,
@@ -497,6 +541,17 @@ PROVENANCE = build_provenance(
     run_id=RUN_ID,
     panel_bed_path=PANEL_BED,
 )
+
+# ── COSMIC availability (Phase 5.2) ────────────────────────────────────────
+# Same file-existence condition already used by annotation_comprehensive.smk
+# to decide whether to pass --custom ...COSMIC... to VEP -- surfaced here so
+# "no COSMIC match" and "COSMIC not available this run" are never conflated.
+# Recorded as an additive key in the provenance JSON (Phase 5.1's own
+# build_provenance()/provenance.py is not modified by this).
+_cosmic_cfg_path = ((sm.config.get("annotation") or {}).get("cosmic") or {}).get("vcf")
+COSMIC_AVAILABLE = bool(_cosmic_cfg_path) and os.path.isfile(_cosmic_cfg_path)
+PROVENANCE.setdefault("annotation_databases", {})["cosmic_available"] = COSMIC_AVAILABLE
+
 provenance_tag_html = provenance_script_tag(PROVENANCE)
 provenance_footer_str = provenance_footer_line(PROVENANCE)
 
@@ -561,7 +616,7 @@ HTML = f"""<!DOCTYPE html>
   <div class="meta-item"><div class="label">Report Date</div><div class="value">{date.today().isoformat()}</div></div>
 </div>
 
-<div class="banner">&#128203; {summary_text} &nbsp;|&nbsp; {tmb_banner_str} &nbsp;|&nbsp; MSI: {f"{msi_score:.1f}%" if msi_score is not None else "N/A"} [{msi_status}]</div>
+<div class="banner">&#128203; {summary_text} &nbsp;|&nbsp; {tmb_banner_str} &nbsp;|&nbsp; MSI: {msi_display_str} [{msi_status}]</div>
 
 <!-- Biomarker summary cards -->
 <div class="biomarker-row">
@@ -571,17 +626,17 @@ HTML = f"""<!DOCTYPE html>
   </div>
   <div class="biomarker-card">
     <div class="bm-label">Microsatellite Instability</div>
-    <div class="bm-value {'msi-high' if msi_status=='MSI-High' else 'mss'}">{f"{msi_score:.1f}%" if msi_score is not None else "N/A"}</div>
-    <div style="font-size:0.85em;margin-top:4px;color:{'#e74c3c' if msi_status=='MSI-High' else '#27ae60'};font-weight:bold">{msi_status}</div>
-    <div style="font-size:0.75em;color:#999;margin-top:2px">Threshold: &ge;{MSI_THRESHOLD}% unstable</div>
+    <div class="bm-value {msi_value_class}" style="color:{msi_value_color}">{msi_display_str}</div>
+    <div style="font-size:0.85em;margin-top:4px;color:{msi_status_color};font-weight:bold">{msi_status}</div>
+    <div style="font-size:0.75em;color:#999;margin-top:2px">{"No PASS variants were evaluated for this sample" if msi_status == "INSUFFICIENT_DATA" else f"Threshold: &ge;{MSI_THRESHOLD}% unstable"}</div>
   </div>
   <div class="biomarker-card">
     <div class="bm-label">CNV Calls</div>
-    <div class="bm-value" style="color:#8e44ad">{len(cnv_calls)}</div>
+    <div class="bm-value" style="color:{cnv_count_color}">{cnv_count_display}</div>
     <div style="font-size:0.85em;margin-top:4px;color:#555">
-      {sum(1 for c in cnv_calls if c['type']=='Amplification')} amp &nbsp; {sum(1 for c in cnv_calls if c['type']=='Deletion')} del
+      {"Tumor/normal region overlap was empty" if cnv_insufficient else f"{sum(1 for c in cnv_calls if c['type']=='Amplification')} amp &nbsp; {sum(1 for c in cnv_calls if c['type']=='Deletion')} del"}
     </div>
-    <div style="font-size:0.75em;color:#999;margin-top:2px">Amp log2 &ge;{AMP_THR} &nbsp; Del log2 &le;{DEL_THR}</div>
+    <div style="font-size:0.75em;color:#999;margin-top:2px">{"CNV could not be assessed" if cnv_insufficient else f"Amp log2 &ge;{AMP_THR} &nbsp; Del log2 &le;{DEL_THR}"}</div>
   </div>
 </div>
 
@@ -597,6 +652,8 @@ HTML = f"""<!DOCTYPE html>
     <img src="data:image/png;base64,{qc_chart_b64}" style="max-width:100%">
   </div>
 </div>
+
+{"" if COSMIC_AVAILABLE else '''<div style="background:#fef3e2;color:#d68910;margin:0 32px 16px;padding:10px 20px;border-radius:6px;font-size:0.85em">&#9888; COSMIC annotation was not performed for this run (reference file unavailable). The COSMIC column below is not populated and should not be read as "no COSMIC match".</div>'''}
 
 <!-- HIGH impact variants -->
 <div class="section">
@@ -622,11 +679,11 @@ HTML = f"""<!DOCTYPE html>
 
 <!-- CNV calls -->
 <div class="section">
-  <div class="section-header">&#128200; Copy Number Variants ({len(cnv_calls)})</div>
+  <div class="section-header">&#128200; Copy Number Variants ({cnv_count_display})</div>
   <div class="section-body">
     <table>
       <tr><th>Gene/Region</th><th>Location</th><th>log2 Ratio</th><th>Copy Number</th><th>Type</th></tr>
-      {_cnv_rows(cnv_calls)}
+      {"<tr><td colspan='6' style='text-align:center;color:#e67e22'>Insufficient tumor/normal coverage overlap &mdash; CNV could not be assessed for this run</td></tr>" if cnv_insufficient else _cnv_rows(cnv_calls)}
     </table>
   </div>
 </div>

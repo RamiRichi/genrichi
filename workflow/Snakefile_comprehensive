@@ -1,13 +1,32 @@
 configfile: "config/comprehensive_config.yaml"
 
+import os
+import sys
 import pandas as pd
 from pathlib import Path
+
+sys.path.insert(0, os.path.join(os.getcwd(), "workflow", "scripts"))
+from preflight import run_preflight_checks, format_report
 
 samples_df = (
     pd.read_csv(config["samples"], sep="\t", dtype=str)
     .set_index("sample_id")
 )
 SAMPLES = samples_df.index.tolist()
+
+# ── Phase 5.2: pre-flight validation ────────────────────────────────────────
+# Runs once, before any rule is scheduled. Validates config completeness/
+# sanity, samples-sheet structure, FASTQ existence/non-emptiness, required
+# reference/resource files, and obvious panel/reference build mismatches.
+# Never changes calling/filtering/MSI/CNV/TMB logic or thresholds.
+_preflight_report = run_preflight_checks(config, samples_df, base_dir=os.getcwd())
+if _preflight_report.errors or _preflight_report.warnings:
+    sys.stderr.write("\n" + format_report(_preflight_report) + "\n")
+if not _preflight_report.ok:
+    sys.exit(
+        f"GenRichi pre-flight validation failed with {len(_preflight_report.errors)} error(s) "
+        "-- see details above. No rules were executed."
+    )
 
 wildcard_constraints:
     sample    = "|".join(SAMPLES),
