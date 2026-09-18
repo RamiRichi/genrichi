@@ -18,10 +18,13 @@ rule comprehensive_report:
         normal_markdup="results/{sample}/normal/align/{sample}.normal.markdup_metrics.txt",
     output:
         html="results/{sample}/report/{sample}_comprehensive_report.html",
+        provenance="results/{sample}/report/{sample}_provenance.json",
     conda: "../envs/report.yaml"
     log: "logs/{sample}/comprehensive_report.log"
     params:
         sample_id=lambda wc: wc.sample,
+        run_id=lambda wc: samples_df.loc[wc.sample, "run_id"]
+            if "run_id" in samples_df.columns else None,
         patient_id=lambda wc: samples_df.loc[wc.sample, "patient_id"]
             if "patient_id" in samples_df.columns else wc.sample,
         sex=lambda wc: samples_df.loc[wc.sample, "sex"]

@@ -19,10 +19,13 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pandas as pd
 
+from provenance import build_provenance, provenance_script_tag, provenance_footer_line
+
 sm = snakemake  # type: ignore[name-defined]
 
 # ── Parameters ────────────────────────────────────────────────────────────────
 SAMPLE_ID      = sm.params.sample_id
+RUN_ID         = getattr(sm.params, "run_id", None)
 PATIENT_ID     = sm.params.patient_id
 SEX            = sm.params.sex
 TUMOR_TYPE     = sm.params.tumor_type
@@ -487,12 +490,23 @@ summary_text  = (
     "No HIGH or MODERATE impact somatic variants detected"
 )
 
+# ── Provenance (Phase 5.1) ────────────────────────────────────────────────────
+PROVENANCE = build_provenance(
+    sample_id=SAMPLE_ID,
+    config=sm.config,
+    run_id=RUN_ID,
+    panel_bed_path=PANEL_BED,
+)
+provenance_tag_html = provenance_script_tag(PROVENANCE)
+provenance_footer_str = provenance_footer_line(PROVENANCE)
+
 HTML = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{COMPANY} — Comprehensive Cancer Panel Report — {SAMPLE_ID}</title>
+{provenance_tag_html}
 <style>
   body{{font-family:Arial,sans-serif;margin:0;background:#f5f5f5;color:#333}}
   .header{{background:#2c3e50;color:white;padding:20px 32px;display:flex;align-items:center}}
@@ -659,7 +673,8 @@ HTML = f"""<!DOCTYPE html>
   {tmb_footer_str} &nbsp;&bull;&nbsp;
   Annotation: MANE Select v1.4 (GRCh38) &nbsp;&bull;&nbsp;
   Threshold: &ge;{TMB_HIGH} mut/Mb (requires assay-specific clinical validation)<br>
-  <span style="color:#c0392b">FOR RESEARCH USE ONLY. Not validated for clinical diagnostic use. Requires expert review before clinical reporting.</span>
+  <span style="color:#c0392b">FOR RESEARCH USE ONLY. Not validated for clinical diagnostic use. Requires expert review before clinical reporting.</span><br>
+  {provenance_footer_str}
 </div>
 
 </body></html>"""
@@ -667,3 +682,8 @@ HTML = f"""<!DOCTYPE html>
 os.makedirs(os.path.dirname(sm.output.html), exist_ok=True)
 with open(sm.output.html, "w", encoding="utf-8") as fh:
     fh.write(HTML)
+
+os.makedirs(os.path.dirname(sm.output.provenance), exist_ok=True)
+with open(sm.output.provenance, "w", encoding="utf-8") as fh:
+    json.dump(PROVENANCE, fh, indent=2, sort_keys=True, default=str)
+    fh.write("\n")
