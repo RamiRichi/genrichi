@@ -1,18 +1,20 @@
-# GenRichi NGS Diagnostic Pipeline
+# GenRichi NGS Bioinformatics Pipeline
 
-> **Clinical-grade Snakemake pipeline for somatic variant calling, hereditary panel analysis, and automated diagnostic reporting.**
+> **Research-use Snakemake pipeline for somatic and hereditary cancer variant analysis, built to laboratory-grade reproducibility and auditability standards.**
 
-Built by a clinical bioinformatician with 7+ years in ISO 15189-accredited molecular diagnostics. Designed for real-world NGS laboratory workflows — not just research.
+> **For Research Use Only (RUO).** Not a certified in-vitro diagnostic (IVD) product. Provided as a technology service to accredited laboratory partners, who retain full clinical and legal responsibility for any resulting report.
+
+Built by a bioinformatician with 7+ years' experience in ISO 15189-accredited molecular diagnostics laboratories. Designed to support research and evaluation workflows that reflect real laboratory practice.
 
 ---
 
 ## What GenRichi Does
 
-GenRichi takes raw sequencing reads (FASTQ) and delivers a ready-to-review clinical HTML report — fully automated.
+GenRichi takes raw sequencing reads (FASTQ) and delivers a ready-to-review research HTML report — fully automated.
 
 ```
 FASTQ → QC (fastp) → Alignment (BWA-MEM2) → Variant Calling (GATK Mutect2)
-     → Annotation (VEP + COSMIC + ClinVar) → Clinical HTML Report
+     → Annotation (VEP + COSMIC + ClinVar) → Research HTML Report
 ```
 
 ### Three Analysis Modes
@@ -33,7 +35,7 @@ FASTQ → QC (fastp) → Alignment (BWA-MEM2) → Variant Calling (GATK Mutect2)
 - **TMB & MSI scoring** — tumor mutational burden and microsatellite instability
 - **CNV detection** — copy number variant calling
 - **Automated HTML reports** — patient-ready, clinician-friendly output
-- **Clinical portal** — web interface for order management and report delivery
+- **Partner portal** — web interface for order management and report delivery
 - **Reproducible** — Conda environments pinned per rule
 - **Configurable** — swap panels, references, thresholds via `config.yaml`
 
@@ -87,7 +89,7 @@ genrichi/
 │   └── samples.tsv                  # Sample sheet template
 ├── resources/
 │   └── panel/                       # BED files (hotspots, genes)
-├── portal/                          # Clinical web portal (Flask)
+├── portal/                          # Partner web portal (Flask)
 └── test_data/                       # Test FASTQ files
 ```
 
@@ -114,9 +116,9 @@ annotation:
 
 ---
 
-## Clinical Portal
+## Partner Portal
 
-GenRichi includes a web-based clinical portal for:
+GenRichi includes a web-based partner portal for:
 - Submitting sequencing orders
 - Tracking pipeline status
 - Viewing and downloading reports
@@ -148,7 +150,7 @@ python app.py
 
 ## Background
 
-GenRichi was developed alongside clinical practice in an ISO 15189-accredited molecular diagnostics laboratory. The pipeline reflects real diagnostic requirements: reproducibility, auditability, and report quality suitable for clinical decision-making.
+GenRichi was developed alongside clinical practice in an ISO 15189-accredited molecular diagnostics laboratory. The pipeline reflects real laboratory requirements — reproducibility, auditability, and report quality — carried over into a research-use tool; it is not itself clinically validated and does not make clinical decisions.
 
 The name **GenRichi** reflects the mission: making genomic diagnostics richer — more complete, more accessible, and more actionable.
 

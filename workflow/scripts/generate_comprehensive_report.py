@@ -157,7 +157,7 @@ if tmb_partial or tmb_coding_mb_actual == 0:
     tmb_value = None
     tmb_status = "N/A"
     tmb_note = (
-        "Partial-region run — full 62-gene panel required for TMB."
+        "Partial-region run — full 55-gene panel required for TMB."
         " Chr17 only covers 6% of assay coding target."
     )
     tmb_variants = pd.DataFrame()
@@ -486,7 +486,7 @@ if tmb_partial or tmb_value is None:
     <div class="bm-value" style="color:#aaa;font-size:1.3em">N/A</div>
     <div style="font-size:0.82em;margin-top:6px;color:#e67e22;font-weight:bold">Partial-Region Run</div>
     <div style="font-size:0.72em;color:#999;margin-top:4px;line-height:1.5">
-      Chr17 only &mdash; 6% of assay coding target.<br>Full 62-gene panel required for TMB.
+      Chr17 only &mdash; 6% of assay coding target.<br>Full 55-gene panel required for TMB.
     </div>
     """
     tmb_footer_str = (

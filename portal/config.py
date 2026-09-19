@@ -44,7 +44,7 @@ PIPELINE_MAP = {
         "label":      "Somatic Comprehensive Panel",
         "snakefile":  "Snakefile_comprehensive",
         "configfile": "config/comprehensive_config.yaml",
-        "description": "Full somatic workup — SNV/indel + CNV + MSI + TMB (65 cancer genes)",
+        "description": "Full somatic workup — SNV/indel + CNV + MSI + TMB (55 cancer genes)",
     },
 }
 
