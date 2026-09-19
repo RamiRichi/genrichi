@@ -660,7 +660,7 @@ class TestObservedFactsInPreflightReport(_TmpMixin, unittest.TestCase):
         self.assertTrue(report.ok)
         self.assertEqual([w.field for w in report.warnings], ["annotation.cosmic.vcf"])
         fields = [i.field for i in report.info]
-        for expected in ("ref.genome", "ref.dbsnp", "annotation.clinvar.vcf", "annotation.vep.cache_dir"):
+        for expected in ("ref.genome", "ref.dbsnp", "annotation.clinvar.vcf", "annotation.vep.cache_dir", "runtime.tools"):
             self.assertIn(expected, fields)
 
     def test_report_text_shows_observed_versions_from_headers_and_cache(self):

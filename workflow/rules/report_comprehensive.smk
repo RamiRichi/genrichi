@@ -16,6 +16,12 @@ rule comprehensive_report:
         normal_mosdepth="results/{sample}/normal/align/{sample}.normal.mosdepth.summary.txt",
         tumor_markdup="results/{sample}/tumor/align/{sample}.tumor.markdup_metrics.txt",
         normal_markdup="results/{sample}/normal/align/{sample}.normal.markdup_metrics.txt",
+        tool_versions=[
+            "results/runtime/alignment_tool_versions.json",
+            "results/runtime/annotation_tool_versions.json",
+            "results/runtime/calling_tool_versions.json",
+            "results/runtime/qc_tool_versions.json",
+        ],
     output:
         html="results/{sample}/report/{sample}_comprehensive_report.html",
         provenance="results/{sample}/report/{sample}_provenance.json",

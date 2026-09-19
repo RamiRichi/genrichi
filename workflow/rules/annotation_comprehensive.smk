@@ -12,6 +12,8 @@ rule vep_annotate_comprehensive:
         vcf="results/{sample}/snv/{sample}.pass.vcf.gz",
         ref=config["ref"]["genome"],
         cache=config["annotation"]["vep"]["cache_dir"],
+        # Gate: written only if the VEP executable matches the VEP cache release.
+        tool_versions="results/runtime/annotation_tool_versions.json",
     output:
         vcf="results/{sample}/annotation/{sample}.vep.vcf.gz",
         tbi="results/{sample}/annotation/{sample}.vep.vcf.gz.tbi",

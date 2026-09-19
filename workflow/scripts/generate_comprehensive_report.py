@@ -540,6 +540,7 @@ PROVENANCE = build_provenance(
     config=sm.config,
     run_id=RUN_ID,
     panel_bed_path=PANEL_BED,
+    tool_version_files=list(getattr(sm.input, "tool_versions", None) or []),
 )
 
 # ── COSMIC availability (Phase 5.2) ────────────────────────────────────────

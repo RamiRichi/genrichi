@@ -194,7 +194,7 @@ class TestComprehensiveReportProvenanceIntegration(unittest.TestCase):
         self.assertIsNotNone(m, "provenance <script> block not found in report HTML")
         embedded = json.loads(m.group(1))
         self.assertEqual(embedded["sample_id"], "HCC1395_demo")
-        self.assertEqual(embedded["schema_version"], "1.0")
+        self.assertEqual(embedded["schema_version"], "1.1")
         self.assertIn("pipeline", embedded)
         self.assertIn("generated_at_utc", embedded)
 
@@ -224,6 +224,42 @@ class TestComprehensiveReportProvenanceIntegration(unittest.TestCase):
         sidecar = json.loads(self.provenance_out.read_text(encoding="utf-8"))
         self.assertIsNone(sidecar["run_id"])
         self.assertIsNone(sidecar["reference_resources"]["panel_of_normals"]["path"])
+
+    def test_report_step_records_observed_tool_versions_and_clinvar_source(self):
+        # The report rule passes the runtime-probe JSON files as `input.tool_versions`;
+        # the sidecar must carry what those tools reported and identify the report's ClinVar source.
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from fixture_builders import write_vcf_with_index
+
+        clinvar = self.tmpdir / "clinvar.vcf.gz"
+        write_vcf_with_index(clinvar, ["##fileformat=VCFv4.1", "##fileDate=2026-05-17", "##source=ClinVar",
+                                       "##reference=GRCh38"])
+        self.fake_snakemake.config["annotation"]["clinvar"]["vcf"] = str(clinvar)
+
+        probe = self.tmpdir / "annotation_tool_versions.json"
+        probe.write_text(json.dumps({
+            "label": "annotation", "observed_at_utc": "2026-09-19T00:00:00+00:00",
+            "conda_prefix": "/envs/annotation",
+            "tools": {"vep": {"found": True, "path": "/envs/annotation/bin/vep", "version": "113.0"},
+                      "bcftools": {"found": True, "path": "/x/bcftools", "version": "1.19", "htslib": "1.19.1"}},
+        }), encoding="utf-8")
+        self.fake_snakemake.input.tool_versions = [str(probe)]
+
+        self._run_report_script()
+        sidecar = json.loads(self.provenance_out.read_text(encoding="utf-8"))
+        tools = sidecar["software_observed"]["tools"]
+        self.assertEqual(tools["vep"]["version"], "113.0")
+        self.assertEqual(tools["bcftools"]["htslib_version"], "1.19.1")
+        report_cv = sidecar["clinical_annotation_sources"]["report_clinvar"]
+        self.assertEqual(report_cv["version"], "2026-05-17")
+        self.assertEqual(report_cv["role"], "report_clinical_classification_source")
+
+    def test_report_without_tool_version_inputs_still_renders(self):
+        # older callers / fixtures have no `tool_versions` input at all
+        self.assertFalse(hasattr(self.fake_snakemake.input, "tool_versions"))
+        self._run_report_script()
+        sidecar = json.loads(self.provenance_out.read_text(encoding="utf-8"))
+        self.assertEqual(sidecar["software_observed"]["status"], "not_collected")
 
 
 if __name__ == "__main__":

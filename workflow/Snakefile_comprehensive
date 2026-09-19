@@ -20,7 +20,7 @@ SAMPLES = samples_df.index.tolist()
 # reference/resource files, and obvious panel/reference build mismatches.
 # Never changes calling/filtering/MSI/CNV/TMB logic or thresholds.
 _preflight_report = run_preflight_checks(config, samples_df, base_dir=os.getcwd())
-if _preflight_report.errors or _preflight_report.warnings:
+if _preflight_report.errors or _preflight_report.warnings or _preflight_report.info:
     sys.stderr.write("\n" + format_report(_preflight_report) + "\n")
 if not _preflight_report.ok:
     sys.exit(
@@ -43,6 +43,7 @@ rule all:
 
 
 # ── Shared (tumor + normal both run through these) ─────────────────────────
+include: "rules/runtime_versions.smk"
 include: "rules/qc_paired.smk"
 include: "rules/align_paired.smk"
 

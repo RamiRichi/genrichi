@@ -406,6 +406,12 @@ def validate_runtime_resources(config: dict, base_dir=None):
                 "(the cache's ClinVar is an annotation dependency, not the report's ClinVar source)",
             ))
 
+    info.append(Issue(
+        "runtime.tools",
+        "VEP, aligner (bwa), samtools, bcftools/htslib, GATK, fastp and MultiQC versions are observed at run time "
+        "inside each conda environment (results/runtime/*_tool_versions.json); the VEP executable is verified "
+        "against the VEP cache release before annotation runs.",
+    ))
     return errors, warnings, info
 
 

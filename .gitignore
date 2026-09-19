@@ -36,6 +36,9 @@ portal/instance/
 # Claude Code local settings (machine-specific permissions)
 .claude/
 
+# Deploy-time build stamp (python workflow/scripts/provenance.py --write-build-stamp workflow/build_info.json)
+workflow/build_info.json
+
 # Generated pipeline outputs (regenerable via Snakemake)
 /results/
 NA12878_dashboard.html
