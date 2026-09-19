@@ -19,9 +19,17 @@ Design goals:
 
 from __future__ import annotations
 
+import json
 import os
+import sys
 from dataclasses import dataclass, field
 from typing import Any, Iterable
+
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if _SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPT_DIR)
+
+import resource_inspect  # noqa: E402
 
 try:
     import pandas as pd
@@ -40,6 +48,7 @@ class Issue:
 class PreflightReport:
     errors: list = field(default_factory=list)
     warnings: list = field(default_factory=list)
+    info: list = field(default_factory=list)  # observed facts (Phase 5.3); never affects `ok`
 
     @property
     def ok(self) -> bool:
@@ -263,6 +272,143 @@ def validate_resources(config: dict) -> list:
     return issues
 
 
+# ── Runtime-resource validation (Phase 5.3): observe the files, don't trust the config ──
+def _str_path(value):
+    return value if isinstance(value, str) and value else None
+
+
+def _resolve_manifest_path(config: dict, base_dir):
+    """(path, explicitly_configured). Default: <base_dir>/config/reference_manifest.json."""
+    explicit = _str_path((config.get("ref") or {}).get("manifest"))
+    if explicit:
+        return (explicit if os.path.isabs(explicit) or not base_dir else os.path.join(base_dir, explicit)), True
+    return os.path.join(base_dir or os.getcwd(), "config", "reference_manifest.json"), False
+
+
+def validate_runtime_resources(config: dict, base_dir=None):
+    """
+    Deep checks on the resources the pipeline will actually read.
+
+    Returns (errors, warnings, info) as lists of Issue. Files that are simply
+    missing are NOT reported here (validate_resources already does), so a
+    missing resource never produces two messages.
+
+    Errors are limited to conditions that make the run invalid or unsafe
+    (inconsistent FASTA/.fai/.dict, BWA index built from another FASTA,
+    unusable VCF index, VEP cache/assembly mismatch, reference differing from
+    the configured manifest). Anything softer is a warning.
+    """
+    errors: list = []
+    warnings: list = []
+    info: list = []
+    if not isinstance(config, dict):
+        return errors, warnings, info
+
+    ref = config.get("ref") or {}
+    ann = config.get("annotation") or {}
+    vep = ann.get("vep") or {}
+    build = vep.get("genome_build")
+
+    def add(target, field_name, messages):
+        for m in messages:
+            target.append(Issue(field_name, m))
+
+    # ── Reference FASTA, .fai, .dict, BWA index, manifest ──
+    genome = _str_path(ref.get("genome"))
+    if genome and os.path.isfile(genome):
+        e, w, facts = resource_inspect.check_fasta_indexes(genome)
+        add(errors, "ref.genome (FASTA/.fai/.dict consistency)", e)
+        add(warnings, "ref.genome (FASTA/.fai/.dict consistency)", w)
+        if facts and not e:
+            e2, w2, bfacts = resource_inspect.check_bwa_index(
+                genome, expected_total_bases=facts.get("total_bases"), expected_contigs=facts.get("contig_count"))
+            add(errors, "ref.genome (BWA index)", e2)
+            add(warnings, "ref.genome (BWA index)", w2)
+
+            manifest_path, explicit = _resolve_manifest_path(config, base_dir)
+            manifest_note = ""
+            if os.path.isfile(manifest_path):
+                try:
+                    with open(manifest_path, encoding="utf-8") as fh:
+                        manifest = json.load(fh)
+                except (OSError, ValueError) as exc:
+                    manifest = None
+                    errors.append(Issue("ref.manifest", f"Reference manifest unreadable: {manifest_path}: {exc}"))
+                if manifest is not None:
+                    diffs = resource_inspect.compare_to_manifest(manifest, facts, build)
+                    if diffs:
+                        errors.append(Issue(
+                            "ref.genome (expected resource set)",
+                            "The configured FASTA is not the reference recorded in "
+                            f"{manifest_path}: " + "; ".join(diffs) + ". If the reference was changed "
+                            "deliberately it must be re-validated and the manifest regenerated.",
+                        ))
+                    else:
+                        manifest_note = f"; matches manifest {os.path.basename(manifest_path)}"
+            elif explicit:
+                errors.append(Issue("ref.manifest", f"Configured reference manifest not found: {manifest_path}"))
+            else:
+                warnings.append(Issue(
+                    "ref.genome (expected resource set)",
+                    f"No reference manifest found ({manifest_path}); cannot confirm the FASTA is the expected "
+                    "resource set. Create one with: python workflow/scripts/preflight.py "
+                    "--write-reference-manifest <genome.fa> <manifest.json> --genome-build GRCh38",
+                ))
+            info.append(Issue(
+                "ref.genome",
+                f"observed {facts['contig_count']} contigs, {facts['total_bases']:,} bp, "
+                f".fai sha256 {facts['fai_sha256'][:16]}…; FASTA/.fai/.dict consistent; "
+                f"BWA index verified ({bfacts.get('bwa_index_n_seqs', '?')} contigs){manifest_note}",
+            ))
+
+    # ── bgzip / tabix indexes usable, header build agrees with declared build ──
+    vcf_resources = [("ref.dbsnp", ref.get("dbsnp")), ("ref.gnomad", ref.get("gnomad")),
+                     ("annotation.clinvar.vcf", (ann.get("clinvar") or {}).get("vcf")),
+                     ("ref.pon", ref.get("pon"))]
+    cosmic = _str_path((ann.get("cosmic") or {}).get("vcf"))
+    if cosmic and os.path.isfile(cosmic):
+        vcf_resources.append(("annotation.cosmic.vcf", cosmic))
+    declared = resource_inspect.normalize_build(build)
+    for field_name, path in vcf_resources:
+        path = _str_path(path)
+        if not path or not os.path.isfile(path):
+            continue
+        e, w = resource_inspect.check_vcf_index(path)
+        add(errors, f"{field_name} (index)", e)
+        add(warnings, f"{field_name} (index)", w)
+        header = resource_inspect.read_vcf_header(path)
+        header_build = resource_inspect.build_family_from_text(header.get("reference"))
+        if declared and header_build and header_build != declared:
+            errors.append(Issue(
+                field_name,
+                f"VCF header says reference '{header.get('reference')}' ({header_build}) but the declared "
+                f"genome build is {declared}",
+            ))
+        if field_name in ("annotation.clinvar.vcf", "ref.dbsnp") and not header.get("error"):
+            bits = [f"{k}={header[k]}" for k in ("file_date", "dbsnp_build_id", "reference", "source") if header.get(k)]
+            note = " (custom ClinVar file; source of the report's ClinVar column)" if field_name.endswith("clinvar.vcf") else ""
+            info.append(Issue(field_name, "header " + ", ".join(bits) + note))
+
+    # ── VEP cache observed from the cache itself ──
+    cache_dir = _str_path(vep.get("cache_dir"))
+    if cache_dir and os.path.isdir(cache_dir):
+        pinned = resource_inspect.vep_cache_version_from_extra(vep.get("extra"))
+        e, w, cfacts = resource_inspect.inspect_vep_cache(cache_dir, pinned, build)
+        add(errors, "annotation.vep.cache_dir (cache/assembly)", e)
+        add(warnings, "annotation.vep.cache_dir (cache/assembly)", w)
+        cinfo = cfacts.get("info") or {}
+        if cinfo and not e:
+            srcs = ", ".join(f"{k[len('source_'):]} {cinfo[k]}" for k in
+                             ("source_gencode", "source_ClinVar", "source_COSMIC", "source_dbSNP") if k in cinfo)
+            info.append(Issue(
+                "annotation.vep.cache_dir",
+                f"observed cache {cfacts['version_dir']}: info.txt assembly {cinfo.get('assembly')}; sources: {srcs} "
+                "(the cache's ClinVar is an annotation dependency, not the report's ClinVar source)",
+            ))
+
+    return errors, warnings, info
+
+
 def check_cosmic_availability(config: dict):
     """
     COSMIC is optional. Returns (available: bool, configured_path: str|None)
@@ -347,9 +493,11 @@ def check_genome_build_naming(config: dict) -> list:
 
 
 # ── Top-level entry point ────────────────────────────────────────────────
-def run_preflight_checks(config: dict, samples_df, base_dir: str | None = None) -> PreflightReport:
+def run_preflight_checks(config: dict, samples_df, base_dir: str | None = None,
+                         deep_resource_checks: bool = True) -> PreflightReport:
     errors: list = []
     warnings: list = []
+    info: list = []
 
     errors.extend(validate_config_keys(config))
     errors.extend(validate_config_ranges(config))
@@ -363,6 +511,12 @@ def run_preflight_checks(config: dict, samples_df, base_dir: str | None = None) 
         None if _ref_genome is _MISSING else _ref_genome,
     ))
     errors.extend(check_genome_build_naming(config))
+
+    if deep_resource_checks:
+        deep_errors, deep_warnings, deep_info = validate_runtime_resources(config, base_dir=base_dir)
+        errors.extend(deep_errors)
+        warnings.extend(deep_warnings)
+        info.extend(deep_info)
 
     if isinstance(config, dict):
         cosmic_available, cosmic_path = check_cosmic_availability(config)
@@ -378,14 +532,14 @@ def run_preflight_checks(config: dict, samples_df, base_dir: str | None = None) 
                 "COSMIC not configured — COSMIC annotation will be skipped for this run (optional).",
             ))
 
-    return PreflightReport(errors=errors, warnings=warnings)
+    return PreflightReport(errors=errors, warnings=warnings, info=info)
 
 
 def format_report(report: PreflightReport, title: str = "GenRichi Phase 1 Pre-flight Validation") -> str:
     lines = [title, "=" * len(title)]
+    info = getattr(report, "info", None) or []
     if not report.errors and not report.warnings:
         lines.append("All pre-flight checks passed.")
-        return "\n".join(lines) + "\n"
     if report.errors:
         lines.append(f"\n{len(report.errors)} error(s) — pipeline will NOT run:")
         for i, issue in enumerate(report.errors, 1):
@@ -394,4 +548,37 @@ def format_report(report: PreflightReport, title: str = "GenRichi Phase 1 Pre-fl
         lines.append(f"\n{len(report.warnings)} warning(s) — pipeline will continue:")
         for i, issue in enumerate(report.warnings, 1):
             lines.append(f"  [{i}] {issue.field}: {issue.message}")
+    if info:
+        lines.append("\nObserved resources / runtime facts:")
+        for issue in info:
+            lines.append(f"  - {issue.field}: {issue.message}")
     return "\n".join(lines) + "\n"
+
+
+def _main(argv=None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="GenRichi pre-flight helpers")
+    ap.add_argument("--write-reference-manifest", nargs=2, metavar=("GENOME_FA", "OUT_JSON"),
+                    help="fingerprint the reference (contig set, .fai/.dict hashes) for later comparison")
+    ap.add_argument("--genome-build", default="GRCh38")
+    ap.add_argument("--description", default=None)
+    args = ap.parse_args(argv)
+    if not args.write_reference_manifest:
+        ap.print_help()
+        return 2
+    genome, out = args.write_reference_manifest
+    try:
+        manifest = resource_inspect.build_reference_manifest(genome, args.genome_build, args.description)
+    except resource_inspect.ResourceError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    with open(out, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(manifest, fh, indent=2, sort_keys=True)
+        fh.write("\n")
+    print(f"wrote {out}: {manifest['reference']['contig_count']} contigs, "
+          f"{manifest['reference']['total_bases']:,} bp")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(_main())

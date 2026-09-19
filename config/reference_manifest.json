@@ -1,0 +1,14 @@
+{
+  "created_utc": "2026-09-19T07:00:48+00:00",
+  "description": "GRCh38 reference FASTA used for the validated Phase 1 HCC1395 baseline (chr-prefixed contig names)",
+  "genome_build": "GRCh38",
+  "reference": {
+    "contig_count": 455,
+    "dict_sha256": "e611292dd7d022b494913ea36e343d8d125a74308e9f78cf0c3471ab68ac461e",
+    "fai_sha256": "3b425de206296a5c8053023fa5ca61da43cfe78c1737c12e58c83367c7e83c21",
+    "fasta_basename": "hg38.fa",
+    "first_contig": "chr1",
+    "total_bases": 3209286105
+  },
+  "schema_version": "1.0"
+}

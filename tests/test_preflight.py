@@ -5,6 +5,8 @@ Run with:
     python -m unittest tests.test_preflight -v
 """
 
+import gzip
+import json
 import sys
 import tempfile
 import unittest
@@ -15,33 +17,36 @@ import pandas as pd
 SCRIPTS_DIR = Path(__file__).resolve().parents[1] / "workflow" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import preflight  # noqa: E402
+import resource_inspect  # noqa: E402
+from fixture_builders import (  # noqa: E402
+    write_reference, write_vcf_with_index, write_vep_cache,
+)
 
 
 def _valid_config(tmp: Path):
-    """A minimally complete, internally-consistent config pointing at real (tiny) fixture files."""
-    genome = tmp / "hg38.fa"
-    genome.write_text(">chr1\nACGT\n", encoding="utf-8")
-    (tmp / "hg38.fa.fai").write_text("chr1\t4\t6\t4\t5\n", encoding="utf-8")
-    (tmp / "hg38.dict").write_text("@HD\tVN:1.6\n", encoding="utf-8")
-
-    dbsnp = tmp / "dbsnp_146.hg38.vcf.gz"
-    dbsnp.write_bytes(b"stub")
-    (tmp / "dbsnp_146.hg38.vcf.gz.tbi").write_bytes(b"stub")
-
-    gnomad = tmp / "af-only-gnomad.hg38.vcf.gz"
-    gnomad.write_bytes(b"stub")
-    (tmp / "af-only-gnomad.hg38.vcf.gz.tbi").write_bytes(b"stub")
-
-    clinvar = tmp / "clinvar.vcf.gz"
-    clinvar.write_bytes(b"stub")
-    (tmp / "clinvar.vcf.gz.tbi").write_bytes(b"stub")
+    """A complete, internally-consistent config pointing at real (tiny) fixture files."""
+    genome = write_reference(tmp)
+    write_vcf_with_index(tmp / "dbsnp_146.hg38.vcf.gz",
+                         ["##fileformat=VCFv4.0", "##fileDate=20151104", "##source=dbSNP",
+                          "##dbSNP_BUILD_ID=146", "##reference=GRCh38.p2"])
+    write_vcf_with_index(tmp / "af-only-gnomad.hg38.vcf.gz", ["##fileformat=VCFv4.2"])
+    write_vcf_with_index(tmp / "clinvar.vcf.gz",
+                         ["##fileformat=VCFv4.1", "##fileDate=2026-05-17", "##source=ClinVar",
+                          "##reference=GRCh38"])
+    dbsnp, gnomad, clinvar = (tmp / "dbsnp_146.hg38.vcf.gz", tmp / "af-only-gnomad.hg38.vcf.gz",
+                              tmp / "clinvar.vcf.gz")
 
     panel_bed = tmp / "panel.bed"
     panel_bed.write_text("chr1\t0\t4\tTP53\n", encoding="utf-8")
 
-    vep_cache = tmp / "vep_cache"
-    vep_cache.mkdir()
+    vep_cache = write_vep_cache(tmp)
+
+    (tmp / "config").mkdir(exist_ok=True)
+    manifest = resource_inspect.build_reference_manifest(str(genome), "GRCh38", "test reference")
+    (tmp / "config" / "reference_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
     return {
         "samples": "config/comprehensive_samples.tsv",
@@ -49,7 +54,8 @@ def _valid_config(tmp: Path):
         "panel": {"bed": str(panel_bed), "name": "Test Panel"},
         "calling": {"filter": {"min_af": 0.02, "min_depth": 20, "min_alt_reads": 3}},
         "annotation": {
-            "vep": {"cache_dir": str(vep_cache), "genome_build": "GRCh38"},
+            "vep": {"cache_dir": str(vep_cache), "genome_build": "GRCh38",
+                    "extra": "--everything --cache_version 113"},
             "clinvar": {"vcf": str(clinvar)},
             "cosmic": {"vcf": None},
         },
@@ -348,7 +354,7 @@ class TestRunPreflightChecksEndToEnd(unittest.TestCase):
         }]).set_index("sample_id")
 
     def test_fully_valid_run_has_no_errors(self):
-        report = preflight.run_preflight_checks(self.config, self._valid_samples_df())
+        report = preflight.run_preflight_checks(self.config, self._valid_samples_df(), base_dir=str(self.tmp))
         self.assertTrue(report.ok, msg=[(i.field, i.message) for i in report.errors])
         # COSMIC is unconfigured in _valid_config -> expect exactly one warning
         self.assertEqual(len(report.warnings), 1)
@@ -359,7 +365,7 @@ class TestRunPreflightChecksEndToEnd(unittest.TestCase):
         self.config["cnv"]["del_threshold"] = 1.0  # wrong sign
         samples_df = self._valid_samples_df()
         samples_df.loc["S1", "tumor_r1"] = ""  # blank field
-        report = preflight.run_preflight_checks(self.config, samples_df)
+        report = preflight.run_preflight_checks(self.config, samples_df, base_dir=str(self.tmp))
         self.assertFalse(report.ok)
         fields = [i.field for i in report.errors]
         self.assertIn("msi.threshold", fields)
@@ -368,7 +374,7 @@ class TestRunPreflightChecksEndToEnd(unittest.TestCase):
 
     def test_format_report_is_actionable_not_a_traceback(self):
         del self.config["panel"]["bed"]
-        report = preflight.run_preflight_checks(self.config, self._valid_samples_df())
+        report = preflight.run_preflight_checks(self.config, self._valid_samples_df(), base_dir=str(self.tmp))
         text = preflight.format_report(report)
         self.assertNotIn("Traceback", text)
         self.assertNotIn("KeyError", text)
@@ -376,11 +382,319 @@ class TestRunPreflightChecksEndToEnd(unittest.TestCase):
         self.assertIn("error(s)", text)
 
     def test_format_report_all_clear(self):
-        report = preflight.run_preflight_checks(self.config, self._valid_samples_df())
+        report = preflight.run_preflight_checks(self.config, self._valid_samples_df(), base_dir=str(self.tmp))
         # still has the cosmic warning, so it won't say "All pre-flight checks passed"
         text = preflight.format_report(report)
         self.assertIn("warning(s)", text)
         self.assertNotIn("error(s)", text)
+
+
+class _TmpMixin:
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmpdir.cleanup)
+        self.tmp = Path(self.tmpdir.name)
+
+
+class TestFastaIndexConsistency(_TmpMixin, unittest.TestCase):
+    def test_consistent_reference_has_no_errors_and_reports_facts(self):
+        genome = write_reference(self.tmp)
+        errors, warnings, facts = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertEqual((errors, warnings), ([], []))
+        self.assertEqual(facts["contig_count"], 1)
+        self.assertEqual(facts["total_bases"], 4)
+        self.assertEqual(len(facts["fai_sha256"]), 64)
+        self.assertEqual(len(facts["dict_sha256"]), 64)
+
+    def test_dict_length_disagreeing_with_fai_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n@SQ\tSN:chr1\tLN:5\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("disagree" in e for e in errors), errors)
+
+    def test_dict_with_different_contig_count_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n@SQ\tSN:chr1\tLN:4\n@SQ\tSN:chr2\tLN:4\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("2 dictionary contigs vs 1" in e for e in errors), errors)
+
+    def test_header_only_dict_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("no @SQ" in e for e in errors), errors)
+
+    def test_truncated_fasta_is_an_error(self):
+        genome = write_reference(self.tmp)
+        genome.write_bytes(b">chr1\nAC")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("beyond the end of the FASTA" in e for e in errors), errors)
+
+    def test_fai_missing_a_contig_the_fasta_has_is_an_error(self):
+        genome = write_reference(self.tmp)
+        genome.write_bytes(b">chr1\nACGT\n>chr2\n" + b"A" * 200 + b"\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("stale" in e for e in errors), errors)
+
+    def test_fai_for_a_different_fasta_is_an_error(self):
+        genome = write_reference(self.tmp)
+        genome.write_bytes(b">chrZ\nACGT\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("first contig" in e for e in errors), errors)
+
+    def test_malformed_fai_is_reported_not_raised(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.fa.fai").write_bytes(b"chr1\tfour\t6\t4\t5\n")
+        errors, _w, _f = resource_inspect.check_fasta_indexes(str(genome))
+        self.assertTrue(any("Unusable FASTA index" in e for e in errors), errors)
+
+    def test_run_preflight_surfaces_inconsistency_with_named_field(self):
+        config = _valid_config(self.tmp)
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n@SQ\tSN:chr1\tLN:9\n")
+        errors, _w, _i = preflight.validate_runtime_resources(config, base_dir=str(self.tmp))
+        self.assertTrue(any(i.field == "ref.genome (FASTA/.fai/.dict consistency)" for i in errors))
+
+
+class TestBwaIndex(_TmpMixin, unittest.TestCase):
+    def test_complete_index_ok(self):
+        genome = write_reference(self.tmp)
+        errors, _w, facts = resource_inspect.check_bwa_index(str(genome), 4, 1)
+        self.assertEqual(errors, [])
+        self.assertEqual(facts["bwa_index_l_pac"], 4)
+
+    def test_missing_index_file_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.fa.sa").unlink()
+        errors, _w, _f = resource_inspect.check_bwa_index(str(genome), 4, 1)
+        self.assertTrue(any("missing .sa" in e for e in errors), errors)
+
+    def test_index_built_from_a_different_fasta_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.fa.ann").write_bytes(b"3209286105 455 11\n")
+        errors, _w, _f = resource_inspect.check_bwa_index(str(genome), 4, 1)
+        self.assertTrue(any("different FASTA" in e for e in errors), errors)
+
+    def test_truncated_pac_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.fa.pac").write_bytes(b"\x00")
+        errors, _w, _f = resource_inspect.check_bwa_index(str(genome), 4, 1)
+        self.assertTrue(any(".pac has 1 bytes" in e for e in errors), errors)
+
+    def test_empty_index_file_is_an_error(self):
+        genome = write_reference(self.tmp)
+        (self.tmp / "hg38.fa.bwt").write_bytes(b"")
+        errors, _w, _f = resource_inspect.check_bwa_index(str(genome), 4, 1)
+        self.assertTrue(any("empty" in e for e in errors), errors)
+
+
+class TestVcfIndexUsability(_TmpMixin, unittest.TestCase):
+    def test_bgzf_vcf_with_valid_tbi_ok(self):
+        vcf = self.tmp / "a.vcf.gz"
+        write_vcf_with_index(vcf, ["##fileformat=VCFv4.2"])
+        self.assertEqual(resource_inspect.check_vcf_index(str(vcf)), ([], []))
+
+    def test_plain_gzip_is_rejected(self):
+        vcf = self.tmp / "a.vcf.gz"
+        vcf.write_bytes(gzip.compress(b"##fileformat=VCFv4.2\n"))
+        Path(str(vcf) + ".tbi").write_bytes(gzip.compress(b"TBI\x01" + b"\x00" * 8))
+        errors, _w = resource_inspect.check_vcf_index(str(vcf))
+        self.assertTrue(any("not BGZF" in e for e in errors), errors)
+
+    def test_index_with_wrong_magic_is_rejected(self):
+        vcf = self.tmp / "a.vcf.gz"
+        write_vcf_with_index(vcf, ["##fileformat=VCFv4.2"])
+        Path(str(vcf) + ".tbi").write_bytes(b"stub")
+        errors, _w = resource_inspect.check_vcf_index(str(vcf))
+        self.assertTrue(any("not a valid TBI" in e for e in errors), errors)
+
+    def test_index_only_slightly_older_than_data_is_not_flagged(self):
+        import os
+        vcf = self.tmp / "a.vcf.gz"
+        write_vcf_with_index(vcf, ["##fileformat=VCFv4.2"])
+        st = os.stat(vcf)
+        os.utime(str(vcf) + ".tbi", (st.st_atime, st.st_mtime - 600))  # 10 min older: normal
+        self.assertEqual(resource_inspect.check_vcf_index(str(vcf)), ([], []))
+
+    def test_index_much_older_than_data_is_a_warning_not_an_error(self):
+        import os
+        vcf = self.tmp / "a.vcf.gz"
+        write_vcf_with_index(vcf, ["##fileformat=VCFv4.2"])
+        st = os.stat(vcf)
+        os.utime(str(vcf) + ".tbi", (st.st_atime, st.st_mtime - 3 * 86400))
+        errors, warnings = resource_inspect.check_vcf_index(str(vcf))
+        self.assertEqual(errors, [])
+        self.assertTrue(any("older than" in w for w in warnings), warnings)
+
+    def test_header_reference_contradicting_declared_build_is_an_error(self):
+        config = _valid_config(self.tmp)
+        write_vcf_with_index(self.tmp / "clinvar.vcf.gz",
+                             ["##fileformat=VCFv4.1", "##fileDate=2026-05-17", "##reference=GRCh37"])
+        errors, _w, _i = preflight.validate_runtime_resources(config, base_dir=str(self.tmp))
+        self.assertTrue(any(i.field == "annotation.clinvar.vcf" and "GRCh37" in i.message for i in errors))
+
+    def test_vcf_header_facts_are_read_from_the_file_not_the_filename(self):
+        vcf = self.tmp / "clinvar.vcf.gz"  # filename carries no version at all
+        write_vcf_with_index(vcf, ["##fileformat=VCFv4.1", "##fileDate=2026-05-17",
+                                   "##source=ClinVar", "##reference=GRCh38"])
+        header = resource_inspect.read_vcf_header(str(vcf))
+        self.assertEqual(header["file_date"], "2026-05-17")
+        self.assertEqual(header["source"], "ClinVar")
+        self.assertEqual(header["reference"], "GRCh38")
+
+
+class TestVepCacheInspection(_TmpMixin, unittest.TestCase):
+    def test_pinned_version_present_reports_observed_assembly(self):
+        cache = write_vep_cache(self.tmp)
+        errors, warnings, facts = resource_inspect.inspect_vep_cache(str(cache), "113", "GRCh38")
+        self.assertEqual((errors, warnings), ([], []))
+        self.assertEqual(facts["assembly"], "GRCh38")
+        self.assertEqual(facts["version_dir"], "113_GRCh38")
+        self.assertEqual(facts["info"]["source_ClinVar"], "202404")
+        self.assertEqual(len(facts["info_txt_sha256"]), 64)
+
+    def test_pinned_version_not_installed_is_an_error_listing_what_is(self):
+        cache = write_vep_cache(self.tmp)
+        errors, _w, _f = resource_inspect.inspect_vep_cache(str(cache), "116", "GRCh38")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("116_GRCh38", errors[0])
+        self.assertIn("113_GRCh38", errors[0])
+
+    def test_assembly_in_info_txt_contradicting_config_is_an_error(self):
+        cache = write_vep_cache(self.tmp, info_assembly="GRCh37")
+        errors, _w, _f = resource_inspect.inspect_vep_cache(str(cache), "113", "GRCh38")
+        self.assertTrue(any("assembly mismatch" in e for e in errors), errors)
+
+    def test_wrong_assembly_directory_is_an_error(self):
+        cache = write_vep_cache(self.tmp, assembly="GRCh37")
+        errors, _w, _f = resource_inspect.inspect_vep_cache(str(cache), "113", "GRCh38")
+        self.assertTrue(errors)
+
+    def test_cache_without_info_txt_is_an_error(self):
+        cache = write_vep_cache(self.tmp)
+        (cache / "homo_sapiens" / "113_GRCh38" / "info.txt").unlink()
+        errors, _w, _f = resource_inspect.inspect_vep_cache(str(cache), "113", "GRCh38")
+        self.assertTrue(any("no info.txt" in e for e in errors), errors)
+
+    def test_unpinned_single_cache_is_a_warning_not_an_error(self):
+        cache = write_vep_cache(self.tmp)
+        errors, warnings, facts = resource_inspect.inspect_vep_cache(str(cache), None, "GRCh38")
+        self.assertEqual(errors, [])
+        self.assertTrue(any("not pinned" in w for w in warnings), warnings)
+        self.assertEqual(facts["version_dir"], "113_GRCh38")
+
+    def test_unpinned_with_several_caches_is_an_error(self):
+        write_vep_cache(self.tmp, version="113")
+        d = self.tmp / "vep_cache" / "homo_sapiens" / "115_GRCh38"
+        d.mkdir()
+        (d / "info.txt").write_text("assembly\tGRCh38\n", encoding="utf-8")
+        errors, _w, _f = resource_inspect.inspect_vep_cache(str(self.tmp / "vep_cache"), None, "GRCh38")
+        self.assertTrue(any("several" in e for e in errors), errors)
+
+
+class TestReferenceManifest(_TmpMixin, unittest.TestCase):
+    def _run(self, config):
+        return preflight.validate_runtime_resources(config, base_dir=str(self.tmp))
+
+    def test_matching_manifest_reports_a_match_and_no_warning(self):
+        config = _valid_config(self.tmp)
+        errors, warnings, info = self._run(config)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
+        self.assertTrue(any("matches manifest" in i.message for i in info), [i.message for i in info])
+
+    def test_reference_that_differs_from_the_manifest_is_an_error(self):
+        config = _valid_config(self.tmp)
+        # a different but internally consistent reference (2 contigs) at the same path
+        genome = Path(config["ref"]["genome"])
+        genome.write_bytes(b">chr1\nACGT\n>chr2\nACGT\n")
+        (self.tmp / "hg38.fa.fai").write_bytes(b"chr1\t4\t6\t4\t5\nchr2\t4\t17\t4\t5\n")
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n@SQ\tSN:chr1\tLN:4\n@SQ\tSN:chr2\tLN:4\n")
+        (self.tmp / "hg38.fa.ann").write_bytes(b"8 2 11\n")
+        (self.tmp / "hg38.fa.pac").write_bytes(b"\x00\x00\x00")
+        errors, _w, _i = self._run(config)
+        self.assertTrue(any(i.field == "ref.genome (expected resource set)" for i in errors),
+                        [(i.field, i.message) for i in errors])
+
+    def test_missing_default_manifest_is_a_warning_not_an_error(self):
+        config = _valid_config(self.tmp)
+        (self.tmp / "config" / "reference_manifest.json").unlink()
+        errors, warnings, _i = self._run(config)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("No reference manifest" in w.message for w in warnings))
+
+    def test_explicitly_configured_but_missing_manifest_is_an_error(self):
+        config = _valid_config(self.tmp)
+        config["ref"]["manifest"] = str(self.tmp / "nope.json")
+        errors, _w, _i = self._run(config)
+        self.assertTrue(any(i.field == "ref.manifest" for i in errors))
+
+    def test_manifest_genome_build_contradicting_config_is_an_error(self):
+        config = _valid_config(self.tmp)
+        path = self.tmp / "config" / "reference_manifest.json"
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        manifest["genome_build"] = "GRCh37"
+        path.write_text(json.dumps(manifest), encoding="utf-8")
+        errors, _w, _i = self._run(config)
+        self.assertTrue(any("expected resource set" in i.field for i in errors))
+
+    def test_manifest_cli_round_trip(self):
+        genome = write_reference(self.tmp)
+        out = self.tmp / "m.json"
+        self.assertEqual(preflight._main(["--write-reference-manifest", str(genome), str(out)]), 0)
+        manifest = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["reference"]["contig_count"], 1)
+        self.assertEqual(resource_inspect.compare_to_manifest(
+            manifest, resource_inspect.check_fasta_indexes(str(genome))[2], "GRCh38"), [])
+
+
+class TestObservedFactsInPreflightReport(_TmpMixin, unittest.TestCase):
+    def _samples(self):
+        real = self.tmp / "reads.fastq.gz"
+        real.write_bytes(b"not empty")
+        return pd.DataFrame([{"sample_id": "S1", "tumor_r1": str(real), "tumor_r2": str(real),
+                              "normal_r1": str(real), "normal_r2": str(real)}]).set_index("sample_id")
+
+    def test_observed_facts_are_info_not_warnings_or_errors(self):
+        config = _valid_config(self.tmp)
+        report = preflight.run_preflight_checks(config, self._samples(), base_dir=str(self.tmp))
+        self.assertTrue(report.ok)
+        self.assertEqual([w.field for w in report.warnings], ["annotation.cosmic.vcf"])
+        fields = [i.field for i in report.info]
+        for expected in ("ref.genome", "ref.dbsnp", "annotation.clinvar.vcf", "annotation.vep.cache_dir"):
+            self.assertIn(expected, fields)
+
+    def test_report_text_shows_observed_versions_from_headers_and_cache(self):
+        config = _valid_config(self.tmp)
+        text = preflight.format_report(
+            preflight.run_preflight_checks(config, self._samples(), base_dir=str(self.tmp)))
+        self.assertIn("file_date=2026-05-17", text)
+        self.assertIn("dbsnp_build_id=146", text)
+        self.assertIn("113_GRCh38", text)
+        self.assertIn("ClinVar 202404", text)
+        self.assertIn("not the report's ClinVar source", text)
+
+    def test_known_optional_cosmic_warning_stays_explicit(self):
+        config = _valid_config(self.tmp)
+        config["annotation"]["cosmic"]["vcf"] = str(self.tmp / "CosmicCodingMuts.vcf.gz")
+        report = preflight.run_preflight_checks(config, self._samples(), base_dir=str(self.tmp))
+        self.assertTrue(report.ok)
+        cosmic = [w for w in report.warnings if w.field == "annotation.cosmic.vcf"]
+        self.assertEqual(len(cosmic), 1)
+        self.assertIn("COSMIC annotation will be skipped", cosmic[0].message)
+
+    def test_deep_checks_can_be_disabled(self):
+        config = _valid_config(self.tmp)
+        (self.tmp / "hg38.dict").write_bytes(b"@HD\tVN:1.6\n")
+        self.assertFalse(preflight.run_preflight_checks(config, self._samples(), base_dir=str(self.tmp)).ok)
+        self.assertTrue(preflight.run_preflight_checks(
+            config, self._samples(), base_dir=str(self.tmp), deep_resource_checks=False).ok)
+
+    def test_missing_resources_are_not_double_reported(self):
+        config = _valid_config(self.tmp)
+        config["ref"]["genome"] = str(self.tmp / "gone.fa")
+        report = preflight.run_preflight_checks(config, self._samples(), base_dir=str(self.tmp))
+        genome_msgs = [e for e in report.errors if e.field.startswith("ref.genome")]
+        self.assertEqual(len(genome_msgs), 1, [(e.field, e.message) for e in genome_msgs])
 
 
 if __name__ == "__main__":
