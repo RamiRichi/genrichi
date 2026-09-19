@@ -2,10 +2,8 @@ name: genrichi_align
 channels:
   - bioconda
   - conda-forge
-  - defaults
 dependencies:
-  - bwa-mem2=2.2.1
-  - samtools=1.21
+  - bwa=0.7.17
+  - samtools=1.19.2
   - gatk4=4.6.1.0
   - mosdepth=0.3.10
-  - htslib=1.21

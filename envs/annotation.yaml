@@ -2,10 +2,9 @@ name: genrichi_annotation
 channels:
   - bioconda
   - conda-forge
-  - defaults
 dependencies:
-  - ensembl-vep=113
-  - bcftools=1.21
-  - htslib=1.21
+  - ensembl-vep=113.4
+  - bcftools=1.19
+  - htslib=1.19
   - python=3.11
   - pandas=2.2
