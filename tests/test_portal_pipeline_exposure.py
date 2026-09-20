@@ -14,14 +14,27 @@ Dependency-light by design: portal/config.py only does `import os` and
 defines plain dict/set literals, so it is imported directly (no Flask
 required) the same way tests/test_qc_status.py imports workflow/scripts
 modules -- by inserting the containing directory onto sys.path.
+
+Since Phase 5.5 Step 14, portal/config.py requires SECRET_KEY and
+PORTAL_PASS to be present in the environment (it raises RuntimeError
+otherwise -- see tests/test_portal_secrets.py for that behavior itself).
+This file only exercises PIPELINE_MAP/PANEL_PRICES, so it supplies
+obviously-fake, non-secret placeholder values via os.environ.setdefault
+(never overriding a real value if one is already set) purely so the
+import succeeds; SMTP is left disabled so no SMTP_PASS is needed either.
 """
 
+import os
 import sys
 import unittest
 from pathlib import Path
 
 PORTAL_DIR = Path(__file__).resolve().parents[1] / "portal"
 sys.path.insert(0, str(PORTAL_DIR))
+
+os.environ.setdefault("SECRET_KEY", "unit-test-placeholder-not-a-real-secret")
+os.environ.setdefault("PORTAL_PASS", "unit-test-placeholder-not-a-real-secret")
+os.environ.setdefault("SMTP_ENABLED", "false")
 
 import config as portal_config  # noqa: E402
 

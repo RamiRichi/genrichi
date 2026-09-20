@@ -3,6 +3,7 @@ GenRichi Portal — Flask Web Application
 Multi-user edition (admin + lab_staff roles)
 """
 
+import json
 import os
 import sys
 import logging
@@ -470,10 +471,13 @@ def settings():
     except Exception:
         disk_usage = "N/A"
 
+    # SMTP_PASS is never read here and never passed into the template
+    # context -- not even masked. It must stay server-side only (Phase
+    # 5.5 Stage 2 review). The template shows a static, non-secret status
+    # line instead of any value derived from the real password.
     return render_template("settings.html",
         smtp_enabled  = cfg.SMTP_ENABLED,
         smtp_user     = cfg.SMTP_USER,
-        smtp_pass     = "••••••••" if cfg.SMTP_PASS else "",
         portal_url    = cfg.PORTAL_URL,
         admin_user    = cfg.PORTAL_USER,
         db_path       = cfg.DB_PATH,
@@ -511,37 +515,37 @@ def settings_save():
         smtp_user = request.form.get("smtp_user", "").strip()
         smtp_pass = request.form.get("smtp_pass", "").strip()
 
-        config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.py")
-        with open(config_path, "r") as f:
-            content = f.read()
+        # SMTP_ENABLED / SMTP_USER are non-secret runtime settings: persist
+        # them to the gitignored portal/instance/settings.json, never to
+        # any tracked Python source file (see config.py's
+        # _load_instance_settings / Stage 2 of the Phase 5.5 security
+        # hardening). SMTP_PASS is a secret and is never written by this
+        # route at all -- it stays exclusively environment/.env-sourced
+        # (Stage 1); this form's password field is display-only.
+        new_settings = dict(cfg._INSTANCE_SETTINGS)
+        new_settings["SMTP_ENABLED"] = enabled
+        new_settings["SMTP_USER"] = smtp_user or cfg.SMTP_USER
 
-        content = content.replace(
-            f'SMTP_ENABLED  = {cfg.SMTP_ENABLED}',
-            f'SMTP_ENABLED  = {enabled}'
-        )
-        if smtp_user:
-            content = content.replace(
-                f'SMTP_USER     = "{cfg.SMTP_USER}"',
-                f'SMTP_USER     = "{smtp_user}"'
-            )
-            content = content.replace(
-                f'SMTP_FROM     = "GenRichi Portal <{cfg.SMTP_USER}>"',
-                f'SMTP_FROM     = "GenRichi Portal <{smtp_user}>"'
-            )
-        if smtp_pass and smtp_pass != "••••••••":
-            content = content.replace(
-                f'SMTP_PASS     = "{cfg.SMTP_PASS}"',
-                f'SMTP_PASS     = "{smtp_pass}"'
-            )
+        os.makedirs(cfg.INSTANCE_DIR, exist_ok=True)
+        with open(cfg.INSTANCE_SETTINGS_PATH, "w", encoding="utf-8") as f:
+            json.dump(new_settings, f, indent=2, sort_keys=True)
+            f.write("\n")
 
-        with open(config_path, "w") as f:
-            f.write(content)
-
+        cfg._INSTANCE_SETTINGS = new_settings
         cfg.SMTP_ENABLED = enabled
-        if smtp_user: cfg.SMTP_USER = smtp_user
-        if smtp_pass and smtp_pass != "••••••••": cfg.SMTP_PASS = smtp_pass
+        cfg.SMTP_USER = new_settings["SMTP_USER"]
+        cfg.SMTP_FROM = f"GenRichi Portal <{cfg.SMTP_USER}>"
 
-        flash("Email settings saved.", "success")
+        if smtp_pass:
+            flash(
+                "Email address and enabled/disabled state saved. The SMTP "
+                "password itself is not editable here -- set SMTP_PASS in "
+                "portal/.env (or your process environment) and restart the "
+                "portal to change it.",
+                "warning",
+            )
+        else:
+            flash("Email settings saved.", "success")
 
     return redirect(url_for("settings"))
 

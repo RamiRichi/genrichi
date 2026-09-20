@@ -56,8 +56,10 @@
           </div>
           <div class="mb-3">
             <label class="form-label small fw-semibold">SMTP Password</label>
-            <input type="password" name="smtp_pass" class="form-control"
-                   value="{{ smtp_pass }}" placeholder="••••••••">
+            <p class="form-control-plaintext text-muted mb-0">
+              <i class="bi bi-shield-lock me-1"></i>
+              Configured via environment (<code>portal/.env</code>) — not editable here.
+            </p>
           </div>
           <button type="submit" class="btn btn-primary">
             <i class="bi bi-check-lg me-1"></i>Save Email Settings
