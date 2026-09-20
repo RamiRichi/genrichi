@@ -157,7 +157,7 @@ def new_order():
         return render_template("new_order.html", pipelines=cfg.PIPELINE_MAP,
                                paired_panels=list(cfg.PAIRED_PANELS))
 
-    panel_type   = request.form.get("panel_type", "hotspot")
+    panel_type   = request.form.get("panel_type", "comprehensive")
     patient_id   = request.form.get("patient_id", "").strip()
     patient_name = request.form.get("patient_name", "").strip()
     sex          = request.form.get("sex", "")

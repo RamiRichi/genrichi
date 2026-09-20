@@ -126,6 +126,8 @@ GenRichi includes a web-based partner portal for:
 - Viewing and downloading reports
 - Multi-user access with role management
 
+> **Note:** the portal currently exposes only the validated **Somatic Comprehensive Panel** (`Snakefile_comprehensive`). The hotspot and hereditary pipelines are withheld from customer-facing order intake pending validation — see `docs/PHASE1_BASELINE.md` and `portal/config.py`.
+
 ```bash
 cd portal
 pip install -r requirements.txt

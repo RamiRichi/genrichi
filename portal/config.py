@@ -27,19 +27,26 @@ CONDA_FRONTEND    = "mamba"
 DEFAULT_CORES     = 8
 
 # ── Pipelines ─────────────────────────────────────────────────────────────────
+# "hotspot" and "hereditary" are intentionally NOT exposed here.
+#
+# hotspot (workflow/Snakefile): a Phase 5.5 audit (Step 12-C/D) found a
+# deterministic, unconditional DAG failure -- align.smk's mosdepth rule
+# produces {sample}.regions.bed.gz, but report.smk's generate_report rule
+# expects {sample}.mosdepth.regions.bed.gz as input, so no rule satisfies
+# it. align.smk's mosdepth call also still carries the
+# `--quantize 0:1:10:30:100:` flag already documented elsewhere in this
+# repo (docs/somatic_panel/session_notes.md) as causing a silent mosdepth
+# crash. Removed from customer-facing exposure until fixed and validated.
+#
+# hereditary (workflow/Snakefile_hereditary): produces ACMG 2015
+# pathogenicity classifications for a 25-gene hereditary panel but has no
+# regression baseline and no test coverage of the classifier logic
+# (workflow/scripts/acmg_classifier.py). Not modified or deleted -- only
+# withheld from customer-facing execution through the portal until a
+# validation baseline exists.
+#
+# Neither pipeline's own code was changed by this restriction.
 PIPELINE_MAP = {
-    "hotspot": {
-        "label":      "Somatic Hotspot Panel",
-        "snakefile":  "Snakefile",
-        "configfile": "config/config.yaml",
-        "description": "Quick driver mutation screen — KRAS, BRAF, TP53, PIK3CA, EGFR …",
-    },
-    "hereditary": {
-        "label":      "Hereditary Germline Panel",
-        "snakefile":  "Snakefile_hereditary",
-        "configfile": "config/hereditary_config.yaml",
-        "description": "ACMG-classified germline variants — BRCA1/2, ATM, PALB2, MLH1 … (25 genes)",
-    },
     "comprehensive": {
         "label":      "Somatic Comprehensive Panel",
         "snakefile":  "Snakefile_comprehensive",
@@ -53,8 +60,6 @@ PAIRED_PANELS = {"comprehensive"}
 
 # ── Pricing (EUR) ─────────────────────────────────────────────────────────────
 PANEL_PRICES = {
-    "hotspot":       350.00,
-    "hereditary":    490.00,
     "comprehensive": 750.00,
 }
 COMPANY_NAME    = "GenRichi GmbH"
