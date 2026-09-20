@@ -17,6 +17,13 @@ exists to prove. A subprocess sidesteps that entirely and, as a side benefit,
 lets each test control the process environment precisely without ever
 touching this test process's own os.environ.
 
+As of Phase 5.5 Step 14, `_run_import_config` additionally runs from a
+temporary COPY of config.py rather than the real portal/ directory, so
+these tests stay correct and fully isolated now that a genuine, rotated
+portal/.env legitimately exists on disk there (see that function's own
+docstring for the full reasoning). Neither portal/.env nor portal/config.py
+is read, written, or deleted by anything in this file.
+
 No real secret value is used, printed, or asserted anywhere in this file --
 only clearly-fake placeholder strings that exist solely to prove the
 loading mechanism works, plus assertions that those placeholders (and,
@@ -129,25 +136,46 @@ def _isolated_process_state(env_var_names):
 
 
 def _run_import_config(env_overrides, code="import config"):
-    """Run `code` in a fresh Python subprocess, cwd=portal/, with only the
-    given environment variables set (PATH is preserved so the interpreter
-    itself can be found; nothing from this test process's real os.environ
-    leaks in otherwise). Returns the completed process."""
-    env = {"PATH": os.environ.get("PATH", "")}
-    if sys.platform == "win32":
-        # Python on Windows needs a few more inherited vars to start cleanly.
-        for k in ("SYSTEMROOT", "TEMP", "TMP"):
-            if k in os.environ:
-                env[k] = os.environ[k]
-    env.update(env_overrides)
-    return subprocess.run(
-        [sys.executable, "-c", code],
-        cwd=str(PORTAL_DIR),
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=30,
-    )
+    """Run `code` in a fresh Python subprocess importing an isolated
+    temporary COPY of the real, unmodified portal/config.py -- never the
+    real portal/ directory itself.
+
+    This is deliberate: portal/config.py derives BASE_DIR from its own
+    __file__, and a genuine, gitignored portal/.env now legitimately
+    exists there (rotated real secrets -- see Phase 5.5 Step 14). Running
+    an unmodified copy of config.py from a fresh temp directory with no
+    .env file next to it means _load_dotenv() finds nothing to load --
+    a real absence, not a faked one -- without ever touching, reading
+    from, or deleting the real portal/.env. Every test in this module
+    that needs to prove "missing secret" behavior therefore still proves
+    it genuinely, regardless of what is or isn't configured on this
+    machine. Tests that supply every required value via env_overrides are
+    unaffected either way, since no .env is needed once all values are
+    already present. config.py's own source is copied byte-for-byte,
+    never edited -- production code is untouched.
+
+    PATH (and, on Windows, a few more inherited vars) is preserved so the
+    interpreter itself can start; nothing else from this test process's
+    real os.environ leaks in."""
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        shutil.copy2(str(CONFIG_PY), str(tmp_path / "config.py"))
+
+        env = {"PATH": os.environ.get("PATH", "")}
+        if sys.platform == "win32":
+            # Python on Windows needs a few more inherited vars to start cleanly.
+            for k in ("SYSTEMROOT", "TEMP", "TMP"):
+                if k in os.environ:
+                    env[k] = os.environ[k]
+        env.update(env_overrides)
+        return subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=str(tmp_path),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
 
 
 class TestMissingSecretsFailSafely(unittest.TestCase):
