@@ -64,7 +64,6 @@ required = [
     "config/hereditary_config.yaml",
     "config/hereditary_samples.tsv",
     "resources/panel/hereditary_genes.bed",
-    "envs/germline.yaml",
     "envs/annotation.yaml",
     "envs/report.yaml",
 ]

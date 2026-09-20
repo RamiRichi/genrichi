@@ -60,7 +60,7 @@ This BED is the panel actually used by `base_recalibrator_paired` (BQSR `-L`), `
 | | matplotlib | 3.9.4 |
 | | jinja2 | 3.1.6 |
 
-`cnv.yaml` and `msi.yaml` exist in `workflow/envs/` but are **not used** by any Phase 1 rule — `calculate_cnv` and `calculate_msi` are pure-Python implementations running under the `report` environment (no cnvkit/msisensor-pro dependency). Left untouched; out of scope for this freeze.
+`cnv.yaml` and `msi.yaml` were never used by any Phase 1 rule — `calculate_cnv` and `calculate_msi` are pure-Python implementations running under the `report` environment (no cnvkit/msisensor-pro dependency) — and were retired (Phase 5.5) as orphaned, unreferenced env specs (`cnv.yaml` was additionally found unsolvable against current package repodata).
 
 ---
 
