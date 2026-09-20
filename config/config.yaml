@@ -10,7 +10,7 @@ ref:
   pon: null                                      # optional Panel-of-Normals VCF
 
 panel:
-  bed: resources/panel/hotspots.bed
+  bed: resources/panel/example_hotspots.bed
   name: "GenRichi Cancer Hotspot Panel v1"
 
 trimming:

@@ -43,6 +43,8 @@ FASTQ → QC (fastp) → Alignment (BWA-MEM2) → Variant Calling (GATK Mutect2)
 
 ## Quick Start
 
+> **Note:** the steps below use `workflow/Snakefile` + `config/config.yaml`, an earlier, historical pathway that is **not** the validated Phase 1 workflow and has no HCC1395 regression baseline. For the validated Phase 1 solid-tumor pipeline, use `workflow/Snakefile_comprehensive` with `config/comprehensive_config.yaml` — see `docs/PHASE1_BASELINE.md`.
+
 ```bash
 # 1. Clone
 git clone https://github.com/RamiRichi/genrichi.git
