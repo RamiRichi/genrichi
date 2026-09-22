@@ -11,6 +11,7 @@ Run with:
 """
 
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -98,6 +99,59 @@ class TestProbeTool(unittest.TestCase):
         rc, text = runtime_probe.run_command(["definitely-not-a-real-binary-xyz"])
         self.assertIsNone(rc)
         self.assertTrue(text)
+
+    def test_run_command_does_not_raise_on_non_utf8_output(self):
+        """Reproduces the 2026-09-22 production failure (order GR-20260922-1E88F4):
+        Debian/Ubuntu's reproducible-builds gcc writes a single raw 0xAB/0xBB byte
+        (not the two-byte UTF-8 encoding of U+00AB/U+00BB) into samtools' compiled-in
+        -ffile-prefix-map=... build-flags string, which subprocess.run(text=True)
+        (strict UTF-8) cannot decode -- crashing observe_tools_alignment before
+        alignment, variant calling, annotation, report generation or provenance are
+        ever reached. run_command() must degrade gracefully instead."""
+        raw = (b"samtools 1.19.2\nUsing htslib 1.21\n"
+               b"Compiler flags: -ffile-prefix-map=\xabBUILDPATH\xbb=. -O2\n")
+        cmd = [sys.executable, "-c",
+               "import sys; sys.stdout.buffer.write(" + repr(raw) + ")"]
+        rc, text = runtime_probe.run_command(cmd)
+        self.assertEqual(rc, 0)
+        self.assertIn("samtools 1.19.2", text)
+        self.assertIn("�", text)  # the bad byte, replaced, not raised
+        # the parser must still extract the version from the clean line above it
+        self.assertEqual(runtime_probe.parse_htslib_tool("samtools")(text)["version"], "1.19.2")
+
+    def test_probe_tool_survives_non_utf8_output_end_to_end(self):
+        raw_samtools = (b"samtools 1.19.2\nUsing htslib 1.21\n"
+                         b"Compiler flags: -ffile-prefix-map=\xabBUILDPATH\xbb=. -O2\n")
+        record = runtime_probe.probe_tool(
+            "samtools",
+            runner=lambda cmd: runtime_probe.run_command(
+                [sys.executable, "-c", "import sys; sys.stdout.buffer.write(" + repr(raw_samtools) + ")"]),
+            which=lambda n: "/env/bin/" + n,
+        )
+        self.assertTrue(record["found"])
+        self.assertEqual(record["version"], "1.19.2")
+        self.assertEqual(record["htslib"], "1.21")
+
+    @unittest.skipUnless(shutil.which("samtools"), "samtools not on PATH")
+    def test_real_installed_samtools_version_is_probed_without_crashing(self):
+        """The actual regression: run_command() against the real samtools binary
+        installed on this machine, not a mock -- this is exactly the call
+        observe_tools_alignment makes in production."""
+        record = runtime_probe.probe_tool("samtools")
+        self.assertTrue(record["found"])
+        self.assertIsNotNone(record["version"], f"first_output_line={record.get('first_output_line')!r}")
+
+    @unittest.skipUnless(shutil.which("bwa"), "bwa not on PATH")
+    def test_real_installed_bwa_version_is_probed_without_crashing(self):
+        record = runtime_probe.probe_tool("bwa")
+        self.assertTrue(record["found"])
+        self.assertIsNotNone(record["version"])
+
+    @unittest.skipUnless(shutil.which("mosdepth"), "mosdepth not on PATH")
+    def test_real_installed_mosdepth_version_is_probed_without_crashing(self):
+        record = runtime_probe.probe_tool("mosdepth")
+        self.assertTrue(record["found"])
+        self.assertIsNotNone(record["version"])
 
 
 class TestVepCacheCompatibility(unittest.TestCase):

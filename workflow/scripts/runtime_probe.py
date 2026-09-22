@@ -87,12 +87,25 @@ TOOLS = {
 
 # ── Running / probing ────────────────────────────────────────────────────
 def run_command(cmd, timeout: int = 120):
-    """(returncode, combined stdout+stderr). Never raises; (None, message) if it cannot run."""
+    """(returncode, combined stdout+stderr). Never raises; (None, message) if it cannot run.
+
+    Output is captured as bytes and decoded with errors="replace", not
+    text=True (strict UTF-8). Some real tool builds embed non-UTF-8 bytes in
+    their --version banner -- e.g. Debian/Ubuntu's reproducible-builds gcc
+    writes -ffile-prefix-map=<0xAB>BUILDPATH...<0xBB>= into samtools'
+    compiled-in build-flags string, a single raw 0xAB/0xBB byte rather than
+    the two-byte UTF-8 encoding of U+00AB/U+00BB. That is real, observed
+    output on a supported platform, not malformed data to reject: probing a
+    tool's version must never crash because of a byte somewhere else in
+    output nothing here actually parses.
+    """
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        proc = subprocess.run(cmd, capture_output=True, timeout=timeout)
     except (OSError, subprocess.SubprocessError) as exc:
         return None, f"{type(exc).__name__}: {exc}"
-    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    stdout = (proc.stdout or b"").decode("utf-8", errors="replace")
+    stderr = (proc.stderr or b"").decode("utf-8", errors="replace")
+    return proc.returncode, stdout + stderr
 
 
 def probe_tool(name, runner=run_command, which=shutil.which):
