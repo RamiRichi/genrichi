@@ -51,7 +51,7 @@ msi:
 
 tmb:
   coding_mb: 1.5           # MSI denominator only — do not change (panel-based indel scoring)
-  coding_bed: resources/panel/comprehensive_genes_cds.bed   # TMB denominator: MANE Select v1.4 CDS ∩ panel BED
+  coding_bed: resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1_cds.bed   # TMB denominator: MANE Select v1.4 CDS clipped to the 55-gene Phase-1 BED above (built by workflow/scripts/build_cds_bed.py)
   partial_threshold: 0.80  # fraction of panel chromosomes needing coverage for full TMB; below → partial run
   high_threshold: 10.0     # TMB-High threshold (mut/Mb); requires assay-specific clinical validation
 

@@ -61,11 +61,11 @@ readonly ALLOWLIST_CONFIG=(
     config/comprehensive_config.yaml
     config/comprehensive_samples.tsv
     resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1.bed
-    resources/panel/comprehensive_genes_cds.bed
+    resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1_cds.bed
 )
 readonly ALLOWLIST=("${ALLOWLIST_CODE[@]}" "${ALLOWLIST_CONFIG[@]}")
 readonly EXPECTED_PANEL_BED="resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1.bed"
-readonly EXPECTED_TMB_BED="resources/panel/comprehensive_genes_cds.bed"
+readonly EXPECTED_TMB_BED="resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1_cds.bed"
 
 # ── test mode (unit tests only; every path must live under /tmp) ─────────────
 TEST_MODE=0
@@ -226,7 +226,7 @@ if [ -n "$COMMIT" ]; then
     DIRTY_SCOPE="$(repo_git status --porcelain --untracked-files=normal -- \
         workflow/Snakefile_comprehensive workflow/rules workflow/scripts \
         config/comprehensive_config.yaml config/comprehensive_samples.tsv \
-        resources/panel/phase1_solid_tumor resources/panel/comprehensive_genes_cds.bed \
+        resources/panel/phase1_solid_tumor \
         2>/dev/null || true)"
     if [ -n "$DIRTY_SCOPE" ]; then
         info "uncommitted changes in the deployable scope; they are IGNORED because HEAD blobs are deployed"

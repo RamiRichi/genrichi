@@ -53,7 +53,7 @@ ALLOWLIST_CONFIG = [
     "config/comprehensive_config.yaml",
     "config/comprehensive_samples.tsv",
     "resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1.bed",
-    "resources/panel/comprehensive_genes_cds.bed",
+    "resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1_cds.bed",
 ]
 EXPECTED_ALLOWLIST = ALLOWLIST_CODE + ALLOWLIST_CONFIG
 RULE_FILES = [r for r in ALLOWLIST_CODE if r.startswith("workflow/rules/")]
@@ -110,7 +110,7 @@ def content_for(rel, version):
             "  name: \"Test Panel\"\n"
             "tmb:\n"
             "  coding_mb: 1.5\n"
-            "  coding_bed: resources/panel/comprehensive_genes_cds.bed\n"
+            "  coding_bed: resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1_cds.bed\n"
         ).encode()
     if rel.endswith(".tsv"):
         return f"sample_id\ttumor_r1\n{version}\tx.fastq\n".encode()
