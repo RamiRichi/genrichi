@@ -1,0 +1,479 @@
+{
+  "sample": "SEQC2_HCC1395_FD1",
+  "pass_vcf": "/home/rami/seqc2_phase1_test/run/results/SEQC2_HCC1395_FD1/snv/SEQC2_HCC1395_FD1.pass.vcf.gz",
+  "tumor_bam": "/home/rami/seqc2_phase1_test/run/results/SEQC2_HCC1395_FD1/tumor/align/SEQC2_HCC1395_FD1.tumor.final.bam",
+  "normal_bam": "/home/rami/seqc2_phase1_test/run/results/SEQC2_HCC1395_FD1/normal/align/SEQC2_HCC1395_FD1.normal.final.bam",
+  "design": "see module docstring of evaluate.py (fixed before results)",
+  "universe": {
+    "panel_intervals": 901,
+    "panel_bases": 200785,
+    "panel_and_HC_intervals": 873,
+    "panel_and_HC_bases": 192493,
+    "panel_bases_outside_HC": 8292,
+    "note": "chrX panel regions are outside SEQC2 HC regions (autosomes only) and are not evaluable"
+  },
+  "truth_variants": {
+    "SNV": {
+      "in_panel": 4,
+      "in_panel_and_HC": 4
+    },
+    "indel": {
+      "in_panel": 0,
+      "in_panel_and_HC": 0
+    },
+    "other": {
+      "in_panel": 0,
+      "in_panel_and_HC": 0
+    }
+  },
+  "pass_calls": {
+    "SNV": {
+      "in_panel": 3,
+      "in_panel_and_HC": 3,
+      "in_panel_outside_HC_not_evaluable": 0
+    },
+    "indel": {
+      "in_panel": 0,
+      "in_panel_and_HC": 0,
+      "in_panel_outside_HC_not_evaluable": 0
+    },
+    "other": {
+      "in_panel": 0,
+      "in_panel_and_HC": 0,
+      "in_panel_outside_HC_not_evaluable": 0
+    }
+  },
+  "strata": [
+    {
+      "name": "P_primary_T20_N20",
+      "min_tumor_depth": 20,
+      "min_normal_depth": 20,
+      "intervals": 1351,
+      "bases": 152721,
+      "truth_variants_in_panel_and_HC": {
+        "SNV": 4,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_variants_evaluable_here": {
+        "SNV": 2,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_not_evaluable_due_to_coverage": [
+        {
+          "site": "chr17:7675088 C>T",
+          "type": "SNV",
+          "tumor_depth": 13,
+          "normal_depth": 5
+        },
+        {
+          "site": "chr8:38428420 G>A",
+          "type": "SNV",
+          "tumor_depth": 18,
+          "normal_depth": 46
+        }
+      ],
+      "results": {
+        "SNV": {
+          "truth_variants": 2,
+          "TP": 2,
+          "FP": 1,
+          "FN": 0,
+          "precision": 0.667,
+          "recall": 1.0,
+          "recall_wilson95_illustrative": [
+            0.342,
+            1.0
+          ],
+          "F1": 0.8,
+          "FP_per_Mb_evaluable": 6.55,
+          "TP_sites": [
+            [
+              "chr13",
+              32339132,
+              "G",
+              "T"
+            ],
+            [
+              "chr2",
+              47806320,
+              "G",
+              "A"
+            ]
+          ],
+          "FP_sites": [
+            [
+              "chr16",
+              23635069,
+              "G",
+              "A"
+            ]
+          ],
+          "FN_sites": []
+        },
+        "indel": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        },
+        "other": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        }
+      }
+    },
+    {
+      "name": "ADD_T10_N10",
+      "min_tumor_depth": 10,
+      "min_normal_depth": 10,
+      "intervals": 1007,
+      "bases": 176476,
+      "truth_variants_in_panel_and_HC": {
+        "SNV": 4,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_variants_evaluable_here": {
+        "SNV": 3,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_not_evaluable_due_to_coverage": [
+        {
+          "site": "chr17:7675088 C>T",
+          "type": "SNV",
+          "tumor_depth": 13,
+          "normal_depth": 5
+        }
+      ],
+      "results": {
+        "SNV": {
+          "truth_variants": 3,
+          "TP": 2,
+          "FP": 1,
+          "FN": 1,
+          "precision": 0.667,
+          "recall": 0.667,
+          "recall_wilson95_illustrative": [
+            0.208,
+            0.939
+          ],
+          "F1": 0.667,
+          "FP_per_Mb_evaluable": 5.67,
+          "TP_sites": [
+            [
+              "chr13",
+              32339132,
+              "G",
+              "T"
+            ],
+            [
+              "chr2",
+              47806320,
+              "G",
+              "A"
+            ]
+          ],
+          "FP_sites": [
+            [
+              "chr16",
+              23635069,
+              "G",
+              "A"
+            ]
+          ],
+          "FN_sites": [
+            [
+              "chr8",
+              38428420,
+              "G",
+              "A"
+            ]
+          ]
+        },
+        "indel": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        },
+        "other": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        }
+      }
+    },
+    {
+      "name": "ADD_T30_N20",
+      "min_tumor_depth": 30,
+      "min_normal_depth": 20,
+      "intervals": 1440,
+      "bases": 132127,
+      "truth_variants_in_panel_and_HC": {
+        "SNV": 4,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_variants_evaluable_here": {
+        "SNV": 2,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_not_evaluable_due_to_coverage": [
+        {
+          "site": "chr17:7675088 C>T",
+          "type": "SNV",
+          "tumor_depth": 13,
+          "normal_depth": 5
+        },
+        {
+          "site": "chr8:38428420 G>A",
+          "type": "SNV",
+          "tumor_depth": 18,
+          "normal_depth": 46
+        }
+      ],
+      "results": {
+        "SNV": {
+          "truth_variants": 2,
+          "TP": 2,
+          "FP": 1,
+          "FN": 0,
+          "precision": 0.667,
+          "recall": 1.0,
+          "recall_wilson95_illustrative": [
+            0.342,
+            1.0
+          ],
+          "F1": 0.8,
+          "FP_per_Mb_evaluable": 7.57,
+          "TP_sites": [
+            [
+              "chr13",
+              32339132,
+              "G",
+              "T"
+            ],
+            [
+              "chr2",
+              47806320,
+              "G",
+              "A"
+            ]
+          ],
+          "FP_sites": [
+            [
+              "chr16",
+              23635069,
+              "G",
+              "A"
+            ]
+          ],
+          "FN_sites": []
+        },
+        "indel": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        },
+        "other": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        }
+      }
+    },
+    {
+      "name": "U_no_coverage_filter",
+      "min_tumor_depth": 0,
+      "min_normal_depth": 0,
+      "intervals": 873,
+      "bases": 192493,
+      "truth_variants_in_panel_and_HC": {
+        "SNV": 4,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_variants_evaluable_here": {
+        "SNV": 4,
+        "indel": 0,
+        "other": 0
+      },
+      "truth_not_evaluable_due_to_coverage": [],
+      "results": {
+        "SNV": {
+          "truth_variants": 4,
+          "TP": 2,
+          "FP": 1,
+          "FN": 2,
+          "precision": 0.667,
+          "recall": 0.5,
+          "recall_wilson95_illustrative": [
+            0.15,
+            0.85
+          ],
+          "F1": 0.571,
+          "FP_per_Mb_evaluable": 5.19,
+          "TP_sites": [
+            [
+              "chr13",
+              32339132,
+              "G",
+              "T"
+            ],
+            [
+              "chr2",
+              47806320,
+              "G",
+              "A"
+            ]
+          ],
+          "FP_sites": [
+            [
+              "chr16",
+              23635069,
+              "G",
+              "A"
+            ]
+          ],
+          "FN_sites": [
+            [
+              "chr17",
+              7675088,
+              "C",
+              "T"
+            ],
+            [
+              "chr8",
+              38428420,
+              "G",
+              "A"
+            ]
+          ]
+        },
+        "indel": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        },
+        "other": {
+          "truth_variants": 0,
+          "TP": 0,
+          "FP": 0,
+          "FN": 0,
+          "precision": null,
+          "recall": null,
+          "recall_wilson95_illustrative": null,
+          "F1": null,
+          "FP_per_Mb_evaluable": 0.0,
+          "TP_sites": [],
+          "FP_sites": [],
+          "FN_sites": []
+        }
+      }
+    }
+  ],
+  "per_truth_variant": [
+    {
+      "site": "chr13:32339132 G>T",
+      "type": "SNV",
+      "tumor_depth": 45,
+      "normal_depth": 37,
+      "in_pass_vcf": true,
+      "FILTER_in_filtered_vcf": "PASS",
+      "in_raw_mutect2_vcf": true
+    },
+    {
+      "site": "chr17:7675088 C>T",
+      "type": "SNV",
+      "tumor_depth": 13,
+      "normal_depth": 5,
+      "in_pass_vcf": false,
+      "FILTER_in_filtered_vcf": "absent",
+      "in_raw_mutect2_vcf": false
+    },
+    {
+      "site": "chr2:47806320 G>A",
+      "type": "SNV",
+      "tumor_depth": 37,
+      "normal_depth": 54,
+      "in_pass_vcf": true,
+      "FILTER_in_filtered_vcf": "PASS",
+      "in_raw_mutect2_vcf": true
+    },
+    {
+      "site": "chr8:38428420 G>A",
+      "type": "SNV",
+      "tumor_depth": 18,
+      "normal_depth": 46,
+      "in_pass_vcf": false,
+      "FILTER_in_filtered_vcf": "PASS",
+      "in_raw_mutect2_vcf": true
+    }
+  ]
+}

@@ -127,7 +127,7 @@ This freeze is **not** a clinical validation of the Phase 1 assay. No claim is m
 ## 7. Known Limitations (carried forward, not resolved by this freeze)
 
 - **No clinical Panel-of-Normals (PoN) validation yet** — `ref.pon` is `null` in `config/comprehensive_config.yaml`.
-- **No orthogonal truth-set validation** — this run reproduces a prior pipeline result on HCC1395; it has not been benchmarked against an independent truth set (e.g. SEQC2/HCC1395 consensus calls, GIAB).
+- **No orthogonal truth-set validation** — this run reproduces a prior pipeline result on HCC1395; it has not been benchmarked against an independent truth set (e.g. SEQC2/HCC1395 consensus calls, GIAB). A first, small-scale, preliminary technical concordance check against the SEQC2 v1.2.1 truth set has since been done (`docs/validation/HCC1395_SEQC2_v1_preliminary_concordance.md`): 2 of 2 evaluable reference SNVs detected and 1 unmatched call, at the panel-region-and-truth-region intersection, with **no evaluable indel** and no evaluable chrX region. This is far too small a sample to estimate sensitivity or specificity and does not change the "not completed" status above.
 - **MSI is not clinically validated** — the MSI module is a panel-based indel-rate estimate (`msi.threshold` in config), explicitly documented in `workflow/rules/msi_scoring.smk` as a heuristic, not a clinically validated MSI assay.
 - **CNV is not clinically validated** — `calculate_cnv` is a pure-Python mosdepth-ratio method, not a validated clinical CNV caller.
 - **Fusion/structural rearrangement detection is not part of Phase 1.**

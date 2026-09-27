@@ -1,0 +1,10 @@
+b558d58863ff3b4468d398163415b981880e57f035cdeab105667a35e773d4e8  /home/rami/seqc2_phase1_test/eval/evaluate.py
+2026-09-26T11:19:42+02:00
+--- amended design 2026-09-27T
+2026-09-27T07:09:04+02:00
+primary mask changed to tumor>=20,normal>=20 per user instruction (matches pipeline min_depth); previous run used a bcftools view -R bug (fixed: norm output must be -Oz for -R to work) -- no prior evaluate.py run had produced numeric results yet, so this is a design fix, not a re-derivation of published numbers.
+8117a6948d319103b3253886f4af8d78ba9f9db6590448ed89177d8f0051b690  /home/rami/seqc2_phase1_test/eval/evaluate.py
+--- amended design 2026-09-27T2
+2026-09-27T07:15:13+02:00
+bugfix: bcftools view -R needs an index and cannot read a piped/streamed bgzip on stdin (crashed with idx_find_and_load, no output produced, no numeric result existed before this point) -- switched to bcftools view -T (targets-file, streaming, no index needed). Verified manually: sSNV truth file restricted to panel.merged.bed now returns the expected 4 records. Design (regions, strata, matching) unchanged from the prior entry.
+641b65559023984b619dfc66f92be0c756389dd89997f429045305b803b925b4  /home/rami/seqc2_phase1_test/eval/evaluate.py
