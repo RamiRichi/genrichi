@@ -1,0 +1,64 @@
+{
+  "shared_mask": {
+    "intervals": 1322,
+    "bases": 127378,
+    "definition": "panel \u2229 SEQC2-HC \u2229 {FD & LL, tumor>=20 & normal>=20}"
+  },
+  "truth_variants_in_shared_mask": {
+    "SNV": 2,
+    "indel": 0,
+    "other": 0
+  },
+  "calls_in_shared_mask": {
+    "FD": {
+      "SNV": 3,
+      "indel": 0,
+      "other": 0
+    },
+    "LL": {
+      "SNV": 2,
+      "indel": 0,
+      "other": 0
+    }
+  },
+  "agreement": {
+    "called_in_both_runs": [
+      "chr13:32339132 G>T (SNV)",
+      "chr2:47806320 G>A (SNV)"
+    ],
+    "called_in_FD_only": [
+      "chr16:23635069 G>A (SNV)"
+    ],
+    "called_in_LL_only": []
+  },
+  "vs_truth_within_shared_mask": {
+    "TP_total_sites_matching_truth": [
+      "chr13:32339132 G>T (SNV)",
+      "chr2:47806320 G>A (SNV)"
+    ],
+    "TP_count": 2,
+    "unmatched_to_truth_any_run": [
+      "chr16:23635069 G>A (SNV)"
+    ],
+    "unmatched_count": 1,
+    "unmatched_called_by": {
+      "chr16:23635069 G>A": [
+        "FD"
+      ]
+    }
+  },
+  "chr16_23635069_FD_unmatched_call_investigated_in_LL": {
+    "site": "chr16:23635069 G>A",
+    "FD_depth_tumor_normal": [
+      70,
+      43
+    ],
+    "LL_depth_tumor_normal": [
+      106,
+      109
+    ],
+    "LL_in_pass_vcf": "absent",
+    "LL_in_filtered_vcf": "absent",
+    "LL_in_raw_mutect2_vcf": "absent"
+  }
+}

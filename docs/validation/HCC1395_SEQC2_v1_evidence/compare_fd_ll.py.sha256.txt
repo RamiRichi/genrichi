@@ -1,0 +1,3 @@
+compare_fd_ll.py -- standalone, read-only script; does not modify evaluate.py, its masks, or any pipeline/config file.
+2026-09-27T15:37:44+02:00
+ca0a97479de87ce8fe645af467f78c2c4a5e83ed94d181d5fd6b0b4a252d524f  /home/rami/seqc2_phase1_test/eval/compare_fd_ll.py
