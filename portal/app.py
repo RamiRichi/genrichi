@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config as cfg
 import models
 import runner
+from models import SFTP_ACCOUNT_RE
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -37,6 +38,7 @@ app.config["MAX_CONTENT_LENGTH"] = cfg.MAX_CONTENT_LENGTH
 
 os.makedirs(cfg.UPLOADS_DIR, exist_ok=True)
 os.makedirs(cfg.LOG_DIR,     exist_ok=True)
+os.makedirs(cfg.PINNED_INPUTS_DIR, exist_ok=True)
 
 
 # ── Auth decorators ───────────────────────────────────────────────────────────
@@ -63,6 +65,94 @@ def admin_required(f):
             return redirect(url_for("dashboard"))
         return f(*args, **kwargs)
     return decorated
+
+
+def _session_lab_id():
+    """The logged-in user's lab, read fresh from the DB (never from the request)."""
+    user = models.get_user(session.get("username", ""))
+    return user["lab_id"] if user else None
+
+
+def _may_access_lab_data(lab_id):
+    """Admins see every lab; everyone else only their own single lab.
+    Used for billing data, which is deliberately lab_id-only (no legacy fallback):
+    an order with no lab has no billing lab to check against."""
+    if session.get("role") == "admin":
+        return True
+    mine = _session_lab_id()
+    return mine is not None and lab_id is not None and mine == lab_id
+
+
+def _may_access_order(order):
+    """The single access rule for every order/report/download/status/log/action
+    route. Admins see every order. A lab user sees an order if it is linked to
+    their own lab (shared with every colleague at that lab) -- never another
+    lab's. An order with no lab_id (legacy, created before lab-linking existed)
+    falls back to creator-only access, exactly as before this fix: this keeps a
+    user's own historical orders visible without ever widening a no-lab order's
+    visibility to a whole lab it was never actually linked to."""
+    if session.get("role") == "admin":
+        return True
+    if order["lab_id"] is not None:
+        mine = _session_lab_id()
+        return mine is not None and mine == order["lab_id"]
+    return order["created_by"] == session.get("username")
+
+
+# ── SFTP upload isolation ─────────────────────────────────────────────────────
+# The trusted server-side link from a lab to its SFTP directory is
+# labs.sftp_account (models.set_lab_sftp_account), set by an admin -- never
+# inferred here from a lab name, a username, or anything a request sends. A
+# lab with no sftp_account has no authorized SFTP files at all: the browser
+# API returns an empty, explicitly-unlinked list for it rather than falling
+# back to showing every client's files. The browser is only ever given
+# 'client/filename' tokens, never a real filesystem path; every token is
+# re-resolved and re-validated here again at order-creation time, independent
+# of what the listing endpoint returned, so a hand-crafted form POST gets the
+# same enforcement as the picker UI. Resolution itself now lives in
+# sftp_paths.py (not here) so runner.py can re-run the identical check again,
+# a third time, right before it copies the file into the pinned-inputs area --
+# see "Input pinning" below and sftp_paths.py's own docstring.
+from sftp_paths import (
+    sftp_upload_root as _sftp_upload_root,
+    list_sftp_clients as _list_sftp_clients,
+    list_sftp_files as _list_sftp_files,
+    resolve_sftp_token as _resolve_sftp_token,
+)
+
+
+def _resolve_order_fastq_field(raw_token, lab_row):
+    """Validate one fastq_* form field for /order/new. Empty stays empty (an
+    order may be created before a file is staged) -- returns (True, None).
+    A non-empty value must resolve, via resolve_sftp_token, to a real file
+    inside the authorized SFTP root: the caller's own lab's account for a lab
+    user, or any real client for an admin.
+
+    This is the SELECTION-time check only -- it decides whether the order may
+    be created at all, and what (client, filename) gets recorded to pin. It is
+    NOT the last check on these bytes: runner.py's pinning worker re-runs
+    resolve_sftp_token on the exact same (client, filename) again, completely
+    independently, right before it copies the file (see "Input pinning"
+    below) -- this function's result is never trusted as still valid by then.
+
+    Returns (True, None) for an empty field, (True, {"client", "name"}) for a
+    resolved one, or (False, flash_message) on any failure.
+    """
+    raw_token = (raw_token or "").strip()
+    if not raw_token:
+        return True, None
+    if session.get("role") == "admin":
+        allowed_client = None
+    else:
+        allowed_client = lab_row["sftp_account"] if lab_row else None
+        if not allowed_client:
+            return False, ("Your lab is not yet linked to an SFTP upload account, so no "
+                           "uploaded file can be selected. Ask an administrator to link it.")
+    path = _resolve_sftp_token(raw_token, allowed_client=allowed_client)
+    if path is None:
+        return False, "The selected file was not found in your authorized SFTP uploads."
+    client, _, name = raw_token.partition("/")
+    return True, {"client": client, "name": name}
 
 
 # ── Login / Logout ────────────────────────────────────────────────────────────
@@ -95,9 +185,10 @@ def logout():
 def dashboard():
     uname = session["username"]
     role  = session["role"]
-    orders = models.list_orders(200, username=uname, role=role)
+    orders = models.list_orders(200, username=uname, role=role, lab_id=_session_lab_id())
     stats = {
         "total":   len(orders),
+        "pinning": sum(1 for o in orders if o["status"] == "Pinning"),
         "queued":  sum(1 for o in orders if o["status"] == "Queued"),
         "running": sum(1 for o in orders if o["status"] == "Running"),
         "done":    sum(1 for o in orders if o["status"] == "Done"),
@@ -116,7 +207,7 @@ def stats():
 
     uname  = session["username"]
     role   = session["role"]
-    orders = models.list_orders(500, username=uname, role=role)
+    orders = models.list_orders(500, username=uname, role=role, lab_id=_session_lab_id())
 
     stats = {
         "total":   len(orders),
@@ -124,6 +215,7 @@ def stats():
         "failed":  sum(1 for o in orders if o["status"] == "Failed"),
         "running": sum(1 for o in orders if o["status"] == "Running"),
         "queued":  sum(1 for o in orders if o["status"] == "Queued"),
+        "pinning": sum(1 for o in orders if o["status"] == "Pinning"),
     }
 
     status_data = {"Done": stats["done"], "Running": stats["running"],
@@ -156,7 +248,8 @@ def stats():
 def new_order():
     if request.method == "GET":
         return render_template("new_order.html", pipelines=cfg.PIPELINE_MAP,
-                               paired_panels=list(cfg.PAIRED_PANELS))
+                               paired_panels=list(cfg.PAIRED_PANELS),
+                               labs=models.list_labs() if session["role"] == "admin" else [])
 
     panel_type   = request.form.get("panel_type", "comprehensive")
     patient_id   = request.form.get("patient_id", "").strip()
@@ -176,17 +269,79 @@ def new_order():
     normal_r1 = request.form.get("fastq_normal_r1", "").strip()
     normal_r2 = request.form.get("fastq_normal_r2", "").strip()
 
-    order_id = models.new_order(
-        patient_id=patient_id, patient_name=patient_name,
-        sex=sex, dob=dob, tumor_type=tumor_type,
-        panel_type=panel_type,
-        fastq_r1=r1, fastq_r2=r2,
-        fastq_normal_r1=normal_r1, fastq_normal_r2=normal_r2,
-        notes=notes, notify_email=notify_email,
-        created_by=session["username"],
-    )
+    # The billing lab is decided server-side: a lab user's order always carries
+    # that user's own lab; only an admin may choose one (never taken from a
+    # lab user's form).
+    if session["role"] == "admin":
+        raw_lab = request.form.get("lab_id", "").strip()
+        lab_id = int(raw_lab) if raw_lab.isdigit() else None
+        if lab_id is not None and models.get_lab(lab_id) is None:
+            flash("Unknown lab.", "error")
+            return redirect(url_for("new_order"))
+    else:
+        lab_id = _session_lab_id()
+    lab_row = models.get_lab(lab_id) if lab_id is not None else None
 
-    flash(f"Order {order_id} created and queued.", "success")
+    # Every non-empty FASTQ field must resolve, server-side, to a real file inside
+    # the authorized SFTP uploads root -- for a lab user, their own lab's linked
+    # account only; for an admin, any real client. This runs regardless of
+    # whether the value came from the file-browser picker or was typed by hand,
+    # and independent of whatever /api/sftp-files previously returned. It only
+    # decides whether the order may be created and which (client, filename) get
+    # recorded to pin -- it is NOT what the pipeline ends up reading from (see
+    # "Input pinning" below): resolved[*] here is either None (no file for that
+    # slot) or a {"client","name"} pair, never a filesystem path.
+    resolved = {}
+    for field, raw in (("fastq_r1", r1), ("fastq_r2", r2),
+                       ("fastq_normal_r1", normal_r1), ("fastq_normal_r2", normal_r2)):
+        ok, value = _resolve_order_fastq_field(raw, lab_row)
+        if not ok:
+            flash(value, "error")
+            return redirect(url_for("new_order"))
+        resolved[field] = value
+
+    # Input pinning: the order NEVER stores a live SFTP path. It is created with
+    # empty fastq_* columns and, if any field was selected, status "Pinning" --
+    # runner.py's pinning worker (durable, DB-driven, survives a portal restart;
+    # see runner.py's "Input pinning" section) copies each selected file into a
+    # server-account-owned directory the SFTP client can never write to,
+    # verifying the source was not still uploading and did not change during the
+    # copy, and hashes the copy. Only once every selected field is pinned does
+    # the order become "Queued"; if any fails, none of the order's pinned copies
+    # are kept and the order is marked "Failed" without ever running. An order
+    # with nothing selected has nothing to pin and goes straight to "Queued", as
+    # before this change.
+    # Order creation and (if any file was selected) every one of its
+    # order_inputs rows must land together, in one transaction -- see
+    # models.new_order_with_inputs()'s docstring for why a separate insert per
+    # field, after the order row's own insert, would risk leaving a 'Pinning'
+    # order with only some of its selected fields recorded.
+    inputs = [(field, info["client"], info["name"])
+             for field, info in resolved.items() if info is not None]
+    needs_pinning = bool(inputs)
+    if needs_pinning:
+        order_id = models.new_order_with_inputs(
+            patient_id=patient_id, patient_name=patient_name,
+            sex=sex, dob=dob, tumor_type=tumor_type,
+            panel_type=panel_type, inputs=inputs,
+            notes=notes, notify_email=notify_email,
+            created_by=session["username"], lab_id=lab_id,
+        )
+    else:
+        order_id = models.new_order(
+            patient_id=patient_id, patient_name=patient_name,
+            sex=sex, dob=dob, tumor_type=tumor_type,
+            panel_type=panel_type,
+            fastq_r1="", fastq_r2="", fastq_normal_r1="", fastq_normal_r2="",
+            notes=notes, notify_email=notify_email,
+            created_by=session["username"], lab_id=lab_id,
+            status="Queued",
+        )
+
+    if needs_pinning:
+        flash(f"Order {order_id} created. Verifying and copying the selected file(s)...", "success")
+    else:
+        flash(f"Order {order_id} created and queued.", "success")
     return redirect(url_for("order_detail", order_id=order_id))
 
 
@@ -199,7 +354,7 @@ def order_detail(order_id):
         abort(404)
 
     # Lab staff can only see their own orders
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
 
     log_tail = ""
@@ -209,7 +364,9 @@ def order_detail(order_id):
             log_tail = "".join(lines[-60:])
 
     return render_template("order.html", order=order, log_tail=log_tail,
-                           pipeline=cfg.PIPELINE_MAP.get(order["panel_type"], {}))
+                           pipeline=cfg.PIPELINE_MAP.get(order["panel_type"], {}),
+                           invoice_issued=models.get_invoice(order_id) is not None,
+                           labs=models.list_labs() if session["role"] == "admin" else [])
 
 
 # ── Report viewer ─────────────────────────────────────────────────────────────
@@ -219,7 +376,7 @@ def report_embed(order_id):
     order = models.get_order(order_id)
     if not order or not order["report_path"]:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     if not os.path.isfile(order["report_path"]):
         abort(404)
@@ -233,7 +390,7 @@ def view_report(order_id):
     order = models.get_order(order_id)
     if not order or not order["report_path"]:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     if not os.path.isfile(order["report_path"]):
         abort(404)
@@ -246,7 +403,7 @@ def download_report(order_id):
     order = models.get_order(order_id)
     if not order or not order["report_path"]:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     if not os.path.isfile(order["report_path"]):
         abort(404)
@@ -256,6 +413,19 @@ def download_report(order_id):
 
 
 # ── Invoice ───────────────────────────────────────────────────────────────────
+# Recipient = the ordering lab (never the patient). GET never writes: without an
+# issued invoice it renders a number-less admin-only draft. An invoice exists
+# (with a fixed, gapless number) only after an explicit admin POST to
+# /order/<id>/invoice/issue.
+def _issuer():
+    return {
+        "name": cfg.COMPANY_NAME, "owner": cfg.COMPANY_OWNER,
+        "address": cfg.COMPANY_ADDRESS, "email": cfg.COMPANY_EMAIL,
+        "web": cfg.COMPANY_WEB, "tax_no": cfg.COMPANY_TAX_NO,
+        "tax_note": cfg.INVOICE_TAX_NOTE,
+    }
+
+
 @app.route("/order/<order_id>/invoice")
 @login_required
 def invoice(order_id):
@@ -263,52 +433,105 @@ def invoice(order_id):
     order = models.get_order(order_id)
     if not order:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_lab_data(order["lab_id"]):
         abort(403)
 
-    net_price   = cfg.PANEL_PRICES.get(order["panel_type"], 0.0)
-    vat         = round(net_price * 0.19, 2)
-    gross_price = round(net_price + vat, 2)
-    today       = date.today()
-    invoice_no  = f"GR-{today.strftime('%Y%m')}-{order_id[-6:]}"
-    pipeline_label = cfg.PIPELINE_MAP.get(order["panel_type"], {}).get("label", order["panel_type"])
+    inv = models.get_invoice(order_id)
+    if inv is None and session["role"] != "admin":
+        abort(404)          # lab users only ever see issued invoices
 
-    return render_template("invoice.html",
-        order=order,
-        cfg=cfg,
-        invoice_no=invoice_no,
-        invoice_date=today.strftime("%d.%m.%Y"),
-        due_date=(today + timedelta(days=cfg.PAYMENT_DAYS)).strftime("%d.%m.%Y"),
-        net_price=net_price,
-        vat=vat,
-        gross_price=gross_price,
-        pipeline_label=pipeline_label,
-    )
+    net_price = cfg.PANEL_PRICES.get(order["panel_type"], 0.0)
+    pipeline_label = cfg.PIPELINE_MAP.get(order["panel_type"], {}).get("label", order["panel_type"])
+    if inv is not None:
+        recipient = json.loads(inv["recipient_json"])
+        issuer = json.loads(inv["issuer_json"])
+        net_price = inv["net_cents"] / 100
+        idate = date.fromisoformat(inv["invoice_date"])
+        ctx = dict(draft=False, invoice_no=inv["invoice_no"],
+                   invoice_date=idate.strftime("%d.%m.%Y"),
+                   due_date=(idate + timedelta(days=cfg.PAYMENT_DAYS)).strftime("%d.%m.%Y"),
+                   service_date=date.fromisoformat(inv["service_date"]).strftime("%d.%m.%Y"),
+                   description=inv["description"])
+    else:
+        lab = models.get_lab(order["lab_id"])
+        recipient = {k: lab[k] for k in models.LAB_FIELDS} if lab else None
+        issuer = _issuer()
+        finished = (order["finished_at"] or "")[:10]
+        ctx = dict(draft=True, invoice_no=None, invoice_date=None, due_date=None,
+                   service_date=None, description=pipeline_label,
+                   default_service_date=finished,
+                   can_issue=bool(cfg.INVOICE_ISSUING_ENABLED and recipient
+                                  and order["status"] == "Done" and net_price > 0),
+                   issuing_enabled=cfg.INVOICE_ISSUING_ENABLED,
+                   order_done=order["status"] == "Done")
+
+    return render_template("invoice.html", order=order, cfg=cfg, issuer=issuer,
+                           recipient=recipient, net_price=net_price, gross_price=net_price,
+                           **ctx)
+
+
+@app.route("/order/<order_id>/invoice/issue", methods=["POST"])
+@admin_required
+def issue_invoice(order_id):
+    from datetime import date
+    order = models.get_order(order_id)
+    if not order:
+        abort(404)
+    if not cfg.INVOICE_ISSUING_ENABLED:
+        flash("Invoice issuing is disabled (set INVOICE_ISSUING_ENABLED=true "
+              "once the tax treatment has been confirmed).", "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    if order["status"] != "Done":
+        flash("Only completed orders can be invoiced.", "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    net = cfg.PANEL_PRICES.get(order["panel_type"], 0.0)
+    if net <= 0:
+        flash("No price is configured for this panel.", "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    try:
+        service_date = date.fromisoformat(request.form.get("service_date", "").strip())
+    except ValueError:
+        flash("A valid service date (Leistungsdatum) is required.", "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    today = date.today()
+    if service_date > today or service_date < date.fromisoformat(order["created_at"][:10]):
+        flash("The service date must be between the order date and today.", "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    try:
+        inv = models.issue_invoice(
+            order_id, issued_by=session["username"], invoice_date=today.isoformat(),
+            service_date=service_date.isoformat(),
+            description=cfg.PIPELINE_MAP.get(order["panel_type"], {}).get("label", order["panel_type"]),
+            net_cents=round(net * 100), issuer=_issuer())
+    except models.LabError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("invoice", order_id=order_id))
+    logger.info("Invoice %s issued for %s by %s", inv["invoice_no"], order_id, session["username"])
+    flash(f"Invoice {inv['invoice_no']} issued.", "success")
+    return redirect(url_for("invoice", order_id=order_id))
 
 
 # ── SFTP file browser API ────────────────────────────────────────────────────
+# Response shape: {"files": [...], "linked": bool}. "linked" tells the picker UI
+# whether the browser is actually usable ("false" means: no admin-configured
+# SFTP link exists yet for this account, not "you have zero files"). Every file
+# entry carries a "token" ('client/filename'), never a real filesystem path --
+# see the "SFTP upload isolation" helpers above for how a token is resolved and
+# re-validated server-side at order-creation time.
 @app.route("/api/sftp-files")
 @login_required
 def api_sftp_files():
-    sftp_root = "/srv/genrichi-sftp"
-    files = []
-    try:
-        for user_dir in sorted(Path(sftp_root).iterdir()):
-            uploads = user_dir / "uploads"
-            if not uploads.is_dir():
-                continue
-            for f in sorted(uploads.iterdir()):
-                if f.suffix.lower() in (".gz", ".fastq", ".fq") or \
-                   f.name.endswith(".fastq.gz") or f.name.endswith(".fq.gz"):
-                    files.append({
-                        "client": user_dir.name,
-                        "name":   f.name,
-                        "path":   str(f),
-                        "size_mb": round(f.stat().st_size / 1024 / 1024, 1),
-                    })
-    except Exception:
-        pass
-    return jsonify(files)
+    if session["role"] == "admin":
+        files = []
+        for client in _list_sftp_clients():
+            files.extend(_list_sftp_files(client))
+        return jsonify({"files": files, "linked": True})
+
+    lab = models.get_lab(_session_lab_id())
+    account = lab["sftp_account"] if lab else None
+    if not account:
+        return jsonify({"files": [], "linked": False})
+    return jsonify({"files": _list_sftp_files(account), "linked": True})
 
 
 # ── Status API ────────────────────────────────────────────────────────────────
@@ -318,7 +541,7 @@ def api_status(order_id):
     order = models.get_order(order_id)
     if not order:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     return jsonify({"status": order["status"],
                     "report_ready": bool(order["report_path"])})
@@ -331,7 +554,7 @@ def download_log(order_id):
     order = models.get_order(order_id)
     if not order or not order["log_path"] or not os.path.isfile(order["log_path"]):
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     return send_file(order["log_path"], as_attachment=True,
                      download_name=f"{order_id}.log")
@@ -344,13 +567,28 @@ def retry_order(order_id):
     order = models.get_order(order_id)
     if not order:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     if order["status"] != "Failed":
         flash("Only failed orders can be retried.", "error")
         return redirect(url_for("order_detail", order_id=order_id))
-    models.update_status(order_id, "Queued", error_msg="")
-    flash(f"Order {order_id} re-queued.", "success")
+    # A failure can happen either during pinning (inputs never got copied) or
+    # during Snakemake itself (inputs were already pinned fine). Retrying must
+    # not skip straight to "Queued" in the first case -- the runner would then
+    # try to read fastq_* columns that are still empty. If every recorded input
+    # for this order is already pinned, go straight back to Queued (re-running
+    # the pipeline is enough); otherwise reset the unfinished ones and route
+    # back through "Pinning" so the pinning worker retries them -- against
+    # their original SFTP source, which may itself no longer exist or may have
+    # changed since order creation, in which case this will (correctly) fail
+    # again with a clear reason rather than silently running on stale bytes.
+    if models.order_inputs_all_done(order_id):
+        models.update_status(order_id, "Queued", error_msg="")
+        flash(f"Order {order_id} re-queued.", "success")
+    else:
+        models.reset_order_inputs_for_retry(order_id)
+        models.update_status(order_id, "Pinning", error_msg="")
+        flash(f"Order {order_id} — re-verifying and copying the selected file(s)...", "success")
     return redirect(url_for("order_detail", order_id=order_id))
 
 
@@ -362,7 +600,7 @@ def cancel_order(order_id):
     order = models.get_order(order_id)
     if not order:
         abort(404)
-    if session["role"] != "admin" and order["created_by"] != session["username"]:
+    if not _may_access_order(order):
         abort(403)
     if order["status"] != "Running":
         flash("Only running orders can be cancelled.", "error")
@@ -390,7 +628,7 @@ def cancel_order(order_id):
 @admin_required
 def user_management():
     users = models.list_users()
-    return render_template("users.html", users=users)
+    return render_template("users.html", users=users, labs=models.list_labs())
 
 
 @app.route("/admin/users/create", methods=["POST"])
@@ -409,7 +647,9 @@ def create_user():
         flash("Password must be at least 6 characters.", "error")
         return redirect(url_for("user_management"))
 
-    ok = models.create_user(username, password, role, full_name, email)
+    raw_lab = request.form.get("lab_id", "").strip()
+    lab_id = int(raw_lab) if raw_lab.isdigit() and models.get_lab(int(raw_lab)) else None
+    ok = models.create_user(username, password, role, full_name, email, lab_id)
     if ok:
         flash(f"User '{username}' created successfully.", "success")
         logger.info("Admin created user: %s (%s)", username, role)
@@ -460,6 +700,97 @@ def delete_user(username):
     return redirect(url_for("user_management"))
 
 
+# ── Labs / billing profiles ───────────────────────────────────────────────────
+@app.route("/admin/labs")
+@admin_required
+def lab_management():
+    labs = models.list_labs()
+    members = {l["id"]: models.lab_members(l["id"]) for l in labs}
+    return render_template("labs.html", labs=labs, members=members)
+
+
+def _lab_form():
+    return {k: request.form.get(k, "") for k in models.LAB_FIELDS}
+
+
+@app.route("/admin/labs/create", methods=["POST"])
+@admin_required
+def create_lab():
+    try:
+        models.create_lab(**_lab_form())
+        flash("Lab created.", "success")
+    except models.LabError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("lab_management"))
+
+
+@app.route("/admin/labs/<int:lab_id>/edit", methods=["POST"])
+@admin_required
+def edit_lab(lab_id):
+    if models.get_lab(lab_id) is None:
+        abort(404)
+    try:
+        models.update_lab(lab_id, **_lab_form())
+        flash("Lab updated. Already issued invoices keep their original recipient.", "success")
+    except models.LabError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("lab_management"))
+
+
+@app.route("/admin/labs/<int:lab_id>/sftp", methods=["POST"])
+@admin_required
+def set_lab_sftp(lab_id):
+    """Link (or clear) a lab's trusted SFTP upload account. This directory name
+    must be confirmed out-of-band (e.g. against the actual SFTP server config) --
+    it is never guessed from the lab's legal name or any user's username."""
+    if models.get_lab(lab_id) is None:
+        abort(404)
+    account = request.form.get("sftp_account", "").strip()
+    try:
+        models.set_lab_sftp_account(lab_id, account)
+        flash("Lab's SFTP account updated." if account else "Lab's SFTP link cleared.", "success")
+    except models.LabError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("lab_management"))
+
+
+@app.route("/admin/users/<username>/lab", methods=["POST"])
+@admin_required
+def set_user_lab(username):
+    raw = request.form.get("lab_id", "").strip()
+    lab_id = int(raw) if raw.isdigit() else None
+    try:
+        models.set_user_lab(username, lab_id)
+        flash(f"Lab of '{username}' updated.", "success")
+    except models.LabError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("user_management"))
+
+
+@app.route("/admin/orders/<order_id>/lab", methods=["POST"])
+@admin_required
+def set_order_lab(order_id):
+    raw = request.form.get("lab_id", "").strip()
+    try:
+        models.set_order_lab(order_id, int(raw) if raw.isdigit() else None)
+        flash("Order billing lab set.", "success")
+    except models.LabError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("order_detail", order_id=order_id))
+
+
+@app.route("/lab")
+@login_required
+def my_lab():
+    """A lab user's read-only view of their own lab's billing profile.
+    There is deliberately no lab id in this URL: nobody can address another lab."""
+    if session["role"] == "admin":
+        return redirect(url_for("lab_management"))
+    lab = models.get_lab(_session_lab_id())
+    members = models.lab_members(lab["id"]) if lab else []
+    return render_template("lab.html", lab=lab, members=members)
+
+
 # ── Settings ──────────────────────────────────────────────────────────────────
 @app.route("/settings")
 @login_required
@@ -482,7 +813,8 @@ def settings():
         admin_user    = cfg.PORTAL_USER,
         db_path       = cfg.DB_PATH,
         workflow_dir  = cfg.WORKFLOW_DIR,
-        total_orders  = len(models.list_orders(1000)),
+        total_orders  = len(models.list_orders(1000, username=session["username"],
+                                               role=session["role"], lab_id=_session_lab_id())),
         disk_usage    = disk_usage,
         pipelines     = cfg.PIPELINE_MAP,
     )

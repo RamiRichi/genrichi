@@ -34,8 +34,9 @@ from test_launchers_safe import scan_text  # noqa: E402
 POSIX = os.name == "posix" and shutil.which("bash") and shutil.which("git") and shutil.which("sha256sum")
 
 EXPECTED_ALLOWLIST = [
-    "app.py", "config.py", "mailer.py", "models.py", "runner.py",
-    "templates/base.html", "templates/dashboard.html", "templates/invoice.html", "templates/login.html",
+    "app.py", "config.py", "mailer.py", "models.py", "runner.py", "sftp_paths.py",
+    "templates/base.html", "templates/dashboard.html", "templates/invoice.html", "templates/lab.html", "templates/labs.html",
+    "templates/login.html",
     "templates/new_order.html", "templates/order.html", "templates/report_view.html",
     "templates/settings.html", "templates/stats.html", "templates/users.html",
     "static/img/logo.png",
@@ -260,7 +261,7 @@ class DeployTestCase(unittest.TestCase):
         self.run_script()
         self.assertIn("CHANGED", self.output)
         self.assertIn("NEW", self.output)
-        self.assertRegex(self.output, r"3 changed, 3 new, 10 unchanged, 16 allowlisted|\d+ changed, \d+ new, \d+ unchanged, 16 allowlisted")
+        self.assertRegex(self.output, r"3 changed, 3 new, 13 unchanged, 19 allowlisted|\d+ changed, \d+ new, \d+ unchanged, 19 allowlisted")
 
     def test_dry_run_exits_nonzero_when_execute_would_be_refused(self):
         (self.state / "dup_state").write_text("active")
@@ -635,7 +636,7 @@ class DeployTestCase(unittest.TestCase):
         self.assertIn("set -euo pipefail", text)
         self.assertNotIn(b"\r", SCRIPT.read_bytes())
 
-    def test_script_allowlist_is_exactly_the_reviewed_16_files(self):
+    def test_script_allowlist_is_exactly_the_reviewed_19_files(self):
         text = SCRIPT.read_text(encoding="utf-8")
         block = re.search(r"readonly ALLOWLIST=\(\n(.*?)\n\)", text, re.S).group(1)
         self.assertEqual([line.strip() for line in block.splitlines() if line.strip()], EXPECTED_ALLOWLIST)

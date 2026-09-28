@@ -10,8 +10,20 @@ import config as cfg
 logger = logging.getLogger("mailer")
 
 
-def send_completion_email(order: dict, report_url: str = "") -> bool:
-    """Send an email when an order completes (Done or Failed)."""
+def send_completion_email(order: dict) -> bool:
+    """Send a generic notice that an order's status changed.
+
+    Deliberately carries no order data: no patient identifier, no panel/
+    analysis type, no file path, no error text, and no direct link to the
+    order or its report. It names only the opaque order_id and points to the
+    portal's login page -- the recipient sees the order's real content only
+    if, after signing in, the same lab-membership check every order/report
+    route already applies (_may_access_order / the invoice lab check) lets
+    them. The email itself is never a source of authorization: the address
+    typed into notify_email at order creation is not assumed to be entitled
+    to see the order's data, so nothing here can leak to it, correct
+    recipient or not.
+    """
     if not cfg.SMTP_ENABLED:
         return False
 
@@ -19,32 +31,9 @@ def send_completion_email(order: dict, report_url: str = "") -> bool:
     if not recipient:
         return False
 
-    status  = order.get("status", "Unknown")
-    oid     = order.get("order_id", "")
-    pid     = order.get("patient_id", "")
-    panel   = order.get("panel_type", "")
-    panel_label = cfg.PIPELINE_MAP.get(panel, {}).get("label", panel)
-
-    subject = f"GenRichi — Order {oid} {status}"
-
-    if status == "Done":
-        color  = "#28a745"
-        icon   = "✅"
-        body   = f"""
-        <p>The analysis for <strong>{pid}</strong> has completed successfully.</p>
-        <p><strong>Panel:</strong> {panel_label}</p>
-        {"<p><a href='" + report_url + "' style='background:#28a745;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;'>View Report</a></p>" if report_url else ""}
-        """
-    else:
-        color  = "#dc3545"
-        icon   = "❌"
-        error  = order.get("error_msg", "Unknown error")
-        body   = f"""
-        <p>The analysis for <strong>{pid}</strong> has <strong>failed</strong>.</p>
-        <p><strong>Panel:</strong> {panel_label}</p>
-        <p><strong>Error:</strong> {error}</p>
-        <p><a href='{cfg.PORTAL_URL}/order/{oid}'>View details and retry</a></p>
-        """
+    oid = order.get("order_id", "")
+    subject = "GenRichi Portal — order update"
+    login_url = f"{cfg.PORTAL_URL}/login"
 
     html = f"""
     <!DOCTYPE html>
@@ -55,8 +44,10 @@ def send_completion_email(order: dict, report_url: str = "") -> bool:
           <h2 style="color:#fff;margin:0">🧬 GenRichi — Bioinformatics Partner Portal</h2>
         </div>
         <div style="padding:30px;">
-          <h3 style="color:{color}">{icon} Order {oid} — {status}</h3>
-          {body}
+          <h3 style="color:#1a2332">Order update</h3>
+          <p>There is an update on an order in the GenRichi portal (reference {oid}).</p>
+          <p>Sign in to the portal to view it, if you are entitled to:</p>
+          <p><a href="{login_url}" style="background:#1a2332;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Sign in</a></p>
           <hr style="margin:20px 0;border:none;border-top:1px solid #eee">
           <p style="color:#888;font-size:12px">GenRichi Bioinformatics Partner Portal &bull; {cfg.PORTAL_URL}</p>
         </div>
@@ -77,7 +68,7 @@ def send_completion_email(order: dict, report_url: str = "") -> bool:
             server.login(cfg.SMTP_USER, cfg.SMTP_PASS)
             server.sendmail(cfg.SMTP_USER, [recipient], msg.as_string())
 
-        logger.info("Email sent to %s for order %s", recipient, oid)
+        logger.info("Notification email sent to %s for order %s", recipient, oid)
         return True
 
     except Exception as exc:

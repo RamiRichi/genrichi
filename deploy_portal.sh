@@ -37,9 +37,12 @@ readonly ALLOWLIST=(
     mailer.py
     models.py
     runner.py
+    sftp_paths.py
     templates/base.html
     templates/dashboard.html
     templates/invoice.html
+    templates/lab.html
+    templates/labs.html
     templates/login.html
     templates/new_order.html
     templates/order.html

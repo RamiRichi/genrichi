@@ -33,6 +33,9 @@ wget-log
 portal/.env
 portal/instance/
 
+# Pinned copies of order FASTQ inputs -- real sequencing data, never committed
+portal/pinned_inputs/
+
 # Claude Code local settings (machine-specific permissions)
 .claude/
 

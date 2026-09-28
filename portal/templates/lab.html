@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Lab — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-building me-2 text-primary"></i>My Lab</h1>
+  <p>Billing profile shared by everyone at your lab</p>
+</div>
+
+{% if lab %}
+<div class="card detail-card">
+  <div class="card-body">
+    <h5 class="mb-1">{{ lab.legal_name }}</h5>
+    <p class="mb-3">
+      {{ lab.address_line1 }}<br>
+      {% if lab.address_line2 %}{{ lab.address_line2 }}<br>{% endif %}
+      {{ lab.postal_code }} {{ lab.city }}<br>
+      {{ lab.country }}
+    </p>
+    <div class="small text-muted mb-1">Staff at this lab</div>
+    <div class="small">
+      {% for m in members %}<code>{{ m.username }}</code>{% if m.full_name %} ({{ m.full_name }}){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
+    </div>
+    <p class="small text-muted mt-3 mb-0">
+      Invoices for your lab's orders are addressed to this name and address.
+      To change them, contact GenRichi.
+    </p>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning">
+  Your account is not linked to a lab yet, so orders you create cannot be invoiced.
+  Please contact GenRichi.
+</div>
+{% endif %}
+{% endblock %}

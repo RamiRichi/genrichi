@@ -7,6 +7,9 @@ import os
 BASE_DIR       = os.path.dirname(os.path.abspath(__file__))
 GENRICHI_DIR   = os.path.dirname(BASE_DIR)          # /home/rami/genrichi
 UPLOADS_DIR    = os.path.join(BASE_DIR, "uploads")  # FASTQs uploaded via browser
+# Server-account-owned copies of the SFTP inputs an order actually pinned --
+# the SFTP client can never write here. See runner.py's "Input pinning".
+PINNED_INPUTS_DIR = os.path.join(BASE_DIR, "pinned_inputs")
 RESULTS_DIR    = os.path.join(GENRICHI_DIR, "results")
 WORKFLOW_DIR   = os.path.join(GENRICHI_DIR, "workflow")
 CONFIG_DIR     = os.path.join(GENRICHI_DIR, "config")
@@ -134,14 +137,25 @@ PAIRED_PANELS = {"comprehensive"}
 PANEL_PRICES = {
     "comprehensive": 750.00,
 }
-COMPANY_NAME    = "GenRichi GmbH"
-COMPANY_ADDRESS = "Musterstraße 1, 10115 Berlin, Deutschland"
+# Kleinunternehmer (§ 19 UStG): no VAT is charged, so there is no USt-IdNr.;
+# invoices carry the Steuernummer (same as website/impressum.html).
+COMPANY_NAME    = "GenRichi Diagnostics"
+COMPANY_OWNER   = "Rami Richi (Inhaber)"
+COMPANY_ADDRESS = "Brandhorsterstr. 3, 06844 Dessau-Roßlau, Deutschland"
 COMPANY_EMAIL   = "info@genrichi.de"
 COMPANY_WEB     = "www.genrichi.de"
-COMPANY_TAX_ID  = "DE123456789"
-BANK_IBAN       = "DE89 3704 0044 0532 0130 00"
-BANK_BIC        = "COBADEFFXXX"
+COMPANY_TAX_NO  = "114/262/00939"
+# Bank details are deliberately empty: fill them in before issuing a real
+# invoice (the old values were sample data). Non-secret; env-overridable.
+BANK_IBAN       = os.environ.get("BANK_IBAN", "")
+BANK_BIC        = os.environ.get("BANK_BIC", "")
 PAYMENT_DAYS    = 30
+# The small-business note printed on invoices. Whether section 19 UStG applies
+# to GenRichi is a tax-advisor determination, not something this file asserts:
+# issuing (which creates the numbered, immutable invoice) stays OFF until
+# INVOICE_ISSUING_ENABLED=true is set in the environment.
+INVOICE_TAX_NOTE = "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet."
+INVOICE_ISSUING_ENABLED = os.environ.get("INVOICE_ISSUING_ENABLED", "false").strip().lower() in ("1", "true", "yes", "on")
 
 # ── Email notifications (optional) ───────────────────────────────────────────
 # SMTP_ENABLED and SMTP_USER are plain settings (not secrets). Precedence,
@@ -159,7 +173,9 @@ PAYMENT_DAYS    = 30
 SMTP_ENABLED  = os.environ.get(
     "SMTP_ENABLED", str(_INSTANCE_SETTINGS.get("SMTP_ENABLED", "true"))
 ).strip().lower() in ("1", "true", "yes", "on")
-SMTP_HOST     = "smtp.ionos.de"
+# Mail is Zoho Mail (IONOS is the domain registrar only). smtp.zoho.eu is the
+# EU data-centre host; use smtp.zoho.com if the account lives on the .com DC.
+SMTP_HOST     = os.environ.get("SMTP_HOST", "smtp.zoho.eu")
 SMTP_PORT     = 587
 SMTP_USER     = os.environ.get("SMTP_USER", _INSTANCE_SETTINGS.get("SMTP_USER") or "info@genrichi.de")
 SMTP_PASS     = _require_env("SMTP_PASS") if SMTP_ENABLED else os.environ.get("SMTP_PASS", "")

@@ -38,7 +38,7 @@
       <i class="bi bi-download me-1"></i>Download
     </a>
     {% endif %}
-    {% if order.status == 'Done' %}
+    {% if order.status == 'Done' and (invoice_issued or session.get('role') == 'admin') %}
     <a href="{{ url_for('invoice', order_id=order.order_id) }}"
        class="btn btn-outline-warning" target="_blank">
       <i class="bi bi-receipt me-1"></i>Rechnung
@@ -50,6 +50,17 @@
   </div>
 </div>
 
+{% if session.get('role') == 'admin' and not order.lab_id %}
+<form method="POST" action="{{ url_for('set_order_lab', order_id=order.order_id) }}"
+      class="d-flex gap-2 align-items-center mb-3">
+  <span class="small text-warning">No billing lab on this order:</span>
+  <select name="lab_id" class="form-select form-select-sm" style="max-width:280px" required>
+    <option value="">— choose lab —</option>
+    {% for l in labs %}<option value="{{ l.id }}">{{ l.legal_name }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-sm btn-outline-primary">Set lab</button>
+</form>
+{% endif %}
 <div class="row g-4">
 
   <!-- Left column: info + status -->

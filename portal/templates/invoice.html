@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<title>Rechnung {{ invoice_no }} — {{ cfg.COMPANY_NAME }}</title>
+<title>{{ 'Rechnungsentwurf' if draft else 'Rechnung ' ~ invoice_no }} — {{ issuer.name }}</title>
 <style>
   @media print {
     .no-print { display: none !important; }
@@ -86,6 +86,10 @@
   .footer { border-top: 1px solid #ecf0f1; padding-top: 16px;
             font-size: 11px; color: #aaa; text-align: center; line-height: 1.8; }
 
+  .draft-bar { background: #f39c12; color: #1b1b1b; display: block; line-height: 1.6;
+               font-size: 13px; }
+  .draft-bar form { margin-top: 8px; display: flex; gap: 10px; align-items: center; }
+  .draft-bar button { background: #1a3a5c; color: #fff; }
   .badge-done { background: #d4edda; color: #155724; padding: 2px 8px;
                 border-radius: 4px; font-size: 11px; font-weight: 600; }
 </style>
@@ -94,9 +98,28 @@
 
 <!-- Print bar -->
 <div class="no-print">
-  <button onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>
+  {% if not draft %}<button onclick="window.print()">🖨️ Drucken / Als PDF speichern</button>{% endif %}
   <a href="{{ url_for('order_detail', order_id=order.order_id) }}">← Zurück zum Auftrag</a>
 </div>
+
+{% if draft %}
+<div class="no-print draft-bar">
+  <strong>ENTWURF – noch keine Rechnung.</strong>
+  Es wurde keine Rechnungsnummer vergeben und nichts gespeichert.
+  {% if not recipient %}<br>Dem Auftrag ist kein Labor zugeordnet – Rechnungsempfänger fehlt.{% endif %}
+  {% if not order_done %}<br>Der Auftrag ist noch nicht abgeschlossen.{% endif %}
+  {% if not issuing_enabled %}<br>Rechnungsstellung ist deaktiviert (INVOICE_ISSUING_ENABLED).{% endif %}
+  {% if can_issue %}
+  <form method="POST" action="{{ url_for('issue_invoice', order_id=order.order_id) }}"
+        onsubmit="return confirm('Rechnung verbindlich ausstellen? Die Nummer wird vergeben und kann nicht geändert werden.')">
+    <label>Leistungsdatum
+      <input type="date" name="service_date" value="{{ default_service_date }}" required>
+    </label>
+    <button type="submit">Rechnung ausstellen</button>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
 
 <div class="page">
 
@@ -106,18 +129,19 @@
       <h1>🧬 Gen<span>Richi</span></h1>
       <p>Bioinformatics Partner for Accredited Labs</p>
       <p style="margin-top:8px;font-size:12px;color:#555">
-        {{ cfg.COMPANY_NAME }}<br>
-        {{ cfg.COMPANY_ADDRESS }}<br>
-        {{ cfg.COMPANY_EMAIL }} · {{ cfg.COMPANY_WEB }}
+        {{ issuer.name }}<br>
+        {{ issuer.address }}<br>
+        {{ issuer.email }} · {{ issuer.web }}
       </p>
     </div>
     <div class="invoice-meta">
-      <h2>Rechnung</h2>
+      <h2>{{ 'Rechnungsentwurf' if draft else 'Rechnung' }}</h2>
       <table>
-        <tr><td>Rechnungsnr.:</td><td>{{ invoice_no }}</td></tr>
-        <tr><td>Datum:</td>       <td>{{ invoice_date }}</td></tr>
-        <tr><td>Auftragsnr.:</td> <td>{{ order.order_id }}</td></tr>
-        <tr><td>Fällig am:</td>   <td>{{ due_date }}</td></tr>
+        <tr><td>Rechnungsnr.:</td><td>{{ invoice_no or '— (wird bei Ausstellung vergeben)' }}</td></tr>
+        <tr><td>Rechnungsdatum:</td><td>{{ invoice_date or '—' }}</td></tr>
+        <tr><td>Leistungsdatum:</td><td>{{ service_date or '—' }}</td></tr>
+        <tr><td>Referenz (Auftragsnr.):</td><td>{{ order.order_id }}</td></tr>
+        <tr><td>Fällig am:</td><td>{{ due_date or '—' }}</td></tr>
       </table>
     </div>
   </div>
@@ -127,21 +151,25 @@
     <div class="addr-block">
       <h4>Rechnungssteller</h4>
       <p>
-        <strong>{{ cfg.COMPANY_NAME }}</strong><br>
-        {{ cfg.COMPANY_ADDRESS }}<br>
-        USt-IdNr.: {{ cfg.COMPANY_TAX_ID }}
+        <strong>{{ issuer.name }}</strong><br>
+        {% if issuer.owner %}{{ issuer.owner }}<br>{% endif %}
+        {{ issuer.address }}<br>
+        Steuernummer: {{ issuer.tax_no }}
       </p>
     </div>
     <div class="addr-block">
       <h4>Rechnungsempfänger</h4>
+      {% if recipient %}
       <p>
-        <strong>{{ order.patient_name or order.patient_id }}</strong><br>
-        {% if order.created_by and order.created_by != 'admin' %}
-        Arzt/Ärztin: {{ order.created_by }}<br>
-        {% endif %}
-        Patienten-ID: {{ order.patient_id }}<br>
-        {% if order.dob %}Geb.: {{ order.dob }}{% endif %}
+        <strong>{{ recipient.legal_name }}</strong><br>
+        {{ recipient.address_line1 }}<br>
+        {% if recipient.address_line2 %}{{ recipient.address_line2 }}<br>{% endif %}
+        {{ recipient.postal_code }} {{ recipient.city }}<br>
+        {{ recipient.country }}
       </p>
+      {% else %}
+      <p><strong>[Kein Labor zugeordnet]</strong></p>
+      {% endif %}
     </div>
   </div>
 
@@ -160,11 +188,9 @@
       <tr>
         <td>1</td>
         <td>
-          <strong>{{ pipeline_label }}</strong><br>
+          <strong>{{ description }}</strong><br>
           <span style="color:#7f8c8d;font-size:12px">
-            Molekulargenetische Analyse · Auftrag {{ order.order_id }}<br>
-            Patient: {{ order.patient_id }}
-            {% if order.tumor_type %} · Indikation: {{ order.tumor_type }}{% endif %}
+            Molekulargenetische Analyse · Auftragsnummer {{ order.order_id }}
           </span>
         </td>
         <td>1</td>
@@ -177,31 +203,32 @@
   <!-- Totals -->
   <div class="totals">
     <table>
-      <tr><td>Nettobetrag:</td>    <td>{{ "%.2f"|format(net_price) }} €</td></tr>
-      <tr><td>MwSt. 19%:</td>      <td>{{ "%.2f"|format(vat) }} €</td></tr>
       <tr class="total-row">
         <td>Gesamtbetrag:</td>
         <td>{{ "%.2f"|format(gross_price) }} €</td>
       </tr>
     </table>
+    {% if issuer.tax_note %}
+    <p style="font-size:12px;color:#555;margin-top:8px">{{ issuer.tax_note }}</p>
+    {% endif %}
   </div>
 
   <!-- Payment -->
   <div class="payment-box">
     <h4>Zahlungsinformationen</h4>
     <table>
-      <tr><td>IBAN:</td>   <td><strong>{{ cfg.BANK_IBAN }}</strong></td></tr>
-      <tr><td>BIC:</td>    <td>{{ cfg.BANK_BIC }}</td></tr>
-      <tr><td>Bank:</td>   <td>{{ cfg.COMPANY_NAME }}</td></tr>
-      <tr><td>Verwendung:</td><td>{{ invoice_no }} / {{ order.order_id }}</td></tr>
+      <tr><td>IBAN:</td>   <td><strong>{{ cfg.BANK_IBAN or '[IBAN nicht konfiguriert]' }}</strong></td></tr>
+      <tr><td>BIC:</td>    <td>{{ cfg.BANK_BIC or '[BIC nicht konfiguriert]' }}</td></tr>
+      <tr><td>Kontoinhaber:</td>   <td>{{ issuer.owner or issuer.name }}</td></tr>
+      <tr><td>Verwendung:</td><td>{{ invoice_no or '[Rechnungsnr.]' }} / {{ order.order_id }}</td></tr>
       <tr><td>Zahlungsziel:</td><td>{{ cfg.PAYMENT_DAYS }} Tage netto</td></tr>
     </table>
   </div>
 
   <!-- Footer -->
   <div class="footer">
-    {{ cfg.COMPANY_NAME }} · {{ cfg.COMPANY_ADDRESS }}<br>
-    E-Mail: {{ cfg.COMPANY_EMAIL }} · Web: {{ cfg.COMPANY_WEB }} · USt-IdNr.: {{ cfg.COMPANY_TAX_ID }}
+    {{ issuer.name }} · {{ issuer.address }}<br>
+    E-Mail: {{ issuer.email }} · Web: {{ issuer.web }} · Steuernummer: {{ issuer.tax_no }}
   </div>
 
 </div>

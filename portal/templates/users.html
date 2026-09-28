@@ -26,6 +26,7 @@
           <th>Full Name</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Lab</th>
           <th>Status</th>
           <th>Created</th>
           <th style="width:200px">Actions</th>
@@ -44,6 +45,22 @@
           <td class="text-muted small">{{ u.email or '—' }}</td>
           <td>
             <span class="role-{{ u.role }}">{{ u.role | replace('_', ' ') | capitalize }}</span>
+          </td>
+          <td>
+            {% if u.role == 'admin' %}
+              <span class="text-muted small">—</span>
+            {% else %}
+            <form method="POST" action="{{ url_for('set_user_lab', username=u.username) }}"
+                  class="d-flex gap-1">
+              <select name="lab_id" class="form-select form-select-sm" style="min-width:150px">
+                <option value="">— no lab —</option>
+                {% for l in labs %}
+                <option value="{{ l.id }}" {% if u.lab_id == l.id %}selected{% endif %}>{{ l.legal_name }}</option>
+                {% endfor %}
+              </select>
+              <button class="btn btn-sm btn-outline-primary" title="Save lab"><i class="bi bi-check-lg"></i></button>
+            </form>
+            {% endif %}
           </td>
           <td>
             {% if u.active %}
@@ -174,6 +191,13 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">Email</label>
             <input type="email" name="email" class="form-control" placeholder="labstaff@yourlab.de">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Lab (shared billing profile)</label>
+            <select name="lab_id" class="form-select">
+              <option value="">— no lab —</option>
+              {% for l in labs %}<option value="{{ l.id }}">{{ l.legal_name }}</option>{% endfor %}
+            </select>
           </div>
           <div class="row">
             <div class="col-md-6 mb-3">

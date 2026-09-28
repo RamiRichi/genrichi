@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Labs — GenRichi{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-start">
+  <div>
+    <h1><i class="bi bi-building me-2 text-primary"></i>Labs &amp; Billing Profiles</h1>
+    <p>One shared billing profile per lab. Invoices are addressed to the lab, never to the patient.</p>
+  </div>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#labModal"
+          data-mode="create">
+    <i class="bi bi-plus-circle-fill me-1"></i>Add Lab
+  </button>
+</div>
+
+<div class="card detail-card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-table me-2"></i>Labs</span>
+    <span class="badge bg-secondary">{{ labs|length }} labs</span>
+  </div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Legal name</th>
+          <th>Billing address</th>
+          <th>Staff</th>
+          <th style="width:220px">SFTP account</th>
+          <th style="width:90px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in labs %}
+        <tr>
+          <td><strong>{{ l.legal_name }}</strong></td>
+          <td class="small">
+            {{ l.address_line1 }}{% if l.address_line2 %}<br>{{ l.address_line2 }}{% endif %}<br>
+            {{ l.postal_code }} {{ l.city }}, {{ l.country }}
+          </td>
+          <td class="small">
+            {% for m in members[l.id] %}
+              <code>{{ m.username }}</code>{% if not m.active %} <span class="text-muted">(inactive)</span>{% endif %}{% if not loop.last %}, {% endif %}
+            {% else %}<span class="text-muted">— none linked —</span>{% endfor %}
+          </td>
+          <td class="small">
+            <form method="POST" action="{{ url_for('set_lab_sftp', lab_id=l.id) }}" class="d-flex gap-1">
+              <input type="text" name="sftp_account" class="form-control form-control-sm font-monospace"
+                     value="{{ l.sftp_account or '' }}" placeholder="not linked"
+                     pattern="[A-Za-z0-9_.\-]*" title="letters, digits, '.', '_' or '-' only">
+              <button class="btn btn-sm btn-outline-primary" title="Save SFTP link"><i class="bi bi-check-lg"></i></button>
+            </form>
+            {% if not l.sftp_account %}<span class="text-warning">no SFTP link — uploads browser disabled for this lab's staff</span>{% endif %}
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary" title="Edit"
+                    data-bs-toggle="modal" data-bs-target="#labModal" data-mode="edit"
+                    data-id="{{ l.id }}"
+                    data-legal_name="{{ l.legal_name }}"
+                    data-address_line1="{{ l.address_line1 }}"
+                    data-address_line2="{{ l.address_line2 }}"
+                    data-postal_code="{{ l.postal_code }}"
+                    data-city="{{ l.city }}"
+                    data-country="{{ l.country }}">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-muted text-center py-4">No labs yet. Add one, then link users on the Users page.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="small text-muted mt-3">
+  Editing a profile does not change invoices that were already issued; they keep the recipient they were issued to.
+</p>
+
+<div class="modal fade" id="labModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="labModalTitle">Add Lab</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" id="labForm" action="{{ url_for('create_lab') }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Full legal name <span class="text-danger">*</span></label>
+            <input type="text" name="legal_name" class="form-control" required maxlength="200">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Billing address — line 1 <span class="text-danger">*</span></label>
+            <input type="text" name="address_line1" class="form-control" required maxlength="200">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Line 2 (department, building…)</label>
+            <input type="text" name="address_line2" class="form-control" maxlength="200">
+          </div>
+          <div class="row">
+            <div class="col-4 mb-3">
+              <label class="form-label small fw-semibold">Postal code <span class="text-danger">*</span></label>
+              <input type="text" name="postal_code" class="form-control" required maxlength="200">
+            </div>
+            <div class="col-8 mb-3">
+              <label class="form-label small fw-semibold">City <span class="text-danger">*</span></label>
+              <input type="text" name="city" class="form-control" required maxlength="200">
+            </div>
+          </div>
+          <div class="mb-1">
+            <label class="form-label small fw-semibold">Country <span class="text-danger">*</span></label>
+            <input type="text" name="country" class="form-control" required maxlength="200" value="Deutschland">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('labModal').addEventListener('show.bs.modal', function (e) {
+  const b = e.relatedTarget, f = document.getElementById('labForm');
+  const edit = b && b.dataset.mode === 'edit';
+  document.getElementById('labModalTitle').textContent = edit ? 'Edit Lab' : 'Add Lab';
+  f.action = edit ? '/admin/labs/' + b.dataset.id + '/edit' : '{{ url_for("create_lab") }}';
+  ['legal_name','address_line1','address_line2','postal_code','city','country'].forEach(function (k) {
+    f.elements[k].value = edit ? (b.dataset[k] || '') : (k === 'country' ? 'Deutschland' : '');
+  });
+});
+</script>
+{% endblock %}
