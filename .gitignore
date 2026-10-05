@@ -15,6 +15,10 @@ resources/vep_cache/
 resources/annotation/
 dev/msi_redesign/reference_annotations/
 dev/msi_redesign/output/*.tsv
+dev/msi_redesign/output/GR_*
+dev/msi_redesign/output/empirical_evidence_stage6a.v1.manifest.json
+dev/msi_redesign/output/sequencing_geometry_analysis.v1.json
+dev/msi_redesign/stage6a_dataset_registry.v1.json
 
 # Snakemake internals
 .snakemake/

@@ -1,0 +1,38 @@
+{
+  "generated_at_utc": "2026-09-24T09:04:34+00:00",
+  "master_panel": {
+    "n_markers": 1208169,
+    "path": "dev/msi_redesign/output/tier2_filtered.v1.tsv",
+    "sha256": "d038ec32e79332e82057a08f72e686cc3728cbf37e5b97b88cc2c14010cd0fbc"
+  },
+  "next_step_not_yet_performed": "statistical/biological down-selection WITHIN each view",
+  "reference_provenance_caveat": "The Broad exome footprint reference has identical chromosome LENGTHS to our production hg38.fa across all 455 shared contigs, but different MD5/M5 checksums for chr1, chr17, and chrX (chrM matches exactly). Not treated as a defect; kept explicitly documented until the exact GRCh38 distribution difference is identified.",
+  "views": {
+    "view_A_wes_compatible": {
+      "definition": "loci FULLY inside the Broad generic exome footprint (broad_exome_footprint_analysis.py fully_inside_footprint category)",
+      "derived_from_master_panel": true,
+      "master_panel_modified": false,
+      "n_markers": 93687,
+      "path": "dev/msi_redesign/output/view_A_wes_compatible.v1.tsv",
+      "sha256": "f59e0a73fc77a59cf88747ea862fff2e92e959bdb249d96c18c821924f2c8fff"
+    },
+    "view_B_wgs": {
+      "definition": "the entire master filtered panel, unchanged",
+      "derived_from_master_panel": true,
+      "master_panel_modified": false,
+      "n_markers": 1208169,
+      "note": "not duplicated as a separate file -- this view IS tier2_filtered.v1.tsv",
+      "path": "dev/msi_redesign/output/tier2_filtered.v1.tsv",
+      "sha256": "d038ec32e79332e82057a08f72e686cc3728cbf37e5b97b88cc2c14010cd0fbc"
+    },
+    "view_C_targeted_panel": {
+      "definition": "DEFERRED -- no capture technology decided yet",
+      "derived_from_master_panel": null,
+      "master_panel_modified": false,
+      "n_markers": null,
+      "note": "reuse build_view() with a real capture BED's overlap-derived member_ids once a targeted-panel capture technology is chosen; no re-derivation of Umap/RepeatMasker/segdup annotation is needed to build this later",
+      "path": null,
+      "sha256": null
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "generated_at_utc": "2026-09-23T06:57:02+00:00",
+  "marker_file_path": "dev/msi_redesign/output/msi_markers.v1.tsv",
+  "marker_file_sha256": "5cf1c92ec1789cf4255e68c319ef7b775a63620ac8202db1775627a2dcc566ec",
+  "n_markers": 39,
+  "n_panel_bed_regions": 901,
+  "reference_build": "GRCh38",
+  "scan_parameters": {
+    "min_mononucleotide_length": 10,
+    "min_str_units_by_motif_length": {
+      "2": 5,
+      "3": 5,
+      "4": 5
+    }
+  },
+  "source_panel_bed_path": "/home/rami/genrichi/resources/panel/phase1_solid_tumor/solid_tumor_phase1_v1.bed",
+  "source_panel_bed_sha256": "cb0ce560f78334ea1e57974c6bf4d52643d9f7a445bc893a6eea2974d3265b36",
+  "source_reference_path": "/home/rami/genrichi/reference_db/ref/hg38.fa"
+}

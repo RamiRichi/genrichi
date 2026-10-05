@@ -1,0 +1,3651 @@
+{
+  "classification_performed": false,
+  "definitions": {
+    "core_equals_shared_first_prefix_asserted": true,
+    "hybrid": "core = first k shared loci by quality rank (shared status is a membership filter only); extension = next (T-k) loci of the View-B quality ranking not already in the core; no duplicates",
+    "quality_first": "stage-3 rank_*_no_shared_key, unchanged",
+    "shared_first": "stage-3 rank_*, unchanged"
+  },
+  "final_panel_size_fixed": false,
+  "generated_at_utc": "2026-09-24T22:00:42+00:00",
+  "hcc1395_results_used": false,
+  "hybrid": {
+    "core_1000": {
+      "total_2000": {
+        "common_core_size": 1000,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.054813,
+        "overlap_with_quality_first_top_total": 1164,
+        "overlap_with_shared_first_top_total": 1000,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1000,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 1000,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 164,
+            "chr10": 89,
+            "chr11": 90,
+            "chr12": 111,
+            "chr13": 45,
+            "chr14": 75,
+            "chr15": 55,
+            "chr16": 67,
+            "chr17": 76,
+            "chr18": 48,
+            "chr19": 52,
+            "chr2": 165,
+            "chr20": 42,
+            "chr21": 19,
+            "chr22": 16,
+            "chr3": 156,
+            "chr4": 106,
+            "chr5": 135,
+            "chr6": 120,
+            "chr7": 114,
+            "chr8": 107,
+            "chr9": 76,
+            "chrX": 71,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 1312,
+            "True": 688
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "shared_fraction": 0.5,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 1999
+          },
+          "wgs_only_or_view_only_fraction": 0.5
+        },
+        "total_unique_loci": 2000,
+        "total_wgs_size": 2000,
+        "wgs_extension_size": 1000,
+        "wgs_only_loci_in_panel": 1000
+      },
+      "total_3000": {
+        "common_core_size": 1000,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 2000,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.045579,
+        "overlap_with_quality_first_top_total": 2240,
+        "overlap_with_shared_first_top_total": 1000,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1000,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 2000,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 242,
+            "chr10": 126,
+            "chr11": 135,
+            "chr12": 183,
+            "chr13": 74,
+            "chr14": 119,
+            "chr15": 87,
+            "chr16": 106,
+            "chr17": 115,
+            "chr18": 70,
+            "chr19": 79,
+            "chr2": 239,
+            "chr20": 64,
+            "chr21": 34,
+            "chr22": 29,
+            "chr3": 227,
+            "chr4": 159,
+            "chr5": 199,
+            "chr6": 162,
+            "chr7": 171,
+            "chr8": 154,
+            "chr9": 114,
+            "chrX": 111,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 1312,
+            "True": 1688
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "shared_fraction": 0.333333,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 3000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 2999
+          },
+          "wgs_only_or_view_only_fraction": 0.666667
+        },
+        "total_unique_loci": 3000,
+        "total_wgs_size": 3000,
+        "wgs_extension_size": 2000,
+        "wgs_only_loci_in_panel": 2000
+      },
+      "total_5000": {
+        "common_core_size": 1000,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 4000,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.048872,
+        "overlap_with_quality_first_top_total": 4430,
+        "overlap_with_shared_first_top_total": 1000,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1000,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1000,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 4000,
+          "chrY": 20,
+          "chromosome": {
+            "chr1": 400,
+            "chr10": 206,
+            "chr11": 215,
+            "chr12": 279,
+            "chr13": 150,
+            "chr14": 191,
+            "chr15": 146,
+            "chr16": 171,
+            "chr17": 173,
+            "chr18": 117,
+            "chr19": 114,
+            "chr2": 406,
+            "chr20": 116,
+            "chr21": 53,
+            "chr22": 50,
+            "chr3": 391,
+            "chr4": 286,
+            "chr5": 334,
+            "chr6": 272,
+            "chr7": 263,
+            "chr8": 255,
+            "chr9": 211,
+            "chrX": 181,
+            "chrY": 20
+          },
+          "flank_other_repeat_flag": {
+            "False": 2176,
+            "True": 2824
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4789,
+            "mixed_microsatellite_and_other": 208,
+            "no_rmsk_hit": 3
+          },
+          "shared": 1000,
+          "shared_fraction": 0.2,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 20,
+            "TIER0_MEAN_1.0": 4980
+          },
+          "wgs_only_or_view_only_fraction": 0.8
+        },
+        "total_unique_loci": 5000,
+        "total_wgs_size": 5000,
+        "wgs_extension_size": 4000,
+        "wgs_only_loci_in_panel": 4000
+      }
+    },
+    "core_1250": {
+      "total_2000": {
+        "common_core_size": 1250,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.080641,
+        "overlap_with_quality_first_top_total": 914,
+        "overlap_with_shared_first_top_total": 1250,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1250,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 750,
+          "chrY": 3,
+          "chromosome": {
+            "chr1": 158,
+            "chr10": 90,
+            "chr11": 92,
+            "chr12": 111,
+            "chr13": 45,
+            "chr14": 72,
+            "chr15": 54,
+            "chr16": 73,
+            "chr17": 76,
+            "chr18": 55,
+            "chr19": 49,
+            "chr2": 177,
+            "chr20": 43,
+            "chr21": 21,
+            "chr22": 16,
+            "chr3": 152,
+            "chr4": 101,
+            "chr5": 127,
+            "chr6": 123,
+            "chr7": 115,
+            "chr8": 99,
+            "chr9": 79,
+            "chrX": 69,
+            "chrY": 3
+          },
+          "flank_other_repeat_flag": {
+            "False": 1528,
+            "True": 472
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1974,
+            "mixed_microsatellite_and_other": 26
+          },
+          "shared": 1250,
+          "shared_fraction": 0.625,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 3,
+            "TIER0_MEAN_1.0": 1997
+          },
+          "wgs_only_or_view_only_fraction": 0.375
+        },
+        "total_unique_loci": 2000,
+        "total_wgs_size": 2000,
+        "wgs_extension_size": 750,
+        "wgs_only_loci_in_panel": 750
+      },
+      "total_3000": {
+        "common_core_size": 1250,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 1750,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.061362,
+        "overlap_with_quality_first_top_total": 1990,
+        "overlap_with_shared_first_top_total": 1250,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1250,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 1750,
+          "chrY": 3,
+          "chromosome": {
+            "chr1": 254,
+            "chr10": 129,
+            "chr11": 134,
+            "chr12": 175,
+            "chr13": 73,
+            "chr14": 117,
+            "chr15": 80,
+            "chr16": 109,
+            "chr17": 118,
+            "chr18": 75,
+            "chr19": 79,
+            "chr2": 245,
+            "chr20": 62,
+            "chr21": 35,
+            "chr22": 26,
+            "chr3": 220,
+            "chr4": 148,
+            "chr5": 200,
+            "chr6": 172,
+            "chr7": 174,
+            "chr8": 148,
+            "chr9": 119,
+            "chrX": 105,
+            "chrY": 3
+          },
+          "flank_other_repeat_flag": {
+            "False": 1528,
+            "True": 1472
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2974,
+            "mixed_microsatellite_and_other": 26
+          },
+          "shared": 1250,
+          "shared_fraction": 0.416667,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 3000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 3,
+            "TIER0_MEAN_1.0": 2997
+          },
+          "wgs_only_or_view_only_fraction": 0.583333
+        },
+        "total_unique_loci": 3000,
+        "total_wgs_size": 3000,
+        "wgs_extension_size": 1750,
+        "wgs_only_loci_in_panel": 1750
+      },
+      "total_5000": {
+        "common_core_size": 1250,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 3750,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.056543,
+        "overlap_with_quality_first_top_total": 4180,
+        "overlap_with_shared_first_top_total": 1250,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1250,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 3750,
+          "chrY": 22,
+          "chromosome": {
+            "chr1": 401,
+            "chr10": 208,
+            "chr11": 220,
+            "chr12": 284,
+            "chr13": 150,
+            "chr14": 188,
+            "chr15": 147,
+            "chr16": 174,
+            "chr17": 177,
+            "chr18": 124,
+            "chr19": 115,
+            "chr2": 415,
+            "chr20": 110,
+            "chr21": 53,
+            "chr22": 50,
+            "chr3": 384,
+            "chr4": 276,
+            "chr5": 331,
+            "chr6": 280,
+            "chr7": 264,
+            "chr8": 248,
+            "chr9": 208,
+            "chrX": 171,
+            "chrY": 22
+          },
+          "flank_other_repeat_flag": {
+            "False": 2321,
+            "True": 2679
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4900,
+            "mixed_microsatellite_and_other": 99,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1250,
+          "shared_fraction": 0.25,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 22,
+            "TIER0_MEAN_1.0": 4978
+          },
+          "wgs_only_or_view_only_fraction": 0.75
+        },
+        "total_unique_loci": 5000,
+        "total_wgs_size": 5000,
+        "wgs_extension_size": 3750,
+        "wgs_only_loci_in_panel": 3750
+      }
+    },
+    "core_1500": {
+      "total_2000": {
+        "common_core_size": 1500,
+        "core_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.1119,
+        "overlap_with_quality_first_top_total": 664,
+        "overlap_with_shared_first_top_total": 1500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1500,
+        "shared_subset_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 500,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 167,
+            "chr10": 82,
+            "chr11": 103,
+            "chr12": 117,
+            "chr13": 48,
+            "chr14": 74,
+            "chr15": 61,
+            "chr16": 71,
+            "chr17": 77,
+            "chr18": 56,
+            "chr19": 55,
+            "chr2": 168,
+            "chr20": 41,
+            "chr21": 20,
+            "chr22": 19,
+            "chr3": 139,
+            "chr4": 100,
+            "chr5": 133,
+            "chr6": 121,
+            "chr7": 107,
+            "chr8": 96,
+            "chr9": 77,
+            "chrX": 64,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1551,
+            "True": 449
+          },
+          "fraction_15_20": 0.025,
+          "fraction_21_30": 0.975,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1960,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "shared_fraction": 0.75,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 1950,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          },
+          "wgs_only_or_view_only_fraction": 0.25
+        },
+        "total_unique_loci": 2000,
+        "total_wgs_size": 2000,
+        "wgs_extension_size": 500,
+        "wgs_only_loci_in_panel": 500
+      },
+      "total_3000": {
+        "common_core_size": 1500,
+        "core_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 1500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.080765,
+        "overlap_with_quality_first_top_total": 1740,
+        "overlap_with_shared_first_top_total": 1500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1500,
+        "shared_subset_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 1500,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 261,
+            "chr10": 123,
+            "chr11": 138,
+            "chr12": 178,
+            "chr13": 66,
+            "chr14": 112,
+            "chr15": 89,
+            "chr16": 110,
+            "chr17": 117,
+            "chr18": 79,
+            "chr19": 80,
+            "chr2": 241,
+            "chr20": 61,
+            "chr21": 27,
+            "chr22": 27,
+            "chr3": 221,
+            "chr4": 153,
+            "chr5": 200,
+            "chr6": 176,
+            "chr7": 165,
+            "chr8": 149,
+            "chr9": 119,
+            "chrX": 104,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1678,
+            "True": 1322
+          },
+          "fraction_15_20": 0.016667,
+          "fraction_21_30": 0.983333,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2960,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "shared_fraction": 0.5,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 2950,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 2996
+          },
+          "wgs_only_or_view_only_fraction": 0.5
+        },
+        "total_unique_loci": 3000,
+        "total_wgs_size": 3000,
+        "wgs_extension_size": 1500,
+        "wgs_only_loci_in_panel": 1500
+      },
+      "total_5000": {
+        "common_core_size": 1500,
+        "core_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 3500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.066389,
+        "overlap_with_quality_first_top_total": 3930,
+        "overlap_with_shared_first_top_total": 1500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 1500,
+        "shared_subset_span_subband": {
+          "15_20": 50,
+          "21_30": 1450,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 3500,
+          "chrY": 23,
+          "chromosome": {
+            "chr1": 401,
+            "chr10": 199,
+            "chr11": 225,
+            "chr12": 293,
+            "chr13": 144,
+            "chr14": 190,
+            "chr15": 153,
+            "chr16": 173,
+            "chr17": 176,
+            "chr18": 124,
+            "chr19": 118,
+            "chr2": 409,
+            "chr20": 107,
+            "chr21": 52,
+            "chr22": 51,
+            "chr3": 384,
+            "chr4": 274,
+            "chr5": 337,
+            "chr6": 284,
+            "chr7": 262,
+            "chr8": 249,
+            "chr9": 208,
+            "chrX": 164,
+            "chrY": 23
+          },
+          "flank_other_repeat_flag": {
+            "False": 2471,
+            "True": 2529
+          },
+          "fraction_15_20": 0.01,
+          "fraction_21_30": 0.99,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4886,
+            "mixed_microsatellite_and_other": 112,
+            "no_rmsk_hit": 2
+          },
+          "shared": 1500,
+          "shared_fraction": 0.3,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 4950,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 23,
+            "TIER0_MEAN_1.0": 4977
+          },
+          "wgs_only_or_view_only_fraction": 0.7
+        },
+        "total_unique_loci": 5000,
+        "total_wgs_size": 5000,
+        "wgs_extension_size": 3500,
+        "wgs_only_loci_in_panel": 3500
+      }
+    },
+    "core_500": {
+      "total_2000": {
+        "common_core_size": 500,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 1500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.022626,
+        "overlap_with_quality_first_top_total": 1664,
+        "overlap_with_shared_first_top_total": 500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 500,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 1500,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 165,
+            "chr10": 89,
+            "chr11": 86,
+            "chr12": 110,
+            "chr13": 47,
+            "chr14": 75,
+            "chr15": 53,
+            "chr16": 76,
+            "chr17": 80,
+            "chr18": 50,
+            "chr19": 49,
+            "chr2": 160,
+            "chr20": 40,
+            "chr21": 18,
+            "chr22": 13,
+            "chr3": 157,
+            "chr4": 108,
+            "chr5": 134,
+            "chr6": 111,
+            "chr7": 115,
+            "chr8": 111,
+            "chr9": 74,
+            "chrX": 78,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 960,
+            "True": 1040
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1992,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 500,
+          "shared_fraction": 0.25,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 1999
+          },
+          "wgs_only_or_view_only_fraction": 0.75
+        },
+        "total_unique_loci": 2000,
+        "total_wgs_size": 2000,
+        "wgs_extension_size": 1500,
+        "wgs_only_loci_in_panel": 1500
+      },
+      "total_3000": {
+        "common_core_size": 500,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 2500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.026991,
+        "overlap_with_quality_first_top_total": 2740,
+        "overlap_with_shared_first_top_total": 500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 500,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 2500,
+          "chrY": 20,
+          "chromosome": {
+            "chr1": 228,
+            "chr10": 122,
+            "chr11": 139,
+            "chr12": 175,
+            "chr13": 83,
+            "chr14": 117,
+            "chr15": 90,
+            "chr16": 107,
+            "chr17": 115,
+            "chr18": 73,
+            "chr19": 71,
+            "chr2": 245,
+            "chr20": 65,
+            "chr21": 31,
+            "chr22": 26,
+            "chr3": 228,
+            "chr4": 167,
+            "chr5": 192,
+            "chr6": 158,
+            "chr7": 166,
+            "chr8": 158,
+            "chr9": 113,
+            "chrX": 111,
+            "chrY": 20
+          },
+          "flank_other_repeat_flag": {
+            "False": 1135,
+            "True": 1865
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2918,
+            "mixed_microsatellite_and_other": 81,
+            "no_rmsk_hit": 1
+          },
+          "shared": 500,
+          "shared_fraction": 0.166667,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 3000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 20,
+            "TIER0_MEAN_1.0": 2980
+          },
+          "wgs_only_or_view_only_fraction": 0.833333
+        },
+        "total_unique_loci": 3000,
+        "total_wgs_size": 3000,
+        "wgs_extension_size": 2500,
+        "wgs_only_loci_in_panel": 2500
+      },
+      "total_5000": {
+        "common_core_size": 500,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 4500,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.041366,
+        "overlap_with_quality_first_top_total": 4930,
+        "overlap_with_shared_first_top_total": 500,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 500,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 500,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 4500,
+          "chrY": 20,
+          "chromosome": {
+            "chr1": 386,
+            "chr10": 220,
+            "chr11": 217,
+            "chr12": 266,
+            "chr13": 162,
+            "chr14": 185,
+            "chr15": 143,
+            "chr16": 168,
+            "chr17": 164,
+            "chr18": 126,
+            "chr19": 102,
+            "chr2": 410,
+            "chr20": 113,
+            "chr21": 50,
+            "chr22": 46,
+            "chr3": 395,
+            "chr4": 282,
+            "chr5": 340,
+            "chr6": 279,
+            "chr7": 260,
+            "chr8": 270,
+            "chr9": 206,
+            "chrX": 190,
+            "chrY": 20
+          },
+          "flank_other_repeat_flag": {
+            "False": 2299,
+            "True": 2701
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4805,
+            "mixed_microsatellite_and_other": 192,
+            "no_rmsk_hit": 3
+          },
+          "shared": 500,
+          "shared_fraction": 0.1,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 20,
+            "TIER0_MEAN_1.0": 4980
+          },
+          "wgs_only_or_view_only_fraction": 0.9
+        },
+        "total_unique_loci": 5000,
+        "total_wgs_size": 5000,
+        "wgs_extension_size": 4500,
+        "wgs_only_loci_in_panel": 4500
+      }
+    },
+    "core_750": {
+      "total_2000": {
+        "common_core_size": 750,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 1250,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.035459,
+        "overlap_with_quality_first_top_total": 1414,
+        "overlap_with_shared_first_top_total": 750,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 750,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 1250,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 91,
+            "chr11": 85,
+            "chr12": 114,
+            "chr13": 44,
+            "chr14": 69,
+            "chr15": 51,
+            "chr16": 72,
+            "chr17": 81,
+            "chr18": 46,
+            "chr19": 50,
+            "chr2": 156,
+            "chr20": 40,
+            "chr21": 21,
+            "chr22": 18,
+            "chr3": 161,
+            "chr4": 107,
+            "chr5": 130,
+            "chr6": 115,
+            "chr7": 115,
+            "chr8": 113,
+            "chr9": 79,
+            "chrX": 71,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 1129,
+            "True": 871
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1984,
+            "mixed_microsatellite_and_other": 16
+          },
+          "shared": 750,
+          "shared_fraction": 0.375,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 1999
+          },
+          "wgs_only_or_view_only_fraction": 0.625
+        },
+        "total_unique_loci": 2000,
+        "total_wgs_size": 2000,
+        "wgs_extension_size": 1250,
+        "wgs_only_loci_in_panel": 1250
+      },
+      "total_3000": {
+        "common_core_size": 750,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 2250,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.034114,
+        "overlap_with_quality_first_top_total": 2490,
+        "overlap_with_shared_first_top_total": 750,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 750,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 2250,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 238,
+            "chr10": 123,
+            "chr11": 137,
+            "chr12": 187,
+            "chr13": 79,
+            "chr14": 109,
+            "chr15": 87,
+            "chr16": 110,
+            "chr17": 119,
+            "chr18": 74,
+            "chr19": 76,
+            "chr2": 240,
+            "chr20": 66,
+            "chr21": 34,
+            "chr22": 30,
+            "chr3": 231,
+            "chr4": 167,
+            "chr5": 191,
+            "chr6": 157,
+            "chr7": 168,
+            "chr8": 157,
+            "chr9": 112,
+            "chrX": 107,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 1130,
+            "True": 1870
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2974,
+            "mixed_microsatellite_and_other": 25,
+            "no_rmsk_hit": 1
+          },
+          "shared": 750,
+          "shared_fraction": 0.25,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 3000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 2999
+          },
+          "wgs_only_or_view_only_fraction": 0.75
+        },
+        "total_unique_loci": 3000,
+        "total_wgs_size": 3000,
+        "wgs_extension_size": 2250,
+        "wgs_only_loci_in_panel": 2250
+      },
+      "total_5000": {
+        "common_core_size": 750,
+        "core_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "extension_span_subband": {
+          "15_20": 0,
+          "21_30": 4250,
+          "31_40": 0
+        },
+        "mean_quality_rank_percentile_viewB": 0.043807,
+        "overlap_with_quality_first_top_total": 4680,
+        "overlap_with_shared_first_top_total": 750,
+        "shared_loci_in_extension_beyond_core": 0,
+        "shared_loci_in_panel": 750,
+        "shared_subset_span_subband": {
+          "15_20": 0,
+          "21_30": 750,
+          "31_40": 0
+        },
+        "stats": {
+          "A_only": 0,
+          "B_only": 4250,
+          "chrY": 20,
+          "chromosome": {
+            "chr1": 394,
+            "chr10": 213,
+            "chr11": 215,
+            "chr12": 277,
+            "chr13": 158,
+            "chr14": 183,
+            "chr15": 143,
+            "chr16": 168,
+            "chr17": 169,
+            "chr18": 119,
+            "chr19": 107,
+            "chr2": 399,
+            "chr20": 109,
+            "chr21": 54,
+            "chr22": 50,
+            "chr3": 404,
+            "chr4": 286,
+            "chr5": 338,
+            "chr6": 279,
+            "chr7": 261,
+            "chr8": 264,
+            "chr9": 206,
+            "chrX": 184,
+            "chrY": 20
+          },
+          "flank_other_repeat_flag": {
+            "False": 2243,
+            "True": 2757
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4797,
+            "mixed_microsatellite_and_other": 200,
+            "no_rmsk_hit": 3
+          },
+          "shared": 750,
+          "shared_fraction": 0.15,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 20,
+            "TIER0_MEAN_1.0": 4980
+          },
+          "wgs_only_or_view_only_fraction": 0.85
+        },
+        "total_unique_loci": 5000,
+        "total_wgs_size": 5000,
+        "wgs_extension_size": 4250,
+        "wgs_only_loci_in_panel": 4250
+      }
+    }
+  },
+  "membership_files_written": false,
+  "outputs": {
+    "hybrid": {
+      "path": "dev/msi_redesign/output\\tradeoff_stage5.v1.hybrid.tsv",
+      "sha256": "481849ee1ff5d0aa530f1ab99107b38c6d439752fadf662ed01c9b462c637812"
+    },
+    "pareto": {
+      "path": "dev/msi_redesign/output\\tradeoff_stage5.v1.pareto.tsv",
+      "sha256": "b630a9e5dcc4b165fbdb4802ad3b5eeae832ebfa9d12078b9e88dc2769543c59"
+    },
+    "quality_first_scenarios": {
+      "path": "dev/msi_redesign/output\\tradeoff_stage5.v1.quality_first_scenarios.tsv",
+      "sha256": "a38baf15f8f1b8badc14257e1e11dc28345b18948d15bdbeee218702789af537"
+    },
+    "shared_first_scenarios": {
+      "path": "dev/msi_redesign/output\\tradeoff_stage5.v1.shared_first_scenarios.tsv",
+      "sha256": "a70c36f6cf54708e8b5ac1e99de53f3b775e9dd17e5745901d0a17a8e4b47d63"
+    }
+  },
+  "panel_size_selected": false,
+  "parameters": {
+    "anchor_bp_development_preference": 25,
+    "band_share_reference_levels_not_thresholds": [
+      0.01,
+      0.05,
+      0.1,
+      0.25,
+      0.5
+    ],
+    "hybrid_cores": [
+      500,
+      750,
+      1000,
+      1250,
+      1500
+    ],
+    "hybrid_totals": [
+      2000,
+      3000,
+      5000
+    ],
+    "n_shared_strong": 6038,
+    "n_viewA_strong": 6074,
+    "n_viewB_strong": 60756,
+    "pareto_objectives": [
+      "shared_fraction (max)",
+      "fraction_21_30 (max)",
+      "quality_percentile (min)",
+      "size: both conventions reported"
+    ],
+    "quality_percentile_definition": "mean(rank_viewB_no_shared_key over members) / N_viewB; lower = higher ranking priority",
+    "sizes": [
+      500,
+      750,
+      1000,
+      1250,
+      1500,
+      2000,
+      3000,
+      5000
+    ]
+  },
+  "pareto": {
+    "configs": [
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_500",
+        "quality_percentile": 0.004123,
+        "shared_fraction": 0.162,
+        "size": 500,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "SF_500",
+        "quality_percentile": 0.048508,
+        "shared_fraction": 1.0,
+        "size": 500,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_750",
+        "quality_percentile": 0.00618,
+        "shared_fraction": 0.148,
+        "size": 750,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "SF_750",
+        "quality_percentile": 0.074881,
+        "shared_fraction": 1.0,
+        "size": 750,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_1000",
+        "quality_percentile": 0.008238,
+        "shared_fraction": 0.12,
+        "size": 1000,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "SF_1000",
+        "quality_percentile": 0.100017,
+        "shared_fraction": 1.0,
+        "size": 1000,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_1250",
+        "quality_percentile": 0.010295,
+        "shared_fraction": 0.0992,
+        "size": 1250,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "SF_1250",
+        "quality_percentile": 0.124615,
+        "shared_fraction": 1.0,
+        "size": 1250,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_1500",
+        "quality_percentile": 0.012353,
+        "shared_fraction": 0.093333,
+        "size": 1500,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 0.966667,
+        "id": "SF_1500",
+        "quality_percentile": 0.147532,
+        "shared_fraction": 1.0,
+        "size": 1500,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_2000",
+        "quality_percentile": 0.016468,
+        "shared_fraction": 0.082,
+        "size": 2000,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 0.753,
+        "id": "SF_2000",
+        "quality_percentile": 0.191593,
+        "shared_fraction": 1.0,
+        "size": 2000,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_3000",
+        "quality_percentile": 0.024697,
+        "shared_fraction": 0.08,
+        "size": 3000,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 0.502,
+        "id": "SF_3000",
+        "quality_percentile": 0.276529,
+        "shared_fraction": 1.0,
+        "size": 3000,
+        "strategy": "shared_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 1.0,
+        "id": "QF_5000",
+        "quality_percentile": 0.041156,
+        "shared_fraction": 0.086,
+        "size": 5000,
+        "strategy": "quality_first"
+      },
+      {
+        "core": null,
+        "fraction_21_30": 0.3012,
+        "id": "SF_5000",
+        "quality_percentile": 0.436678,
+        "shared_fraction": 1.0,
+        "size": 5000,
+        "strategy": "shared_first"
+      },
+      {
+        "core": 500,
+        "fraction_21_30": 1.0,
+        "id": "HY_c500_T2000",
+        "quality_percentile": 0.022626,
+        "shared_fraction": 0.25,
+        "size": 2000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 500,
+        "fraction_21_30": 1.0,
+        "id": "HY_c500_T3000",
+        "quality_percentile": 0.026991,
+        "shared_fraction": 0.166667,
+        "size": 3000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 500,
+        "fraction_21_30": 1.0,
+        "id": "HY_c500_T5000",
+        "quality_percentile": 0.041366,
+        "shared_fraction": 0.1,
+        "size": 5000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 750,
+        "fraction_21_30": 1.0,
+        "id": "HY_c750_T2000",
+        "quality_percentile": 0.035459,
+        "shared_fraction": 0.375,
+        "size": 2000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 750,
+        "fraction_21_30": 1.0,
+        "id": "HY_c750_T3000",
+        "quality_percentile": 0.034114,
+        "shared_fraction": 0.25,
+        "size": 3000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 750,
+        "fraction_21_30": 1.0,
+        "id": "HY_c750_T5000",
+        "quality_percentile": 0.043807,
+        "shared_fraction": 0.15,
+        "size": 5000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1000,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1000_T2000",
+        "quality_percentile": 0.054813,
+        "shared_fraction": 0.5,
+        "size": 2000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1000,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1000_T3000",
+        "quality_percentile": 0.045579,
+        "shared_fraction": 0.333333,
+        "size": 3000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1000,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1000_T5000",
+        "quality_percentile": 0.048872,
+        "shared_fraction": 0.2,
+        "size": 5000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1250,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1250_T2000",
+        "quality_percentile": 0.080641,
+        "shared_fraction": 0.625,
+        "size": 2000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1250,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1250_T3000",
+        "quality_percentile": 0.061362,
+        "shared_fraction": 0.416667,
+        "size": 3000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1250,
+        "fraction_21_30": 1.0,
+        "id": "HY_c1250_T5000",
+        "quality_percentile": 0.056543,
+        "shared_fraction": 0.25,
+        "size": 5000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1500,
+        "fraction_21_30": 0.975,
+        "id": "HY_c1500_T2000",
+        "quality_percentile": 0.1119,
+        "shared_fraction": 0.75,
+        "size": 2000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1500,
+        "fraction_21_30": 0.983333,
+        "id": "HY_c1500_T3000",
+        "quality_percentile": 0.080765,
+        "shared_fraction": 0.5,
+        "size": 3000,
+        "strategy": "hybrid"
+      },
+      {
+        "core": 1500,
+        "fraction_21_30": 0.99,
+        "id": "HY_c1500_T5000",
+        "quality_percentile": 0.066389,
+        "shared_fraction": 0.3,
+        "size": 5000,
+        "strategy": "hybrid"
+      }
+    ],
+    "dominated_by_size_as_benefit": {},
+    "dominated_by_size_as_cost": {
+      "HY_c1000_T2000": "SF_500",
+      "HY_c1000_T3000": "HY_c750_T2000",
+      "HY_c1000_T5000": "HY_c1000_T3000",
+      "HY_c1250_T2000": "SF_500",
+      "HY_c1250_T3000": "HY_c1000_T2000",
+      "HY_c1250_T5000": "HY_c1000_T2000",
+      "HY_c1500_T2000": "SF_1000",
+      "HY_c1500_T3000": "HY_c1000_T2000",
+      "HY_c1500_T5000": "HY_c1000_T2000",
+      "HY_c500_T3000": "HY_c500_T2000",
+      "HY_c500_T5000": "HY_c500_T2000",
+      "HY_c750_T3000": "HY_c500_T2000",
+      "HY_c750_T5000": "HY_c500_T2000",
+      "QF_1000": "QF_500",
+      "QF_1250": "QF_1000",
+      "QF_1500": "QF_1000",
+      "QF_2000": "QF_1000",
+      "QF_3000": "HY_c500_T2000",
+      "QF_5000": "HY_c500_T2000",
+      "QF_750": "QF_500",
+      "SF_1000": "SF_500",
+      "SF_1250": "SF_1000",
+      "SF_1500": "SF_1000",
+      "SF_2000": "SF_1000",
+      "SF_3000": "SF_1000",
+      "SF_5000": "SF_1000",
+      "SF_750": "SF_500"
+    },
+    "front_size_as_benefit": [
+      "QF_500",
+      "SF_500",
+      "QF_750",
+      "SF_750",
+      "QF_1000",
+      "SF_1000",
+      "QF_1250",
+      "SF_1250",
+      "QF_1500",
+      "SF_1500",
+      "QF_2000",
+      "SF_2000",
+      "QF_3000",
+      "SF_3000",
+      "QF_5000",
+      "SF_5000",
+      "HY_c500_T2000",
+      "HY_c500_T3000",
+      "HY_c500_T5000",
+      "HY_c750_T2000",
+      "HY_c750_T3000",
+      "HY_c750_T5000",
+      "HY_c1000_T2000",
+      "HY_c1000_T3000",
+      "HY_c1000_T5000",
+      "HY_c1250_T2000",
+      "HY_c1250_T3000",
+      "HY_c1250_T5000",
+      "HY_c1500_T2000",
+      "HY_c1500_T3000",
+      "HY_c1500_T5000"
+    ],
+    "front_size_as_cost": [
+      "QF_500",
+      "SF_500",
+      "HY_c500_T2000",
+      "HY_c750_T2000"
+    ],
+    "within_fixed_size": {
+      "1000": {
+        "dominated_by": {},
+        "front": [
+          "QF_1000",
+          "SF_1000"
+        ]
+      },
+      "1250": {
+        "dominated_by": {},
+        "front": [
+          "QF_1250",
+          "SF_1250"
+        ]
+      },
+      "1500": {
+        "dominated_by": {},
+        "front": [
+          "QF_1500",
+          "SF_1500"
+        ]
+      },
+      "2000": {
+        "dominated_by": {},
+        "front": [
+          "QF_2000",
+          "SF_2000",
+          "HY_c500_T2000",
+          "HY_c750_T2000",
+          "HY_c1000_T2000",
+          "HY_c1250_T2000",
+          "HY_c1500_T2000"
+        ]
+      },
+      "3000": {
+        "dominated_by": {},
+        "front": [
+          "QF_3000",
+          "SF_3000",
+          "HY_c500_T3000",
+          "HY_c750_T3000",
+          "HY_c1000_T3000",
+          "HY_c1250_T3000",
+          "HY_c1500_T3000"
+        ]
+      },
+      "500": {
+        "dominated_by": {},
+        "front": [
+          "QF_500",
+          "SF_500"
+        ]
+      },
+      "5000": {
+        "dominated_by": {},
+        "front": [
+          "QF_5000",
+          "SF_5000",
+          "HY_c500_T5000",
+          "HY_c750_T5000",
+          "HY_c1000_T5000",
+          "HY_c1250_T5000",
+          "HY_c1500_T5000"
+        ]
+      },
+      "750": {
+        "dominated_by": {},
+        "front": [
+          "QF_750",
+          "SF_750"
+        ]
+      }
+    }
+  },
+  "production_changes": false,
+  "scenarios": {
+    "viewA": {
+      "1000": {
+        "loci_in_both_strategies": 999,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 18,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 41,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 684,
+            "True": 316
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1000,
+          "pct_of_available_strong_set": 16.464,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 999,
+          "shared_fraction": 0.999,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          },
+          "wgs_only_or_view_only_fraction": 0.001
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 19,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 40,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 685,
+            "True": 315
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1000,
+          "pct_of_available_strong_set": 16.464,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "1250": {
+        "loci_in_both_strategies": 1249,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 3,
+          "chromosome": {
+            "chr1": 107,
+            "chr10": 47,
+            "chr11": 62,
+            "chr12": 83,
+            "chr13": 26,
+            "chr14": 48,
+            "chr15": 40,
+            "chr16": 44,
+            "chr17": 52,
+            "chr18": 32,
+            "chr19": 41,
+            "chr2": 110,
+            "chr20": 29,
+            "chr21": 15,
+            "chr22": 14,
+            "chr3": 77,
+            "chr4": 53,
+            "chr5": 82,
+            "chr6": 69,
+            "chr7": 68,
+            "chr8": 57,
+            "chr9": 54,
+            "chrX": 37,
+            "chrY": 3
+          },
+          "flank_other_repeat_flag": {
+            "False": 900,
+            "True": 350
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1250,
+          "pct_of_available_strong_set": 20.58,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1224,
+            "mixed_microsatellite_and_other": 26
+          },
+          "shared": 1249,
+          "shared_fraction": 0.9992,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1250,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 3,
+            "TIER0_MEAN_1.0": 1247
+          },
+          "wgs_only_or_view_only_fraction": 0.0008
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 3,
+          "chromosome": {
+            "chr1": 108,
+            "chr10": 47,
+            "chr11": 62,
+            "chr12": 83,
+            "chr13": 26,
+            "chr14": 48,
+            "chr15": 40,
+            "chr16": 44,
+            "chr17": 52,
+            "chr18": 32,
+            "chr19": 41,
+            "chr2": 110,
+            "chr20": 29,
+            "chr21": 15,
+            "chr22": 14,
+            "chr3": 77,
+            "chr4": 53,
+            "chr5": 82,
+            "chr6": 69,
+            "chr7": 68,
+            "chr8": 57,
+            "chr9": 53,
+            "chrX": 37,
+            "chrY": 3
+          },
+          "flank_other_repeat_flag": {
+            "False": 901,
+            "True": 349
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1250,
+          "pct_of_available_strong_set": 20.58,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1224,
+            "mixed_microsatellite_and_other": 26
+          },
+          "shared": 1250,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1250,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 3,
+            "TIER0_MEAN_1.0": 1247
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "1500": {
+        "loci_in_both_strategies": 1498,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 2,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 78,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 94,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 65,
+            "chrX": 43,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1050,
+            "True": 450
+          },
+          "fraction_15_20": 0.032667,
+          "fraction_21_30": 0.967333,
+          "n": 1500,
+          "pct_of_available_strong_set": 24.695,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1498,
+          "shared_fraction": 0.998667,
+          "span_subband": {
+            "15_20": 49,
+            "21_30": 1451,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          },
+          "wgs_only_or_view_only_fraction": 0.001333
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 79,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 95,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 64,
+            "chrX": 42,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1051,
+            "True": 449
+          },
+          "fraction_15_20": 0.033333,
+          "fraction_21_30": 0.966667,
+          "n": 1500,
+          "pct_of_available_strong_set": 24.695,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 1450,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "2000": {
+        "loci_in_both_strategies": 1998,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 2,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 85,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 155,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 77,
+            "chrX": 50,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1443,
+            "True": 557
+          },
+          "fraction_15_20": 0.2465,
+          "fraction_21_30": 0.7535,
+          "n": 2000,
+          "pct_of_available_strong_set": 32.927,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 1998,
+          "shared_fraction": 0.999,
+          "span_subband": {
+            "15_20": 493,
+            "21_30": 1507,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          },
+          "wgs_only_or_view_only_fraction": 0.001
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 86,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 156,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 76,
+            "chrX": 49,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1444,
+            "True": 556
+          },
+          "fraction_15_20": 0.247,
+          "fraction_21_30": 0.753,
+          "n": 2000,
+          "pct_of_available_strong_set": 32.927,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 2000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 494,
+            "21_30": 1506,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "3000": {
+        "loci_in_both_strategies": 2995,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 5,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 266,
+            "chr10": 112,
+            "chr11": 153,
+            "chr12": 182,
+            "chr13": 67,
+            "chr14": 133,
+            "chr15": 114,
+            "chr16": 109,
+            "chr17": 130,
+            "chr18": 72,
+            "chr19": 99,
+            "chr2": 223,
+            "chr20": 61,
+            "chr21": 33,
+            "chr22": 43,
+            "chr3": 215,
+            "chr4": 137,
+            "chr5": 175,
+            "chr6": 183,
+            "chr7": 170,
+            "chr8": 125,
+            "chr9": 102,
+            "chrX": 92,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 2200,
+            "True": 800
+          },
+          "fraction_15_20": 0.478,
+          "fraction_21_30": 0.502333,
+          "n": 3000,
+          "pct_of_available_strong_set": 49.391,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2936,
+            "mixed_microsatellite_and_other": 60,
+            "no_rmsk_hit": 4
+          },
+          "shared": 2995,
+          "shared_fraction": 0.998333,
+          "span_subband": {
+            "15_20": 1434,
+            "21_30": 1507,
+            "31_40": 59
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 2996
+          },
+          "wgs_only_or_view_only_fraction": 0.001667
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 266,
+            "chr10": 112,
+            "chr11": 154,
+            "chr12": 182,
+            "chr13": 67,
+            "chr14": 133,
+            "chr15": 114,
+            "chr16": 109,
+            "chr17": 131,
+            "chr18": 72,
+            "chr19": 98,
+            "chr2": 224,
+            "chr20": 61,
+            "chr21": 33,
+            "chr22": 43,
+            "chr3": 215,
+            "chr4": 138,
+            "chr5": 174,
+            "chr6": 182,
+            "chr7": 170,
+            "chr8": 125,
+            "chr9": 101,
+            "chrX": 92,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 2202,
+            "True": 798
+          },
+          "fraction_15_20": 0.478333,
+          "fraction_21_30": 0.502,
+          "n": 3000,
+          "pct_of_available_strong_set": 49.391,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2936,
+            "mixed_microsatellite_and_other": 60,
+            "no_rmsk_hit": 4
+          },
+          "shared": 3000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 1435,
+            "21_30": 1506,
+            "31_40": 59
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 2996
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "500": {
+        "loci_in_both_strategies": 499,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 11,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 20,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 332,
+            "True": 168
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 500,
+          "pct_of_available_strong_set": 8.232,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 499,
+          "shared_fraction": 0.998,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          },
+          "wgs_only_or_view_only_fraction": 0.002
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 12,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 19,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 333,
+            "True": 167
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 500,
+          "pct_of_available_strong_set": 8.232,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 500,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "5000": {
+        "loci_in_both_strategies": 4979,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 21,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 438,
+            "chr10": 203,
+            "chr11": 247,
+            "chr12": 313,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 184,
+            "chr17": 224,
+            "chr18": 137,
+            "chr19": 159,
+            "chr2": 399,
+            "chr20": 100,
+            "chr21": 50,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 240,
+            "chr5": 316,
+            "chr6": 261,
+            "chr7": 260,
+            "chr8": 203,
+            "chr9": 172,
+            "chrX": 155,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3702,
+            "True": 1298
+          },
+          "fraction_15_20": 0.6814,
+          "fraction_21_30": 0.3014,
+          "n": 5000,
+          "pct_of_available_strong_set": 82.318,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4323,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 600
+          },
+          "shared": 4979,
+          "shared_fraction": 0.9958,
+          "span_subband": {
+            "15_20": 3407,
+            "21_30": 1507,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          },
+          "wgs_only_or_view_only_fraction": 0.0042
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 440,
+            "chr10": 203,
+            "chr11": 248,
+            "chr12": 314,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 185,
+            "chr17": 225,
+            "chr18": 137,
+            "chr19": 158,
+            "chr2": 401,
+            "chr20": 100,
+            "chr21": 49,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 239,
+            "chr5": 314,
+            "chr6": 260,
+            "chr7": 261,
+            "chr8": 203,
+            "chr9": 171,
+            "chrX": 153,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3684,
+            "True": 1316
+          },
+          "fraction_15_20": 0.6816,
+          "fraction_21_30": 0.3012,
+          "n": 5000,
+          "pct_of_available_strong_set": 82.318,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4334,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 589
+          },
+          "shared": 5000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 3408,
+            "21_30": 1506,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "750": {
+        "loci_in_both_strategies": 749,
+        "n_available_strong_set": 6074,
+        "quality_first": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 66,
+            "chr10": 25,
+            "chr11": 39,
+            "chr12": 57,
+            "chr13": 14,
+            "chr14": 26,
+            "chr15": 23,
+            "chr16": 27,
+            "chr17": 35,
+            "chr18": 15,
+            "chr19": 28,
+            "chr2": 58,
+            "chr20": 16,
+            "chr21": 12,
+            "chr22": 10,
+            "chr3": 52,
+            "chr4": 33,
+            "chr5": 48,
+            "chr6": 33,
+            "chr7": 41,
+            "chr8": 41,
+            "chr9": 28,
+            "chrX": 22,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 502,
+            "True": 248
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 750,
+          "pct_of_available_strong_set": 12.348,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 734,
+            "mixed_microsatellite_and_other": 16
+          },
+          "shared": 749,
+          "shared_fraction": 0.998667,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 750,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 749
+          },
+          "wgs_only_or_view_only_fraction": 0.001333
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 66,
+            "chr10": 25,
+            "chr11": 39,
+            "chr12": 58,
+            "chr13": 14,
+            "chr14": 26,
+            "chr15": 23,
+            "chr16": 27,
+            "chr17": 35,
+            "chr18": 15,
+            "chr19": 28,
+            "chr2": 58,
+            "chr20": 16,
+            "chr21": 12,
+            "chr22": 10,
+            "chr3": 52,
+            "chr4": 33,
+            "chr5": 48,
+            "chr6": 33,
+            "chr7": 41,
+            "chr8": 41,
+            "chr9": 27,
+            "chrX": 22,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 502,
+            "True": 248
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 750,
+          "pct_of_available_strong_set": 12.348,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 734,
+            "mixed_microsatellite_and_other": 16
+          },
+          "shared": 750,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 750,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 749
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      }
+    },
+    "viewB": {
+      "1000": {
+        "loci_in_both_strategies": 120,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 880,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 76,
+            "chr10": 51,
+            "chr11": 38,
+            "chr12": 45,
+            "chr13": 26,
+            "chr14": 35,
+            "chr15": 20,
+            "chr16": 37,
+            "chr17": 30,
+            "chr18": 28,
+            "chr19": 18,
+            "chr2": 91,
+            "chr20": 16,
+            "chr21": 10,
+            "chr22": 4,
+            "chr3": 91,
+            "chr4": 59,
+            "chr5": 61,
+            "chr6": 69,
+            "chr7": 60,
+            "chr8": 61,
+            "chr9": 34,
+            "chrX": 40
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 262
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1000,
+          "pct_of_available_strong_set": 1.646,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1000
+          },
+          "shared": 120,
+          "shared_fraction": 0.12,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 1000
+          },
+          "wgs_only_or_view_only_fraction": 0.88
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 19,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 40,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 685,
+            "True": 315
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1000,
+          "pct_of_available_strong_set": 1.646,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "1250": {
+        "loci_in_both_strategies": 124,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 1126,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 104,
+            "chr10": 65,
+            "chr11": 46,
+            "chr12": 60,
+            "chr13": 29,
+            "chr14": 45,
+            "chr15": 26,
+            "chr16": 40,
+            "chr17": 42,
+            "chr18": 31,
+            "chr19": 23,
+            "chr2": 102,
+            "chr20": 22,
+            "chr21": 12,
+            "chr22": 7,
+            "chr3": 106,
+            "chr4": 76,
+            "chr5": 80,
+            "chr6": 83,
+            "chr7": 74,
+            "chr8": 79,
+            "chr9": 48,
+            "chrX": 50
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 512
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1250,
+          "pct_of_available_strong_set": 2.057,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1250
+          },
+          "shared": 124,
+          "shared_fraction": 0.0992,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1250,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 1250
+          },
+          "wgs_only_or_view_only_fraction": 0.9008
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 3,
+          "chromosome": {
+            "chr1": 108,
+            "chr10": 47,
+            "chr11": 62,
+            "chr12": 83,
+            "chr13": 26,
+            "chr14": 48,
+            "chr15": 40,
+            "chr16": 44,
+            "chr17": 52,
+            "chr18": 32,
+            "chr19": 41,
+            "chr2": 110,
+            "chr20": 29,
+            "chr21": 15,
+            "chr22": 14,
+            "chr3": 77,
+            "chr4": 53,
+            "chr5": 82,
+            "chr6": 69,
+            "chr7": 68,
+            "chr8": 57,
+            "chr9": 53,
+            "chrX": 37,
+            "chrY": 3
+          },
+          "flank_other_repeat_flag": {
+            "False": 901,
+            "True": 349
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1250,
+          "pct_of_available_strong_set": 2.057,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1224,
+            "mixed_microsatellite_and_other": 26
+          },
+          "shared": 1250,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1250,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 3,
+            "TIER0_MEAN_1.0": 1247
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "1500": {
+        "loci_in_both_strategies": 140,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 1360,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 129,
+            "chr10": 73,
+            "chr11": 56,
+            "chr12": 74,
+            "chr13": 34,
+            "chr14": 51,
+            "chr15": 33,
+            "chr16": 54,
+            "chr17": 54,
+            "chr18": 38,
+            "chr19": 30,
+            "chr2": 123,
+            "chr20": 27,
+            "chr21": 15,
+            "chr22": 9,
+            "chr3": 127,
+            "chr4": 86,
+            "chr5": 99,
+            "chr6": 97,
+            "chr7": 86,
+            "chr8": 87,
+            "chr9": 58,
+            "chrX": 60
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 762
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 1500,
+          "pct_of_available_strong_set": 2.469,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1500
+          },
+          "shared": 140,
+          "shared_fraction": 0.093333,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 1500
+          },
+          "wgs_only_or_view_only_fraction": 0.906667
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 79,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 95,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 64,
+            "chrX": 42,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1051,
+            "True": 449
+          },
+          "fraction_15_20": 0.033333,
+          "fraction_21_30": 0.966667,
+          "n": 1500,
+          "pct_of_available_strong_set": 2.469,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 1450,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "2000": {
+        "loci_in_both_strategies": 164,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 1836,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 165,
+            "chr10": 91,
+            "chr11": 89,
+            "chr12": 113,
+            "chr13": 50,
+            "chr14": 79,
+            "chr15": 50,
+            "chr16": 70,
+            "chr17": 71,
+            "chr18": 46,
+            "chr19": 48,
+            "chr2": 157,
+            "chr20": 36,
+            "chr21": 25,
+            "chr22": 14,
+            "chr3": 159,
+            "chr4": 108,
+            "chr5": 130,
+            "chr6": 114,
+            "chr7": 120,
+            "chr8": 107,
+            "chr9": 76,
+            "chrX": 82
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 1262
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2000
+          },
+          "shared": 164,
+          "shared_fraction": 0.082,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 2000
+          },
+          "wgs_only_or_view_only_fraction": 0.918
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 86,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 156,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 76,
+            "chrX": 49,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1444,
+            "True": 556
+          },
+          "fraction_15_20": 0.247,
+          "fraction_21_30": 0.753,
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 2000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 494,
+            "21_30": 1506,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "3000": {
+        "loci_in_both_strategies": 240,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 2760,
+          "chrY": 19,
+          "chromosome": {
+            "chr1": 232,
+            "chr10": 126,
+            "chr11": 134,
+            "chr12": 169,
+            "chr13": 90,
+            "chr14": 112,
+            "chr15": 80,
+            "chr16": 103,
+            "chr17": 104,
+            "chr18": 76,
+            "chr19": 62,
+            "chr2": 255,
+            "chr20": 63,
+            "chr21": 29,
+            "chr22": 27,
+            "chr3": 232,
+            "chr4": 172,
+            "chr5": 193,
+            "chr6": 162,
+            "chr7": 170,
+            "chr8": 158,
+            "chr9": 123,
+            "chrX": 109,
+            "chrY": 19
+          },
+          "flank_other_repeat_flag": {
+            "False": 1234,
+            "True": 1766
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2926,
+            "mixed_microsatellite_and_other": 73,
+            "no_rmsk_hit": 1
+          },
+          "shared": 240,
+          "shared_fraction": 0.08,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 3000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 19,
+            "TIER0_MEAN_1.0": 2981
+          },
+          "wgs_only_or_view_only_fraction": 0.92
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 266,
+            "chr10": 112,
+            "chr11": 154,
+            "chr12": 182,
+            "chr13": 67,
+            "chr14": 133,
+            "chr15": 114,
+            "chr16": 109,
+            "chr17": 131,
+            "chr18": 72,
+            "chr19": 98,
+            "chr2": 224,
+            "chr20": 61,
+            "chr21": 33,
+            "chr22": 43,
+            "chr3": 215,
+            "chr4": 138,
+            "chr5": 174,
+            "chr6": 182,
+            "chr7": 170,
+            "chr8": 125,
+            "chr9": 101,
+            "chrX": 92,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 2202,
+            "True": 798
+          },
+          "fraction_15_20": 0.478333,
+          "fraction_21_30": 0.502,
+          "n": 3000,
+          "pct_of_available_strong_set": 4.938,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2936,
+            "mixed_microsatellite_and_other": 60,
+            "no_rmsk_hit": 4
+          },
+          "shared": 3000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 1435,
+            "21_30": 1506,
+            "31_40": 59
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 2996
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "500": {
+        "loci_in_both_strategies": 81,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 419,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 33,
+            "chr10": 30,
+            "chr11": 22,
+            "chr12": 20,
+            "chr13": 15,
+            "chr14": 16,
+            "chr15": 8,
+            "chr16": 16,
+            "chr17": 14,
+            "chr18": 18,
+            "chr19": 6,
+            "chr2": 45,
+            "chr20": 9,
+            "chr21": 6,
+            "chr22": 3,
+            "chr3": 39,
+            "chr4": 31,
+            "chr5": 36,
+            "chr6": 36,
+            "chr7": 28,
+            "chr8": 35,
+            "chr9": 12,
+            "chrX": 22
+          },
+          "flank_other_repeat_flag": {
+            "False": 500
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 500,
+          "pct_of_available_strong_set": 0.823,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 500
+          },
+          "shared": 81,
+          "shared_fraction": 0.162,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 500
+          },
+          "wgs_only_or_view_only_fraction": 0.838
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 12,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 19,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 333,
+            "True": 167
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 500,
+          "pct_of_available_strong_set": 0.823,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 500,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "5000": {
+        "loci_in_both_strategies": 430,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 4570,
+          "chrY": 19,
+          "chromosome": {
+            "chr1": 384,
+            "chr10": 225,
+            "chr11": 215,
+            "chr12": 263,
+            "chr13": 164,
+            "chr14": 185,
+            "chr15": 144,
+            "chr16": 168,
+            "chr17": 161,
+            "chr18": 126,
+            "chr19": 98,
+            "chr2": 413,
+            "chr20": 113,
+            "chr21": 49,
+            "chr22": 48,
+            "chr3": 397,
+            "chr4": 289,
+            "chr5": 338,
+            "chr6": 277,
+            "chr7": 260,
+            "chr8": 270,
+            "chr9": 205,
+            "chrX": 189,
+            "chrY": 19
+          },
+          "flank_other_repeat_flag": {
+            "False": 2271,
+            "True": 2729
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4807,
+            "mixed_microsatellite_and_other": 190,
+            "no_rmsk_hit": 3
+          },
+          "shared": 430,
+          "shared_fraction": 0.086,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 19,
+            "TIER0_MEAN_1.0": 4981
+          },
+          "wgs_only_or_view_only_fraction": 0.914
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 440,
+            "chr10": 203,
+            "chr11": 248,
+            "chr12": 314,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 185,
+            "chr17": 225,
+            "chr18": 137,
+            "chr19": 158,
+            "chr2": 401,
+            "chr20": 100,
+            "chr21": 49,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 239,
+            "chr5": 314,
+            "chr6": 260,
+            "chr7": 261,
+            "chr8": 203,
+            "chr9": 171,
+            "chrX": 153,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3684,
+            "True": 1316
+          },
+          "fraction_15_20": 0.6816,
+          "fraction_21_30": 0.3012,
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4334,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 589
+          },
+          "shared": 5000,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 3408,
+            "21_30": 1506,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      },
+      "750": {
+        "loci_in_both_strategies": 111,
+        "n_available_strong_set": 60756,
+        "quality_first": {
+          "A_only": 0,
+          "B_only": 639,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 53,
+            "chr10": 42,
+            "chr11": 30,
+            "chr12": 30,
+            "chr13": 20,
+            "chr14": 24,
+            "chr15": 13,
+            "chr16": 28,
+            "chr17": 21,
+            "chr18": 24,
+            "chr19": 6,
+            "chr2": 73,
+            "chr20": 9,
+            "chr21": 9,
+            "chr22": 3,
+            "chr3": 67,
+            "chr4": 52,
+            "chr5": 48,
+            "chr6": 50,
+            "chr7": 46,
+            "chr8": 48,
+            "chr9": 24,
+            "chrX": 30
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 12
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 750,
+          "pct_of_available_strong_set": 1.234,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 750
+          },
+          "shared": 111,
+          "shared_fraction": 0.148,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 750,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 750
+          },
+          "wgs_only_or_view_only_fraction": 0.852
+        },
+        "shared_first": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 66,
+            "chr10": 25,
+            "chr11": 39,
+            "chr12": 58,
+            "chr13": 14,
+            "chr14": 26,
+            "chr15": 23,
+            "chr16": 27,
+            "chr17": 35,
+            "chr18": 15,
+            "chr19": 28,
+            "chr2": 58,
+            "chr20": 16,
+            "chr21": 12,
+            "chr22": 10,
+            "chr3": 52,
+            "chr4": 33,
+            "chr5": 48,
+            "chr6": 33,
+            "chr7": 41,
+            "chr8": 41,
+            "chr9": 27,
+            "chrX": 22,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 502,
+            "True": 248
+          },
+          "fraction_15_20": 0.0,
+          "fraction_21_30": 1.0,
+          "n": 750,
+          "pct_of_available_strong_set": 1.234,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 734,
+            "mixed_microsatellite_and_other": 16
+          },
+          "shared": 750,
+          "shared_fraction": 1.0,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 750,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 749
+          },
+          "wgs_only_or_view_only_fraction": 0.0
+        }
+      }
+    }
+  },
+  "script": {
+    "path": "C:\\GenRichi\\dev\\msi_redesign\\tradeoff_pareto_stage5.py",
+    "python": "3.12.10",
+    "sha256": "74c06e3a35c3d4ff055710a71c6a3db265ea6b8f3ddfbfc5bdfbdd3fae063b60",
+    "version": "tradeoff_pareto_stage5.v1"
+  },
+  "shared_first_band_analysis": {
+    "viewA_shared_first": {
+      "first_15_20_rank": 1451,
+      "first_rank_where_cumulative_15_20_share_reaches": {
+        "0.01": 1465,
+        "0.05": 1527,
+        "0.1": 1612,
+        "0.25": 2008,
+        "0.5": 3130
+      },
+      "last_21_30_rank": 6039,
+      "n_21_30_in_list": 1507
+    },
+    "viewB_quality_first": {
+      "first_15_20_rank": 16993,
+      "first_rank_where_cumulative_15_20_share_reaches": {
+        "0.01": 17164,
+        "0.05": 17887,
+        "0.1": 18880,
+        "0.25": 23626,
+        "0.5": 37900
+      },
+      "last_21_30_rank": 20700,
+      "n_21_30_in_list": 17719
+    },
+    "viewB_shared_first": {
+      "first_15_20_rank": 1451,
+      "first_rank_where_cumulative_15_20_share_reaches": {
+        "0.01": 1465,
+        "0.05": 1527,
+        "0.1": 1612,
+        "0.25": 2008,
+        "0.5": 3130
+      },
+      "last_21_30_rank": 24914,
+      "n_21_30_in_list": 17719
+    }
+  },
+  "stage": "trade-off / Pareto analysis (development / RUO)",
+  "stage4_manifest_path": "dev/msi_redesign/output/scenario_preview_stage4.v1.manifest.json",
+  "status": "DEVELOPMENT_ANALYSIS_NOT_A_SELECTED_PANEL",
+  "upstream_outputs_modified": false,
+  "verified_upstream_hashes": {
+    "spacing250_manifest": "703a99389ea8a3f7c82ecb6ef5884e2a40e0e008b31c4ade27161958f9e0b410",
+    "spacing250_viewA_wes_compatible_selected_panel": "16a2a3fbbb4c452e81b0e98b4fdb9c9bfe7f30b160309a407745dd874a11a200",
+    "spacing250_viewA_wes_compatible_traceability_all_loci": "13d5d85243ccf1aa18e8d228fa88bdd97166c123d709553831bd9e400cfe9d16",
+    "spacing250_viewB_wgs_selected_panel": "6292272337e05af8cf4172df1594437c0aa73a7596688051671f211177f7d0d2",
+    "spacing250_viewB_wgs_traceability_all_loci": "004224614bafca78292c4f19c8bd88d7e1ab50d2900926f42ccd52e193743529",
+    "stage2_manifest": "aa611663a619f3b469d88b2b17afb198b71bc696609a45b769e3f5841fb20e61",
+    "stage2_strong_mono_primary": "c6a98adbb2b2d5893ec2f1be8e75e8deea50481d736522243512598d7c2b0721",
+    "stage2_strong_str_comparison": "b0db9dc117eefee321f02216997767f73e824c811a1072c18063b8805ccd8aae",
+    "stage2_traceability_all_representatives": "194db0bf09f00b18643d58f1c6f6dfc84585520d90dd0d5b55d48f8c111f64bf",
+    "stage3_manifest": "e95f76db84a81e5e3d1647e177827d0355316b92740ef79b5a277bc2de37e0ce",
+    "stage3_ranked_union": "3d1b3660c8a22ac9ea9978316a0246a670a8866a2e72382798498763c307ff0b",
+    "stage3_ranked_viewA": "042743e5000c11c5647d19d477404f15f64bc0b35178a7420629198afadb8451",
+    "stage3_ranked_viewB": "ef368104588b292191125aeb0fcede9a618b21464c74131efcfb0e37bccf9686",
+    "stage4_comparison_table": "a847f1a692e98003845cf533142e4b2c341da9de12f05aa5005532db1a2614b5",
+    "stage4_manifest": "caf0c6a0270417fbba7f3d0864b5ac61c35b10f9e24fa67512378fc12e6f1bd3"
+  },
+  "viewB_strategy_overlaps": {
+    "1000": 120,
+    "1250": 124,
+    "1500": 140,
+    "2000": 164,
+    "3000": 240,
+    "500": 81,
+    "5000": 430,
+    "750": 111
+  }
+}

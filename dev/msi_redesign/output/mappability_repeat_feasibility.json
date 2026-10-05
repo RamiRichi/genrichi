@@ -1,0 +1,108 @@
+{
+  "analysis_type": "READ_ONLY_FEASIBILITY_ANALYSIS_NOT_A_FILTERED_PANEL",
+  "filter_scenarios_not_a_final_panel": {
+    "exclude_any_of_(segdup_or_flank_other_repeat_or_umap_zero_coverage)": 658985,
+    "exclude_flank_other_repeat_class": 701362,
+    "exclude_segdup_overlap": 2528529,
+    "exclude_umap_single_read_not_fully_covered": 2600623,
+    "exclude_umap_single_read_zero_coverage": 2647709,
+    "raw_candidate_universe": 2682853
+  },
+  "n_loci_with_any_flank_repeatmasker_hit": 2258748,
+  "n_loci_with_flank_hit_but_only_microsatellite_class": 277257,
+  "n_loci_with_flank_other_repeat_class": 1981491,
+  "n_total_tier2_candidates": 2682853,
+  "pairwise_overlaps": {
+    "all_three": 21234,
+    "any_of_three": 2024247,
+    "flank_other_repeat_AND_segdup": 114710,
+    "low_mappability_AND_flank_other_repeat": 31268,
+    "low_mappability_AND_segdup": 29450
+  },
+  "repeatmasker_flank_class_hit_counts": {
+    "DNA": 166246,
+    "DNA?": 772,
+    "LINE": 818805,
+    "LTR": 250132,
+    "LTR?": 1422,
+    "Low_complexity": 61823,
+    "RC": 497,
+    "RC?": 109,
+    "RNA": 137,
+    "Retroposon": 7891,
+    "SINE": 1208336,
+    "SINE?": 5,
+    "Satellite": 10017,
+    "Simple_repeat": 609569,
+    "Unknown": 1275,
+    "rRNA": 526,
+    "scRNA": 935,
+    "snRNA": 1898,
+    "srpRNA": 1076,
+    "tRNA": 399
+  },
+  "repeatmasker_locus_self_class_hit_counts": {
+    "DNA": 59200,
+    "DNA?": 169,
+    "LINE": 417262,
+    "LTR": 95732,
+    "LTR?": 358,
+    "Low_complexity": 39002,
+    "RC": 135,
+    "RC?": 17,
+    "RNA": 15,
+    "Retroposon": 4617,
+    "SINE": 847415,
+    "Satellite": 8467,
+    "Simple_repeat": 538589,
+    "Unknown": 305,
+    "rRNA": 81,
+    "scRNA": 212,
+    "snRNA": 196,
+    "srpRNA": 425,
+    "tRNA": 12
+  },
+  "repeatmasker_locus_self_classification": {
+    "microsatellite_class_only": 551820,
+    "mixed_microsatellite_and_other": 24977,
+    "no_rmsk_hit": 711020,
+    "unexpected_non_microsatellite_class": 1395036
+  },
+  "segmental_duplication": {
+    "fracmatch_max": 1.0,
+    "fracmatch_mean": 0.9585750973502158,
+    "fracmatch_min": 0.9,
+    "n_loci_window_overlapping_segdup": 154324,
+    "n_segdup_fracmatch_values": 708586,
+    "provenance_note": "genomicSuperDups.txt last updated 2014 on UCSC hg38 -- not re-analyzed since; treat as a QC flag informed by an aging annotation, not an authoritative up-to-date map of all GRCh38 segmental duplications"
+  },
+  "umap_multi_read_continuous_score_distribution": {
+    "mean_score_histogram": {
+      "0.0-0.2": 3142,
+      "0.0_exactly": 11,
+      "0.2-0.4": 6177,
+      "0.4-0.6": 54441,
+      "0.6-0.8": 45764,
+      "0.8-1.0_exclusive": 82144,
+      "1.0_exactly": 2449720
+    },
+    "min_score_histogram": {
+      "0.0-0.2": 30022,
+      "0.0_exactly": 31240,
+      "0.2-0.4": 15647,
+      "0.4-0.6": 20454,
+      "0.6-0.8": 30281,
+      "0.8-1.0_exclusive": 64035,
+      "1.0_exactly": 2449720
+    },
+    "n_loci_no_data": 41454,
+    "n_loci_with_data": 2641399
+  },
+  "umap_single_read_binary_window_coverage": {
+    "n_fully_covered_window": 2600623,
+    "n_loci_no_data": 0,
+    "n_loci_with_data": 2682853,
+    "n_partially_covered_window": 47086,
+    "n_zero_covered_window": 35144
+  }
+}

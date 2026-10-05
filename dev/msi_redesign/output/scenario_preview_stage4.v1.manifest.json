@@ -1,0 +1,1126 @@
+{
+  "chrY_removed": false,
+  "chromosome_is_a_ranking_key": false,
+  "chromosome_quotas": false,
+  "classification_performed": false,
+  "final_panel_size_fixed": false,
+  "generated_at_utc": "2026-09-24T21:43:12+00:00",
+  "hcc1395_results_used": false,
+  "outputs": {
+    "comparison_table": {
+      "path": "dev/msi_redesign/output\\scenario_preview_stage4.v1.comparison.tsv",
+      "sha256": "a847f1a692e98003845cf533142e4b2c341da9de12f05aa5005532db1a2614b5"
+    }
+  },
+  "panel_size_selected": false,
+  "primary_quality_ranking_hierarchy": [
+    "1. |span - 25| (25 = median span of verified Promega markers)",
+    "2. Umap multi-read mean == 1.0 before NOT_ASSESSED (never imputed)",
+    "3. higher read_measurable_fraction (100 bp read + 5 bp flank geometry)",
+    "4. RepeatMasker tier, then flank flag (existing categories)",
+    "5. objective Umap uniqueness fields (single-read coverage, multi-read min)",
+    "6. sha256(marker_id) deterministic tie-break"
+  ],
+  "production_changes": false,
+  "ranking_algorithm_rewritten": false,
+  "ranking_label_mapping": {
+    "not_combined_into_one_score": true,
+    "primary_quality_ranking": "stage-3 columns rank_viewA_no_shared_key / rank_viewB_no_shared_key (Shared status does not influence rank)",
+    "secondary_common_core_ranking": "stage-3 columns rank_viewA / rank_viewB (Shared-first; sensitivity/comparison only)"
+  },
+  "scenarios": {
+    "viewA": {
+      "1000": {
+        "loci_in_both_rankings_top_n": 999,
+        "n_available_strong_set": 6074,
+        "primary_quality_ranking": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 18,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 41,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 684,
+            "True": 316
+          },
+          "n": 1000,
+          "pct_of_available_strong_set": 16.464,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 999,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 19,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 40,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 685,
+            "True": 315
+          },
+          "n": 1000,
+          "pct_of_available_strong_set": 16.464,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          }
+        }
+      },
+      "1500": {
+        "loci_in_both_rankings_top_n": 1498,
+        "n_available_strong_set": 6074,
+        "primary_quality_ranking": {
+          "A_only": 2,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 78,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 94,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 65,
+            "chrX": 43,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1050,
+            "True": 450
+          },
+          "n": 1500,
+          "pct_of_available_strong_set": 24.695,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1498,
+          "span_subband": {
+            "15_20": 49,
+            "21_30": 1451,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 79,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 95,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 64,
+            "chrX": 42,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1051,
+            "True": 449
+          },
+          "n": 1500,
+          "pct_of_available_strong_set": 24.695,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 1450,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          }
+        }
+      },
+      "2000": {
+        "loci_in_both_rankings_top_n": 1998,
+        "n_available_strong_set": 6074,
+        "primary_quality_ranking": {
+          "A_only": 2,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 85,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 155,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 77,
+            "chrX": 50,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1443,
+            "True": 557
+          },
+          "n": 2000,
+          "pct_of_available_strong_set": 32.927,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 1998,
+          "span_subband": {
+            "15_20": 493,
+            "21_30": 1507,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 86,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 156,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 76,
+            "chrX": 49,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1444,
+            "True": 556
+          },
+          "n": 2000,
+          "pct_of_available_strong_set": 32.927,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 2000,
+          "span_subband": {
+            "15_20": 494,
+            "21_30": 1506,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          }
+        }
+      },
+      "500": {
+        "loci_in_both_rankings_top_n": 499,
+        "n_available_strong_set": 6074,
+        "primary_quality_ranking": {
+          "A_only": 1,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 11,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 20,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 332,
+            "True": 168
+          },
+          "n": 500,
+          "pct_of_available_strong_set": 8.232,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 499,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 12,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 19,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 333,
+            "True": 167
+          },
+          "n": 500,
+          "pct_of_available_strong_set": 8.232,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 500,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          }
+        }
+      },
+      "5000": {
+        "loci_in_both_rankings_top_n": 4979,
+        "n_available_strong_set": 6074,
+        "primary_quality_ranking": {
+          "A_only": 21,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 438,
+            "chr10": 203,
+            "chr11": 247,
+            "chr12": 313,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 184,
+            "chr17": 224,
+            "chr18": 137,
+            "chr19": 159,
+            "chr2": 399,
+            "chr20": 100,
+            "chr21": 50,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 240,
+            "chr5": 316,
+            "chr6": 261,
+            "chr7": 260,
+            "chr8": 203,
+            "chr9": 172,
+            "chrX": 155,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3702,
+            "True": 1298
+          },
+          "n": 5000,
+          "pct_of_available_strong_set": 82.318,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4323,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 600
+          },
+          "shared": 4979,
+          "span_subband": {
+            "15_20": 3407,
+            "21_30": 1507,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 440,
+            "chr10": 203,
+            "chr11": 248,
+            "chr12": 314,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 185,
+            "chr17": 225,
+            "chr18": 137,
+            "chr19": 158,
+            "chr2": 401,
+            "chr20": 100,
+            "chr21": 49,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 239,
+            "chr5": 314,
+            "chr6": 260,
+            "chr7": 261,
+            "chr8": 203,
+            "chr9": 171,
+            "chrX": 153,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3684,
+            "True": 1316
+          },
+          "n": 5000,
+          "pct_of_available_strong_set": 82.318,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4334,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 589
+          },
+          "shared": 5000,
+          "span_subband": {
+            "15_20": 3408,
+            "21_30": 1506,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          }
+        }
+      }
+    },
+    "viewB": {
+      "1000": {
+        "loci_in_both_rankings_top_n": 120,
+        "n_available_strong_set": 60756,
+        "primary_quality_ranking": {
+          "A_only": 0,
+          "B_only": 880,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 76,
+            "chr10": 51,
+            "chr11": 38,
+            "chr12": 45,
+            "chr13": 26,
+            "chr14": 35,
+            "chr15": 20,
+            "chr16": 37,
+            "chr17": 30,
+            "chr18": 28,
+            "chr19": 18,
+            "chr2": 91,
+            "chr20": 16,
+            "chr21": 10,
+            "chr22": 4,
+            "chr3": 91,
+            "chr4": 59,
+            "chr5": 61,
+            "chr6": 69,
+            "chr7": 60,
+            "chr8": 61,
+            "chr9": 34,
+            "chrX": 40
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 262
+          },
+          "n": 1000,
+          "pct_of_available_strong_set": 1.646,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1000
+          },
+          "shared": 120,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 1000
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 86,
+            "chr10": 36,
+            "chr11": 50,
+            "chr12": 70,
+            "chr13": 19,
+            "chr14": 41,
+            "chr15": 32,
+            "chr16": 32,
+            "chr17": 43,
+            "chr18": 21,
+            "chr19": 35,
+            "chr2": 84,
+            "chr20": 24,
+            "chr21": 13,
+            "chr22": 13,
+            "chr3": 65,
+            "chr4": 46,
+            "chr5": 66,
+            "chr6": 49,
+            "chr7": 54,
+            "chr8": 48,
+            "chr9": 40,
+            "chrX": 32,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 685,
+            "True": 315
+          },
+          "n": 1000,
+          "pct_of_available_strong_set": 1.646,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 976,
+            "mixed_microsatellite_and_other": 24
+          },
+          "shared": 1000,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 999
+          }
+        }
+      },
+      "1500": {
+        "loci_in_both_rankings_top_n": 140,
+        "n_available_strong_set": 60756,
+        "primary_quality_ranking": {
+          "A_only": 0,
+          "B_only": 1360,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 129,
+            "chr10": 73,
+            "chr11": 56,
+            "chr12": 74,
+            "chr13": 34,
+            "chr14": 51,
+            "chr15": 33,
+            "chr16": 54,
+            "chr17": 54,
+            "chr18": 38,
+            "chr19": 30,
+            "chr2": 123,
+            "chr20": 27,
+            "chr21": 15,
+            "chr22": 9,
+            "chr3": 127,
+            "chr4": 86,
+            "chr5": 99,
+            "chr6": 97,
+            "chr7": 86,
+            "chr8": 87,
+            "chr9": 58,
+            "chrX": 60
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 762
+          },
+          "n": 1500,
+          "pct_of_available_strong_set": 2.469,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1500
+          },
+          "shared": 140,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 1500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 1500
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 135,
+            "chr10": 50,
+            "chr11": 79,
+            "chr12": 102,
+            "chr13": 31,
+            "chr14": 60,
+            "chr15": 53,
+            "chr16": 51,
+            "chr17": 62,
+            "chr18": 38,
+            "chr19": 52,
+            "chr2": 124,
+            "chr20": 32,
+            "chr21": 16,
+            "chr22": 17,
+            "chr3": 95,
+            "chr4": 65,
+            "chr5": 97,
+            "chr6": 85,
+            "chr7": 78,
+            "chr8": 68,
+            "chr9": 64,
+            "chrX": 42,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1051,
+            "True": 449
+          },
+          "n": 1500,
+          "pct_of_available_strong_set": 2.469,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1460,
+            "mixed_microsatellite_and_other": 39,
+            "no_rmsk_hit": 1
+          },
+          "shared": 1500,
+          "span_subband": {
+            "15_20": 50,
+            "21_30": 1450,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1496
+          }
+        }
+      },
+      "2000": {
+        "loci_in_both_rankings_top_n": 164,
+        "n_available_strong_set": 60756,
+        "primary_quality_ranking": {
+          "A_only": 0,
+          "B_only": 1836,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 165,
+            "chr10": 91,
+            "chr11": 89,
+            "chr12": 113,
+            "chr13": 50,
+            "chr14": 79,
+            "chr15": 50,
+            "chr16": 70,
+            "chr17": 71,
+            "chr18": 46,
+            "chr19": 48,
+            "chr2": 157,
+            "chr20": 36,
+            "chr21": 25,
+            "chr22": 14,
+            "chr3": 159,
+            "chr4": 108,
+            "chr5": 130,
+            "chr6": 114,
+            "chr7": 120,
+            "chr8": 107,
+            "chr9": 76,
+            "chrX": 82
+          },
+          "flank_other_repeat_flag": {
+            "False": 738,
+            "True": 1262
+          },
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 2000
+          },
+          "shared": 164,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 2000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 2000
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 4,
+          "chromosome": {
+            "chr1": 170,
+            "chr10": 72,
+            "chr11": 101,
+            "chr12": 133,
+            "chr13": 44,
+            "chr14": 82,
+            "chr15": 78,
+            "chr16": 70,
+            "chr17": 86,
+            "chr18": 48,
+            "chr19": 75,
+            "chr2": 156,
+            "chr20": 45,
+            "chr21": 19,
+            "chr22": 21,
+            "chr3": 134,
+            "chr4": 89,
+            "chr5": 128,
+            "chr6": 115,
+            "chr7": 114,
+            "chr8": 91,
+            "chr9": 76,
+            "chrX": 49,
+            "chrY": 4
+          },
+          "flank_other_repeat_flag": {
+            "False": 1444,
+            "True": 556
+          },
+          "n": 2000,
+          "pct_of_available_strong_set": 3.292,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 1954,
+            "mixed_microsatellite_and_other": 44,
+            "no_rmsk_hit": 2
+          },
+          "shared": 2000,
+          "span_subband": {
+            "15_20": 494,
+            "21_30": 1506,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 4,
+            "TIER0_MEAN_1.0": 1996
+          }
+        }
+      },
+      "500": {
+        "loci_in_both_rankings_top_n": 81,
+        "n_available_strong_set": 60756,
+        "primary_quality_ranking": {
+          "A_only": 0,
+          "B_only": 419,
+          "chrY": 0,
+          "chromosome": {
+            "chr1": 33,
+            "chr10": 30,
+            "chr11": 22,
+            "chr12": 20,
+            "chr13": 15,
+            "chr14": 16,
+            "chr15": 8,
+            "chr16": 16,
+            "chr17": 14,
+            "chr18": 18,
+            "chr19": 6,
+            "chr2": 45,
+            "chr20": 9,
+            "chr21": 6,
+            "chr22": 3,
+            "chr3": 39,
+            "chr4": 31,
+            "chr5": 36,
+            "chr6": 36,
+            "chr7": 28,
+            "chr8": 35,
+            "chr9": 12,
+            "chrX": 22
+          },
+          "flank_other_repeat_flag": {
+            "False": 500
+          },
+          "n": 500,
+          "pct_of_available_strong_set": 0.823,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 500
+          },
+          "shared": 81,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "TIER0_MEAN_1.0": 500
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 1,
+          "chromosome": {
+            "chr1": 39,
+            "chr10": 16,
+            "chr11": 27,
+            "chr12": 34,
+            "chr13": 12,
+            "chr14": 23,
+            "chr15": 17,
+            "chr16": 17,
+            "chr17": 25,
+            "chr18": 9,
+            "chr19": 21,
+            "chr2": 43,
+            "chr20": 11,
+            "chr21": 7,
+            "chr22": 3,
+            "chr3": 31,
+            "chr4": 20,
+            "chr5": 31,
+            "chr6": 20,
+            "chr7": 28,
+            "chr8": 30,
+            "chr9": 19,
+            "chrX": 16,
+            "chrY": 1
+          },
+          "flank_other_repeat_flag": {
+            "False": 333,
+            "True": 167
+          },
+          "n": 500,
+          "pct_of_available_strong_set": 0.823,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 492,
+            "mixed_microsatellite_and_other": 8
+          },
+          "shared": 500,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 500,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 1,
+            "TIER0_MEAN_1.0": 499
+          }
+        }
+      },
+      "5000": {
+        "loci_in_both_rankings_top_n": 430,
+        "n_available_strong_set": 60756,
+        "primary_quality_ranking": {
+          "A_only": 0,
+          "B_only": 4570,
+          "chrY": 19,
+          "chromosome": {
+            "chr1": 384,
+            "chr10": 225,
+            "chr11": 215,
+            "chr12": 263,
+            "chr13": 164,
+            "chr14": 185,
+            "chr15": 144,
+            "chr16": 168,
+            "chr17": 161,
+            "chr18": 126,
+            "chr19": 98,
+            "chr2": 413,
+            "chr20": 113,
+            "chr21": 49,
+            "chr22": 48,
+            "chr3": 397,
+            "chr4": 289,
+            "chr5": 338,
+            "chr6": 277,
+            "chr7": 260,
+            "chr8": 270,
+            "chr9": 205,
+            "chrX": 189,
+            "chrY": 19
+          },
+          "flank_other_repeat_flag": {
+            "False": 2271,
+            "True": 2729
+          },
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4807,
+            "mixed_microsatellite_and_other": 190,
+            "no_rmsk_hit": 3
+          },
+          "shared": 430,
+          "span_subband": {
+            "15_20": 0,
+            "21_30": 5000,
+            "31_40": 0
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 19,
+            "TIER0_MEAN_1.0": 4981
+          }
+        },
+        "secondary_common_core_ranking": {
+          "A_only": 0,
+          "B_only": 0,
+          "chrY": 7,
+          "chromosome": {
+            "chr1": 440,
+            "chr10": 203,
+            "chr11": 248,
+            "chr12": 314,
+            "chr13": 122,
+            "chr14": 200,
+            "chr15": 180,
+            "chr16": 185,
+            "chr17": 225,
+            "chr18": 137,
+            "chr19": 158,
+            "chr2": 401,
+            "chr20": 100,
+            "chr21": 49,
+            "chr22": 81,
+            "chr3": 349,
+            "chr4": 239,
+            "chr5": 314,
+            "chr6": 260,
+            "chr7": 261,
+            "chr8": 203,
+            "chr9": 171,
+            "chrX": 153,
+            "chrY": 7
+          },
+          "flank_other_repeat_flag": {
+            "False": 3684,
+            "True": 1316
+          },
+          "n": 5000,
+          "pct_of_available_strong_set": 8.23,
+          "rmsk_self_category": {
+            "microsatellite_class_only": 4334,
+            "mixed_microsatellite_and_other": 77,
+            "no_rmsk_hit": 589
+          },
+          "shared": 5000,
+          "span_subband": {
+            "15_20": 3408,
+            "21_30": 1506,
+            "31_40": 86
+          },
+          "umap_status": {
+            "NOT_ASSESSED": 7,
+            "TIER0_MEAN_1.0": 4993
+          }
+        }
+      }
+    }
+  },
+  "script": {
+    "path": "C:\\GenRichi\\dev\\msi_redesign\\scenario_preview_stage4.py",
+    "python": "3.12.10",
+    "sha256": "853b5b1ed69270c79a3ece68c82868c2955acb83281a09b59c01df993d6d8b1e",
+    "version": "scenario_preview_stage4.v1"
+  },
+  "sizes_previewed": [
+    500,
+    1000,
+    1500,
+    2000,
+    5000
+  ],
+  "stage": "scenario previews over the stage-3 rankings (development / RUO)",
+  "stage3_manifest_path": "dev/msi_redesign/output/candidate_ranking_stage3.v1.manifest.json",
+  "stage3_outputs_modified": false,
+  "status": "DEVELOPMENT_SCENARIO_PREVIEW_NOT_A_SELECTED_PANEL",
+  "verified_upstream_hashes": {
+    "spacing250_manifest": "703a99389ea8a3f7c82ecb6ef5884e2a40e0e008b31c4ade27161958f9e0b410",
+    "spacing250_viewA_wes_compatible_selected_panel": "16a2a3fbbb4c452e81b0e98b4fdb9c9bfe7f30b160309a407745dd874a11a200",
+    "spacing250_viewA_wes_compatible_traceability_all_loci": "13d5d85243ccf1aa18e8d228fa88bdd97166c123d709553831bd9e400cfe9d16",
+    "spacing250_viewB_wgs_selected_panel": "6292272337e05af8cf4172df1594437c0aa73a7596688051671f211177f7d0d2",
+    "spacing250_viewB_wgs_traceability_all_loci": "004224614bafca78292c4f19c8bd88d7e1ab50d2900926f42ccd52e193743529",
+    "stage2_manifest": "aa611663a619f3b469d88b2b17afb198b71bc696609a45b769e3f5841fb20e61",
+    "stage2_strong_mono_primary": "c6a98adbb2b2d5893ec2f1be8e75e8deea50481d736522243512598d7c2b0721",
+    "stage2_strong_str_comparison": "b0db9dc117eefee321f02216997767f73e824c811a1072c18063b8805ccd8aae",
+    "stage2_traceability_all_representatives": "194db0bf09f00b18643d58f1c6f6dfc84585520d90dd0d5b55d48f8c111f64bf",
+    "stage3_manifest": "e95f76db84a81e5e3d1647e177827d0355316b92740ef79b5a277bc2de37e0ce",
+    "stage3_ranked_union": "3d1b3660c8a22ac9ea9978316a0246a670a8866a2e72382798498763c307ff0b",
+    "stage3_ranked_viewA": "042743e5000c11c5647d19d477404f15f64bc0b35178a7420629198afadb8451",
+    "stage3_ranked_viewB": "ef368104588b292191125aeb0fcede9a618b21464c74131efcfb0e37bccf9686"
+  }
+}

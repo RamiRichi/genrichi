@@ -1,0 +1,14 @@
+{
+  "clinically_validated_for_genrichi": false,
+  "combined_file_path": "dev/msi_redesign/output/msi_markers.dev_combined.v1.tsv",
+  "combined_file_sha256": "6e8db16d44a5b2e7996eb0550a45988ac0e1d636b50d6a39bf336f75e0eccee6",
+  "combined_n_markers": 2682858,
+  "generated_at_utc": "2026-09-23T08:25:09+00:00",
+  "note": "Neither tier is clinically validated for GenRichi. Tier 1 markers are clinically established in the field (Promega MSI Analysis System) but have not been validated on GenRichi's pipeline/data. Tier 2 markers are a development-only quantitative candidate set, not independently validated.",
+  "tier1_n_markers": 5,
+  "tier1_source_file": "dev/msi_redesign/output/msi_markers.promega_tier1.tsv",
+  "tier1_source_sha256": "e8c6be574cad38f4394f0dcabcc03ba8ade8fdec142e53a168b68f33ad4722a3",
+  "tier2_n_markers": 2682853,
+  "tier2_source_file": "dev/msi_redesign/output/msi_markers.v2.tsv",
+  "tier2_source_sha256": "7bb1b9ed837a540709049a42f320abc3ef2632720e1b4e347c3156c963423e5c"
+}

@@ -1,0 +1,158 @@
+{
+  "analysis_type": "EXPLORATORY_DOWNSELECTION_NOT_A_VALIDATED_PANEL",
+  "final_panel_selected": false,
+  "hcc1395_or_any_sample_data_used": false,
+  "master_panel_or_views_modified": false,
+  "view_A_wes_compatible": {
+    "chrom_counts": {
+      "chr1": 8728,
+      "chr10": 3769,
+      "chr11": 4554,
+      "chr12": 5635,
+      "chr13": 2263,
+      "chr14": 3352,
+      "chr15": 3331,
+      "chr16": 3179,
+      "chr17": 4066,
+      "chr18": 2216,
+      "chr19": 3610,
+      "chr2": 7405,
+      "chr20": 1996,
+      "chr21": 1057,
+      "chr22": 1481,
+      "chr3": 6119,
+      "chr4": 5047,
+      "chr5": 5250,
+      "chr6": 5200,
+      "chr7": 4625,
+      "chr8": 3971,
+      "chr9": 3360,
+      "chrX": 3296,
+      "chrY": 177
+    },
+    "gap_proximity_scenario_counts": {
+      "n_loci_within_0bp_of_assembly_gap": 0,
+      "n_loci_within_100bp_of_assembly_gap": 1,
+      "n_loci_within_10bp_of_assembly_gap": 0,
+      "n_loci_within_50bp_of_assembly_gap": 0,
+      "n_total_with_distance_data": 93687
+    },
+    "kind_counts": {
+      "mononucleotide": 62467,
+      "str": 31220
+    },
+    "motif_length_counts": {
+      "1": 62467,
+      "2": 23126,
+      "3": 5479,
+      "4": 1998,
+      "5": 497,
+      "6": 120
+    },
+    "n_loci_with_gap_distance_data": 93687,
+    "n_total": 93687,
+    "repeat_length_band_counts": {
+      "10-14bp": 22472,
+      "15-20bp": 6141,
+      "21-30bp": 2271,
+      "31bp+": 195,
+      "5-9bp": 62608
+    },
+    "repeat_length_histogram_summary": {
+      "max": 49,
+      "min": 5,
+      "n_distinct_lengths": 43
+    },
+    "spacing_scenario_counts": {
+      "n_loci_with_neighbor_within_100bp": 22399,
+      "n_loci_with_neighbor_within_200bp": 28346,
+      "n_loci_with_neighbor_within_20bp": 13553,
+      "n_loci_with_neighbor_within_50bp": 17989,
+      "n_loci_with_no_neighbor_on_chromosome": 0,
+      "n_total": 93687
+    },
+    "umap_multiread_mean_band_counts": {
+      "0.7-0.9": 405,
+      "0.9-1.0_exclusive": 397,
+      "1.0_exactly": 92489,
+      "below_0.7": 219,
+      "no_data": 177
+    }
+  },
+  "view_B_wgs": {
+    "chrom_counts": {
+      "chr1": 90572,
+      "chr10": 55420,
+      "chr11": 52189,
+      "chr12": 58316,
+      "chr13": 44748,
+      "chr14": 38456,
+      "chr15": 31183,
+      "chr16": 31419,
+      "chr17": 30588,
+      "chr18": 34244,
+      "chr19": 21186,
+      "chr2": 105929,
+      "chr20": 24212,
+      "chr21": 15886,
+      "chr22": 11566,
+      "chr3": 86862,
+      "chr4": 86768,
+      "chr5": 78325,
+      "chr6": 75817,
+      "chr7": 64953,
+      "chr8": 63196,
+      "chr9": 46489,
+      "chrX": 55153,
+      "chrY": 4692
+    },
+    "gap_proximity_scenario_counts": {
+      "n_loci_within_0bp_of_assembly_gap": 0,
+      "n_loci_within_100bp_of_assembly_gap": 102,
+      "n_loci_within_10bp_of_assembly_gap": 22,
+      "n_loci_within_50bp_of_assembly_gap": 56,
+      "n_total_with_distance_data": 1208169
+    },
+    "kind_counts": {
+      "mononucleotide": 658504,
+      "str": 549665
+    },
+    "motif_length_counts": {
+      "1": 658504,
+      "2": 427319,
+      "3": 44177,
+      "4": 62525,
+      "5": 13919,
+      "6": 1725
+    },
+    "n_loci_with_gap_distance_data": 1208169,
+    "n_total": 1208169,
+    "repeat_length_band_counts": {
+      "10-14bp": 267021,
+      "15-20bp": 82205,
+      "21-30bp": 36747,
+      "31bp+": 3601,
+      "5-9bp": 818595
+    },
+    "repeat_length_histogram_summary": {
+      "max": 81,
+      "min": 5,
+      "n_distinct_lengths": 54
+    },
+    "spacing_scenario_counts": {
+      "n_loci_with_neighbor_within_100bp": 407520,
+      "n_loci_with_neighbor_within_200bp": 489558,
+      "n_loci_with_neighbor_within_20bp": 274412,
+      "n_loci_with_neighbor_within_50bp": 345931,
+      "n_loci_with_no_neighbor_on_chromosome": 0,
+      "n_total": 1208169
+    },
+    "umap_multiread_mean_band_counts": {
+      "0.7-0.9": 11559,
+      "0.9-1.0_exclusive": 10619,
+      "1.0_exactly": 1173054,
+      "below_0.7": 8245,
+      "no_data": 4692
+    }
+  }
+}
