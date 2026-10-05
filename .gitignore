@@ -13,6 +13,8 @@ Rami_Richi_*
 resources/reference/
 resources/vep_cache/
 resources/annotation/
+dev/msi_redesign/reference_annotations/
+dev/msi_redesign/output/*.tsv
 
 # Snakemake internals
 .snakemake/

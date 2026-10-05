@@ -603,8 +603,8 @@ HTML = f"""<!DOCTYPE html>
 <div class="header">
   {logo_html}
   <div>
-    <h1>{COMPANY} — Comprehensive Cancer Panel Report</h1>
-    <div class="sub">Clinical genomics reporting system &bull; Somatic variant analysis</div>
+    <h1>{COMPANY} — Comprehensive Cancer Panel Research Report (RUO)</h1>
+    <div class="sub">Research-use analysis &bull; Somatic variant analysis</div>
   </div>
 </div>
 
@@ -731,7 +731,7 @@ HTML = f"""<!DOCTYPE html>
   {tmb_footer_str} &nbsp;&bull;&nbsp;
   Annotation: MANE Select v1.4 (GRCh38) &nbsp;&bull;&nbsp;
   Threshold: &ge;{TMB_HIGH} mut/Mb (requires assay-specific clinical validation)<br>
-  <span style="color:#c0392b">FOR RESEARCH USE ONLY. Not validated for clinical diagnostic use. Requires expert review before clinical reporting.</span><br>
+  <span style="color:#c0392b">RESEARCH USE ONLY (RUO). Not an IVD and not intended for diagnosis, treatment decisions, or clinical reporting.</span><br>
   {provenance_footer_str}
 </div>
 
